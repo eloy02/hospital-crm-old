@@ -1,4 +1,4 @@
-﻿namespace DB.NetCore.Model
+﻿namespace DB.Model
 {
     public class Document
     {

@@ -1,10 +1,11 @@
 using Caliburn.Micro;
+using Core.Types;
+using Core.Types.Enumerations;
 using KladrApiClient;
 using PacientRegistry.Models;
+using System;
 using System.Linq;
-using System.Threading.Tasks;
 using System.Windows;
-using Сore.Types.Enumerations;
 
 namespace PacientRegistry
 {
@@ -400,7 +401,31 @@ namespace PacientRegistry
         public async void SavePacient()
         {
             SavingPacientVisibility = Visibility.Visible;
-            await Task.Delay(1000);
+
+            try
+            {
+                var paient = new PacientCore()
+                {
+                    BuildingNumber = BuildingNumber,
+                    DocumentPath = PdfPath,
+                    FirstName = PacientFirstName,
+                    FlatNumber = FlatNumber,
+                    LastName = PacientLastName,
+                    PacientPhoneNumber = PacientPhoneNumber,
+                    PacientType = SelectedPacientType.Value,
+                    ParentFirstName = ParentFirstName,
+                    ParentLastName = ParentLastName,
+                    ParentPatronymicName = ParentPatronymicName,
+                    PatronymicName = PacientPatronymicName,
+                    Sity = Sity,
+                    Street = Street
+                };
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message, "Регистратура", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+
             SavingPacientVisibility = Visibility.Collapsed;
         }
 

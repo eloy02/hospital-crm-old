@@ -131,11 +131,5 @@
   <ItemGroup>
     <Folder Include="Models\" />
   </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\Сore\Сore.csproj">
-      <Project>{7b493964-c467-4f29-93d3-bdfe6ab48f47}</Project>
-      <Name>Сore</Name>
-    </ProjectReference>
-  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace DB.NetCore.Model
+namespace DB.Model
 {
     public class VisitLog
     {

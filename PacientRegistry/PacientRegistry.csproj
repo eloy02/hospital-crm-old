@@ -133,11 +133,10 @@
       <SubType>Designer</SubType>
     </Page>
   </ItemGroup>
-  <ItemGroup />
   <ItemGroup>
-    <ProjectReference Include="..\Сore\Сore.csproj">
-      <Project>{7b493964-c467-4f29-93d3-bdfe6ab48f47}</Project>
-      <Name>Сore</Name>
+    <ProjectReference Include="..\Core\Core.csproj">
+      <Project>{35EF9F12-5790-4EE1-9997-52D5635DBB5A}</Project>
+      <Name>Core</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

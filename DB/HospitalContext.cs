@@ -1,7 +1,7 @@
-﻿using DB.NetCore.Model;
+﻿using DB.Model;
 using Microsoft.EntityFrameworkCore;
 
-namespace DB.NetCore
+namespace DB
 {
     public class HospitalContext : DbContext
     {
