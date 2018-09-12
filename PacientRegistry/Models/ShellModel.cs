@@ -1,16 +1,29 @@
-﻿using KladrApiClient;
+﻿using Castle.Windsor;
+using Castle.Windsor.Installer;
+using Core.Interfaces;
+using Core.Types;
+using KladrApiClient;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace PacientRegistry.Models
 {
     public class ShellModel
     {
         private const string RegionId = "0200000000000";
+
+        private static WindsorContainer _container;
+        private ICore Core { get; set; }
+
         private KladrClient kladrClient;
         private ShellViewModel ViewModel;
 
         public ShellModel(ShellViewModel viewModel)
         {
+            _container.Install(FromAssembly.Named("Core"));
+
+            Core = _container.Resolve<ICore>();
+
             kladrClient = new KladrClient("some_token", "some_key");
             ViewModel = viewModel;
         }
@@ -60,6 +73,10 @@ namespace PacientRegistry.Models
                                             {"contentType", "building"},
                                             {"streetId", streetId},
                                         }, ViewModel.SetKladrBuildings);
+        }
+
+        public async Task SavePacientAsync(PacientCore pacient)
+        {
         }
     }
 }

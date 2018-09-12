@@ -1,5 +1,7 @@
 ﻿using Castle.Windsor;
 using Core.Interfaces;
+using Core.Types;
+using System.Threading.Tasks;
 
 namespace Core
 {
@@ -11,6 +13,10 @@ namespace Core
         {
             _container = ioc;
             //Log = _container.Resolve<ILogger>();
+        }
+
+        public async Task SavePacientAsync(PacientCore pacient)
+        {
         }
     }
 }
