@@ -1,4 +1,4 @@
-﻿namespace DB
+﻿namespace DB.NetCore
 {
     public class DBService
     {

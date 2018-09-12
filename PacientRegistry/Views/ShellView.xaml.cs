@@ -1,4 +1,5 @@
-﻿using System.Windows;
+﻿using Microsoft.Win32;
+using System.Windows;
 
 namespace PacientRegistry
 {
@@ -14,6 +15,19 @@ namespace PacientRegistry
 
         private void ChoosePdfPath_Click(object sender, RoutedEventArgs e)
         {
+            string filePath = string.Empty;
+
+            OpenFileDialog dialog = new OpenFileDialog
+            {
+                Filter = "Pdf Files|*.pdf",
+                Title = "Выберите PDF файлы документов ИПРА или ПМПК"
+            };
+            if (dialog.ShowDialog() == true)
+            {
+                filePath = dialog.FileName;
+            }
+
+            PdfPath.Text = filePath;
         }
     }
 }

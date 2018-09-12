@@ -132,10 +132,6 @@
     <Folder Include="Models\" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\DB\DB.csproj">
-      <Project>{f22878eb-7a90-4712-a69e-a6a74a9e8c45}</Project>
-      <Name>DB</Name>
-    </ProjectReference>
     <ProjectReference Include="..\Сore\Сore.csproj">
       <Project>{7b493964-c467-4f29-93d3-bdfe6ab48f47}</Project>
       <Name>Сore</Name>
