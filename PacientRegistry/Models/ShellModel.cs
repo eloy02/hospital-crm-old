@@ -1,5 +1,4 @@
-﻿using Castle.Windsor;
-using Core.Interfaces;
+﻿using Core.Interfaces;
 using Core.Types;
 using KladrApiClient;
 using System.Collections.Generic;
@@ -11,7 +10,6 @@ namespace PacientRegistry.Models
     {
         private const string RegionId = "0200000000000";
 
-        private static WindsorContainer _container;
         private ICore Core = new Core.Core();
 
         private KladrClient kladrClient;

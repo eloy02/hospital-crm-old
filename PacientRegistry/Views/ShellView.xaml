@@ -169,6 +169,7 @@
                                 </Grid.ColumnDefinitions>
 
                                 <ComboBox
+                                    Text="{Binding FlatNumber}"
                                     Grid.Column="0"
                                     materialDesign:HintAssist.Hint="№ квартиры"
                                     IsEditable="True"

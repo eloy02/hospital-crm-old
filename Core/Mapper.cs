@@ -19,7 +19,7 @@ namespace Core
             a.PatronymicName = src.PatronymicName;
             a.Sity = src.Sity;
             a.Street = src.Street;
-
+            a.FlatNumber = src.FlatNumber;
             return a;
         }
     }
