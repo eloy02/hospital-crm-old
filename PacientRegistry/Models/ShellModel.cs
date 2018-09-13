@@ -1,5 +1,4 @@
 ﻿using Castle.Windsor;
-using Castle.Windsor.Installer;
 using Core.Interfaces;
 using Core.Types;
 using KladrApiClient;
@@ -13,17 +12,13 @@ namespace PacientRegistry.Models
         private const string RegionId = "0200000000000";
 
         private static WindsorContainer _container;
-        private ICore Core { get; set; }
+        private ICore Core = new Core.Core();
 
         private KladrClient kladrClient;
         private ShellViewModel ViewModel;
 
         public ShellModel(ShellViewModel viewModel)
         {
-            _container.Install(FromAssembly.Named("Core"));
-
-            Core = _container.Resolve<ICore>();
-
             kladrClient = new KladrClient("some_token", "some_key");
             ViewModel = viewModel;
         }
@@ -75,8 +70,26 @@ namespace PacientRegistry.Models
                                         }, ViewModel.SetKladrBuildings);
         }
 
-        public async Task SavePacientAsync(PacientCore pacient)
+        public async Task SavePacientAsync()
         {
+            var pacient = new PacientCore()
+            {
+                BuildingNumber = ViewModel.BuildingNumber,
+                DocumentPath = ViewModel.PdfPath,
+                FirstName = ViewModel.PacientFirstName,
+                FlatNumber = ViewModel.FlatNumber,
+                LastName = ViewModel.PacientLastName,
+                PacientPhoneNumber = ViewModel.PacientPhoneNumber,
+                PacientType = ViewModel.SelectedPacientType.Value,
+                ParentFirstName = ViewModel.ParentFirstName,
+                ParentLastName = ViewModel.ParentLastName,
+                ParentPatronymicName = ViewModel.ParentPatronymicName,
+                PatronymicName = ViewModel.PacientPatronymicName,
+                Sity = ViewModel.Sity,
+                Street = ViewModel.Street
+            };
+
+            await Core.SavePacientAsync(pacient);
         }
     }
 }

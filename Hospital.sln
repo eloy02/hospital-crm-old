@@ -7,9 +7,9 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RehabilitationCentre", "Reh
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PacientRegistry", "PacientRegistry\PacientRegistry.csproj", "{7AB18265-8FC7-46A9-B978-19ED80030B8D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Core", "Core\Core.csproj", "{35EF9F12-5790-4EE1-9997-52D5635DBB5A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Core", "Core\Core.csproj", "{35EF9F12-5790-4EE1-9997-52D5635DBB5A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DB", "DB\DB.csproj", "{35BBB171-E96E-4F69-88F6-DEAB480D7F0F}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DB.EF", "DB.EF\DB.EF.csproj", "{26D88F5A-1250-4B1D-A411-2D2458080BB3}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -29,10 +29,10 @@ Global
 		{35EF9F12-5790-4EE1-9997-52D5635DBB5A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{35EF9F12-5790-4EE1-9997-52D5635DBB5A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{35EF9F12-5790-4EE1-9997-52D5635DBB5A}.Release|Any CPU.Build.0 = Release|Any CPU
-		{35BBB171-E96E-4F69-88F6-DEAB480D7F0F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{35BBB171-E96E-4F69-88F6-DEAB480D7F0F}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{35BBB171-E96E-4F69-88F6-DEAB480D7F0F}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{35BBB171-E96E-4F69-88F6-DEAB480D7F0F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{26D88F5A-1250-4B1D-A411-2D2458080BB3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{26D88F5A-1250-4B1D-A411-2D2458080BB3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{26D88F5A-1250-4B1D-A411-2D2458080BB3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{26D88F5A-1250-4B1D-A411-2D2458080BB3}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

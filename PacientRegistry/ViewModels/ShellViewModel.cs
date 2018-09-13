@@ -1,5 +1,4 @@
 using Caliburn.Micro;
-using Core.Types;
 using Core.Types.Enumerations;
 using KladrApiClient;
 using PacientRegistry.Models;
@@ -404,22 +403,7 @@ namespace PacientRegistry
 
             try
             {
-                var paient = new PacientCore()
-                {
-                    BuildingNumber = BuildingNumber,
-                    DocumentPath = PdfPath,
-                    FirstName = PacientFirstName,
-                    FlatNumber = FlatNumber,
-                    LastName = PacientLastName,
-                    PacientPhoneNumber = PacientPhoneNumber,
-                    PacientType = SelectedPacientType.Value,
-                    ParentFirstName = ParentFirstName,
-                    ParentLastName = ParentLastName,
-                    ParentPatronymicName = ParentPatronymicName,
-                    PatronymicName = PacientPatronymicName,
-                    Sity = Sity,
-                    Street = Street
-                };
+                await Model.SavePacientAsync();
             }
             catch (Exception ex)
             {

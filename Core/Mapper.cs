@@ -1,17 +1,13 @@
 ﻿using Core.Types;
-using DB.Model;
+using DB.EF;
 
 namespace Core
 {
     public static class Mapper
     {
-        internal static Pacient Assign(this Pacient a, PacientCore src)
+        internal static Pacients Assign(this Pacients a, PacientCore src)
         {
             a.BuildingNumber = src.BuildingNumber;
-            a.Document = new Document
-            {
-                FilePath = src.DocumentPath
-            };
             a.FirstName = src.FirstName;
             a.FlatNumber = src.FlatNumber;
             a.LastName = src.LastName;
