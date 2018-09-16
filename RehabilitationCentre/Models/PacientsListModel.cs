@@ -37,5 +37,17 @@ namespace RehabilitationCentre.Models
         {
             await Core.ShowPdfDocumentAsync(pacient);
         }
+
+        public async Task GetDoctorsAsync()
+        {
+            var d = await Core.GetDoctorsAsync();
+
+            ViewModel.Doctors.AddRange(d);
+        }
+
+        public async Task SetPacientVisitAsync(Pacient selectedPacient, Doctor selectedDoctor)
+        {
+            await Core.SetPacientVisit(selectedPacient, selectedDoctor);
+        }
     }
 }

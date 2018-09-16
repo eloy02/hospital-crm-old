@@ -22,6 +22,7 @@ namespace Core
             a.Street = src.Street;
             a.FlatNumber = src.FlatNumber;
             a.ParentPhoneNumber = src.ParentsPhoneNumber;
+            a.Id = src.Id;
 
             return a;
         }
@@ -42,6 +43,18 @@ namespace Core
             a.Sity = src.Sity;
             a.Street = src.Street;
             a.ParentsPhoneNumber = src.ParentPhoneNumber;
+
+            return a;
+        }
+
+        internal static Doctor Assign(this Doctor a, Doctors src)
+        {
+            a.FirstName = src.FirstName;
+            a.Id = src.Id;
+            a.LastName = src.LastName;
+            a.PatronymicName = src.PatronymicName;
+            a.Position = src.Position;
+            a.DisplayName = $"{a.LastName} {a.FirstName} {a.PatronymicName} - {a.Position}";
 
             return a;
         }

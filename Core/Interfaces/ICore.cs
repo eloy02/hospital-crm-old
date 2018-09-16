@@ -11,5 +11,11 @@ namespace Core.Interfaces
         Task<IEnumerable<Pacient>> GetAllPacientsAsync();
 
         Task ShowPdfDocumentAsync(Pacient pacient);
+
+        string GetProgrammTempFolder();
+
+        Task<IEnumerable<Doctor>> GetDoctorsAsync();
+
+        Task SetPacientVisit(Pacient pacient, Doctor doctor);
     }
 }

@@ -1,4 +1,6 @@
-﻿using System.Windows;
+﻿using System.ComponentModel;
+using System.IO;
+using System.Windows;
 
 namespace RehabilitationCentre
 {
@@ -10,6 +12,21 @@ namespace RehabilitationCentre
         public ShellView()
         {
             InitializeComponent();
+        }
+
+        private void Window_Closing(object sender, CancelEventArgs e)
+        {
+            var path = Directory.GetCurrentDirectory() + @"\Temp";
+            DirectoryInfo di = new DirectoryInfo(path);
+
+            foreach (FileInfo file in di.EnumerateFiles())
+            {
+                file.Delete();
+            }
+            foreach (DirectoryInfo dir in di.EnumerateDirectories())
+            {
+                dir.Delete(true);
+            }
         }
     }
 }

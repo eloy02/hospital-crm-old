@@ -2,6 +2,7 @@
 using Core.Interfaces;
 using Core.Types;
 using DB.EF;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -18,6 +19,11 @@ namespace Core
         {
             _container = ioc;
             //Log = _container.Resolve<ILogger>();
+        }
+
+        public string GetProgrammTempFolder()
+        {
+            return Directory.GetCurrentDirectory() + @"\Temp";
         }
 
         public async Task SavePacientAsync(Pacient pacient)
@@ -59,9 +65,39 @@ namespace Core
 
         public async Task ShowPdfDocumentAsync(Pacient pacient)
         {
+            var path = GetProgrammTempFolder();
+            Directory.CreateDirectory(path);
+
             var raw = await DB.GetDocumentByPacientAsync(new Pacients().Assign(pacient));
 
-            File.WriteAllBytes("F:\\hello.pdf", raw);
+            var file = $"{path}\\{Guid.NewGuid().ToString()}.pdf";
+            File.WriteAllBytes(file, raw);
+
+            var pdfProc = System.Diagnostics.Process.Start(file);
+        }
+
+        private void pdfProcess_Exited(object sender, EventArgs e)
+        {
+            File.Delete("F:\\hello.pdf");
+        }
+
+        public async Task<IEnumerable<Doctor>> GetDoctorsAsync()
+        {
+            var raw = await DB.GetDoctorsAsync();
+
+            return raw.Select(r => new Doctor().Assign(r)).ToList();
+        }
+
+        public async Task SetPacientVisit(Pacient pacient, Doctor doctor)
+        {
+            var visit = new VisitLogs
+            {
+                DoctorId = doctor.Id,
+                PacientId = pacient.Id,
+                VisitDateTime = DateTime.Now
+            };
+
+            await DB.SetPacientVisitAsync(visit);
         }
     }
 }

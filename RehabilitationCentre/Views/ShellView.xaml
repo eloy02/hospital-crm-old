@@ -10,7 +10,8 @@
         TextOptions.TextRenderingMode="Auto"
         Background="{DynamicResource MaterialDesignPaper}"
         FontFamily="{DynamicResource MaterialDesignFont}"
-        Title="Центр ребиалитации">
+        Title="Центр ребиалитации"
+        Closing="Window_Closing">
 
     <Window.Resources>
         <ResourceDictionary>

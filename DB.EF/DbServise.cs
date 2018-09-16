@@ -11,6 +11,7 @@ namespace DB.EF
         {
             using (var db = new HospitalContext())
             {
+                data.Id = default(int);
                 db.Pacients.Add(data);
                 await db.SaveChangesAsync();
             }
@@ -30,15 +31,33 @@ namespace DB.EF
         {
             using (var db = new HospitalContext())
             {
-                var raw = await db.Pacients.Where(p => p.Id == pacient.Id).ToListAsync();
+                var raw = await db.Documents.Where(p => p.PacientId == pacient.Id).ToListAsync();
 
-                //if (raw != null)
-                //{
-                //    return raw.Documents.Where(p => p.Id == pacient.Id).SingleOrDefault().Document;
-                //}
-                //else return null;
+                if (raw != null)
+                {
+                    return raw.SingleOrDefault().Document;
+                }
+                else return null;
+            }
+        }
 
-                return null;
+        public async Task<IEnumerable<Doctors>> GetDoctorsAsync()
+        {
+            using (var db = new HospitalContext())
+            {
+                var raw = await db.Doctors.ToListAsync();
+
+                return raw;
+            }
+        }
+
+        public async Task SetPacientVisitAsync(VisitLogs visit)
+        {
+            using (var db = new HospitalContext())
+            {
+                db.VisitLogs.Add(visit);
+
+                await db.SaveChangesAsync();
             }
         }
     }
