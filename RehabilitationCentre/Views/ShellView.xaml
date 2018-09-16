@@ -12,52 +12,47 @@
         FontFamily="{DynamicResource MaterialDesignFont}"
         Title="Центр ребиалитации">
 
-    <materialDesign:DrawerHost
-        BorderThickness="2"
-        BorderBrush="{DynamicResource MaterialDesignDivider}">
-        <materialDesign:ColorZone
-            Mode="PrimaryDark"
-            Padding="16"
-            CornerRadius="3"
-            materialDesign:ShadowAssist.ShadowDepth="Depth3">
-            <StackPanel
-                Orientation="Horizontal">
-                <ToggleButton
-                    Style="{DynamicResource MaterialDesignHamburgerToggleButton}"
-                    Command="{x:Static materialDesign:DrawerHost.OpenDrawerCommand}"
-                    CommandParameter="{x:Static Dock.Left}" />
+    <Window.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesignTheme.Button.xaml" />
+                <ResourceDictionary Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesignTheme.CheckBox.xaml" />
+                <ResourceDictionary Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesignTheme.ListBox.xaml" />
+                <ResourceDictionary Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesignTheme.PopupBox.xaml" />
+                <ResourceDictionary Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesignTheme.RadioButton.xaml" />
+                <ResourceDictionary Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesignTheme.TextBlock.xaml" />
+                <ResourceDictionary Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesignTheme.ToggleButton.xaml" />
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
+    </Window.Resources>
 
-                <TextBlock
-                    VerticalAlignment="Center"
-                    Margin="16 0 0 0">
-                    Material Design In XAML Toolkit
-                </TextBlock>
-            </StackPanel>
-        </materialDesign:ColorZone>
-        <materialDesign:DrawerHost.LeftDrawerContent>
-            <StackPanel
-                Width="250"
-                Margin="16">
-                <TextBlock
-                    Margin="4"
-                    HorizontalAlignment="Center">
-                        Меню
-                </TextBlock>
+    <Grid Background="#FFDEDEDE">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="300" />
+            <ColumnDefinition Width="*" />
+        </Grid.ColumnDefinitions>
 
-                <Grid
-                    Height="auto">
-                    <ListView x:Name="MenuItems" Foreground="LightGray" FontFamily="Champagne &amp; Limousines" FontSize="18"  SelectedIndex="0">
-                        <ListView.ItemTemplate>
-                            <DataTemplate>
-                                <StackPanel Orientation="Horizontal">
-                                    <materialDesign:PackIcon x:Name="MenuItems_Icon" Kind="{Binding Icon}" Width="30" Height="30" VerticalAlignment="Center" Margin="5" />
-                                    <TextBlock x:Name="MenuItems_Name" Text="{Binding Name}" FontSize="17" VerticalAlignment="Center" Margin="20 0" />
-                                </StackPanel>
-                            </DataTemplate>
-                        </ListView.ItemTemplate>
-                    </ListView>
-                </Grid>
-            </StackPanel>
-        </materialDesign:DrawerHost.LeftDrawerContent>
-    </materialDesign:DrawerHost>
+        <Grid  Background="#FF222222" Grid.Column="0">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="100" />
+                <RowDefinition Height="*" />
+            </Grid.RowDefinitions>
+
+            <ListView Grid.Row="1" x:Name="MenuItems" Foreground="LightGray" FontFamily="Champagne &amp; Limousines" FontSize="18"  SelectedIndex="0">
+                <ListView.ItemTemplate>
+                    <DataTemplate>
+                        <StackPanel Orientation="Horizontal">
+                            <materialDesign:PackIcon x:Name="MenuItems_Icon" Kind="{Binding Icon}" Width="30" Height="30" VerticalAlignment="Center" Margin="5" />
+                            <TextBlock x:Name="MenuItems_Name" Text="{Binding Name}" FontSize="17" VerticalAlignment="Center" Margin="20 0" />
+                        </StackPanel>
+                    </DataTemplate>
+                </ListView.ItemTemplate>
+            </ListView>
+        </Grid>
+
+        <Grid
+            Grid.Column="1">
+            <ContentControl x:Name="CurrentView" />
+        </Grid>
+    </Grid>
 </Window>

@@ -404,6 +404,8 @@ namespace PacientRegistry
             try
             {
                 await Model.SavePacientAsync();
+
+                ClearForms();
             }
             catch (Exception ex)
             {

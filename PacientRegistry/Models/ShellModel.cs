@@ -70,7 +70,7 @@ namespace PacientRegistry.Models
 
         public async Task SavePacientAsync()
         {
-            var pacient = new PacientCore()
+            var pacient = new Pacient()
             {
                 BuildingNumber = ViewModel.BuildingNumber,
                 DocumentPath = ViewModel.PdfPath,
@@ -83,6 +83,7 @@ namespace PacientRegistry.Models
                 ParentLastName = ViewModel.ParentLastName,
                 ParentPatronymicName = ViewModel.ParentPatronymicName,
                 PatronymicName = ViewModel.PacientPatronymicName,
+                ParentsPhoneNumber = ViewModel.ParentPhoneNumber,
                 Sity = ViewModel.Sity,
                 Street = ViewModel.Street
             };

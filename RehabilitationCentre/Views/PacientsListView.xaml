@@ -6,16 +6,60 @@
              xmlns:local="clr-namespace:RehabilitationCentre.Views"
              xmlns:ValueConverters="clr-namespace:Core.Types.Enumerations;assembly=Core"
              xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+             xmlns:cal="http://www.caliburnproject.org"
+             xmlns:i="clr-namespace:System.Windows.Interactivity;assembly=System.Windows.Interactivity"
              mc:Ignorable="d"
              d:DesignHeight="450" d:DesignWidth="800">
 
     <UserControl.Resources>
         <ResourceDictionary>
             <ValueConverters:EnumDescriptionConverter x:Key="vcEnumToString" />
+            <BooleanToVisibilityConverter x:Key="BoolToVis" />
         </ResourceDictionary>
     </UserControl.Resources>
 
-    <materialDesign:DialogHost>
+    <materialDesign:DialogHost
+            IsOpen="{Binding ChooseDoctor}">
+        <materialDesign:DialogHost.DialogContent>
+            <StackPanel
+                    Margin="16">
+                <TextBlock>
+                        Выберите доктора
+                </TextBlock>
+                <ComboBox
+                        Margin="0 8 0 0"
+                        HorizontalAlignment="Stretch"
+                        x:Name="Doctors" />
+                <StackPanel
+                        Orientation="Horizontal"
+                        HorizontalAlignment="Right">
+                    <Button
+                            Style="{StaticResource MaterialDesignFlatButton}"
+                            IsDefault="True"
+                            Margin="0 8 8 0"
+                            Command="materialDesign:DialogHost.CloseDialogCommand">
+                        <Button.CommandParameter>
+                            <system:Boolean xmlns:system="clr-namespace:System;assembly=mscorlib">
+                                True
+                            </system:Boolean>
+                        </Button.CommandParameter>
+                        Принять
+                    </Button>
+                    <Button
+                            Style="{StaticResource MaterialDesignFlatButton}"
+                            IsCancel="True"
+                            Margin="0 8 8 0"
+                            Command="materialDesign:DialogHost.CloseDialogCommand">
+                        <Button.CommandParameter>
+                            <system:Boolean xmlns:system="clr-namespace:System;assembly=mscorlib">
+                                False
+                            </system:Boolean>
+                        </Button.CommandParameter>
+                        Отмена
+                    </Button>
+                </StackPanel>
+            </StackPanel>
+        </materialDesign:DialogHost.DialogContent>
         <Grid>
             <Grid.RowDefinitions>
                 <RowDefinition Height="auto" />
@@ -30,9 +74,11 @@
                     Header="Фильтры">
                 </Expander>
             </materialDesign:Card>
+
             <ProgressBar
                 Grid.Row="1"
-                IsIndeterminate="True" />
+                IsIndeterminate="True"
+                Visibility="{Binding Path=IsPacientsLoading, Converter={StaticResource BoolToVis}}" />
 
             <DataGrid
                 Grid.Row="2"
@@ -42,7 +88,8 @@
                 materialDesign:DataGridAssist.CellPadding="13 8 8 8"
                 materialDesign:DataGridAssist.ColumnHeaderPadding="8"
                 HeadersVisibility="Column"
-                x:Name="Pacients">
+                x:Name="Pacients"
+                SelectedItem="{Binding SelectedPacient}">
                 <DataGrid.Columns>
 
                     <DataGridTemplateColumn
@@ -53,9 +100,9 @@
                                     Margin="10">
                                     <StackPanel Orientation="Horizontal">
                                         <materialDesign:PackIcon Kind="Account" Margin="0,0,10,0" />
-                                        <TextBox Text="{Binding LastName}" Margin="0,0,5,0" />
-                                        <TextBox Text="{Binding FistName}" Margin="0,0,5,0" />
-                                        <TextBox Text="{Binding PatronymicName}" Margin="0,0,5,0" />
+                                        <TextBlock Text="{Binding LastName}" Margin="0,0,5,0" />
+                                        <TextBlock Text="{Binding FirstName}" Margin="0,0,5,0" />
+                                        <TextBlock Text="{Binding PatronymicName}" Margin="0,0,5,0" />
                                     </StackPanel>
                                 </StackPanel>
                             </DataTemplate>
@@ -63,6 +110,7 @@
                     </DataGridTemplateColumn>
 
                     <DataGridTextColumn
+                        IsReadOnly="True"
                         Header="Тип пациента"
                         Binding="{Binding PacientType, Converter={StaticResource vcEnumToString}}" />
 
@@ -70,13 +118,17 @@
                         Header="Телефоны">
                         <DataGridTemplateColumn.CellTemplate>
                             <DataTemplate>
-                                <StackPanel
-                                    Margin="10">
-                                    <StackPanel Orientation="Horizontal">
+                                <StackPanel>
+                                    <StackPanel Orientation="Horizontal"
+                                                Margin="10,10,10,10">
                                         <materialDesign:PackIcon Kind="PhoneClassic" Margin="0,0,10,0" />
-                                        <TextBox Text="{Binding PacientPhoneNumber, StringFormat='Номер пацента: {0}'}" />
+                                        <TextBlock Text="{Binding PacientPhoneNumber, StringFormat='Номер пацента: {0}'}" />
                                     </StackPanel>
-                                    <TextBox Text="{Binding PacientPhoneNumber, StringFormat='Номер родителей: {0}'}" />
+                                    <StackPanel Orientation="Horizontal"
+                                                Margin="10,10,10,10">
+                                        <materialDesign:PackIcon Kind="PhoneClassic" Margin="0,0,10,0" />
+                                        <TextBlock Text="{Binding ParentsPhoneNumber, StringFormat='Номер родителей: {0}'}" />
+                                    </StackPanel>
                                 </StackPanel>
                             </DataTemplate>
                         </DataGridTemplateColumn.CellTemplate>
@@ -89,9 +141,9 @@
                                 <StackPanel
                                     Margin="10">
                                     <StackPanel Orientation="Horizontal">
-                                        <TextBox Text="{Binding ParentLastName}" Margin="0,0,5,0" />
-                                        <TextBox Text="{Binding ParentFirstName}" Margin="0,0,5,0" />
-                                        <TextBox Text="{Binding ParentPatronymicName}" Margin="0,0,5,0" />
+                                        <TextBlock Text="{Binding ParentLastName}" Margin="0,0,5,0" />
+                                        <TextBlock Text="{Binding ParentFirstName}" Margin="0,0,5,0" />
+                                        <TextBlock Text="{Binding ParentPatronymicName}" Margin="0,0,5,0" />
                                     </StackPanel>
                                 </StackPanel>
                             </DataTemplate>
@@ -104,14 +156,21 @@
                                 <StackPanel
                                     Margin="10">
                                     <Button
+                                        x:Name="ShowPacientDocumet"
                                         Style="{StaticResource MaterialDesignRaisedLightButton}"
-                                        Width="200">
+                                        Width="300">
+                                        <i:Interaction.Triggers>
+                                            <i:EventTrigger EventName="Click">
+                                                <cal:ActionMessage MethodName="ShowPacientDocumet" />
+                                            </i:EventTrigger>
+                                        </i:Interaction.Triggers>
                                         Просмотреть документ пациента
                                     </Button>
 
                                     <Button
+                                        Margin="10,10,10,10"
                                         Style="{StaticResource MaterialDesignRaisedLightButton}"
-                                        Width="200">
+                                        Width="300">
                                         Отметить посещение
                                     </Button>
                                 </StackPanel>

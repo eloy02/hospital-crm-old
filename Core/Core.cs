@@ -4,6 +4,7 @@ using Core.Types;
 using DB.EF;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace Core
@@ -19,7 +20,7 @@ namespace Core
             //Log = _container.Resolve<ILogger>();
         }
 
-        public async Task SavePacientAsync(PacientCore pacient)
+        public async Task SavePacientAsync(Pacient pacient)
         {
             byte[] file = null;
             Pacients pacientDb = null;
@@ -45,6 +46,22 @@ namespace Core
             };
 
             await DB.SavePacientAsync(pacientDb);
+        }
+
+        public async Task<IEnumerable<Pacient>> GetAllPacientsAsync()
+        {
+            var raw = await DB.GetPacientsAsync();
+
+            var pacients = raw.Select(p => new Pacient().Assign(p)).ToList();
+
+            return pacients;
+        }
+
+        public async Task ShowPdfDocumentAsync(Pacient pacient)
+        {
+            var raw = await DB.GetDocumentByPacientAsync(new Pacients().Assign(pacient));
+
+            File.WriteAllBytes("F:\\hello.pdf", raw);
         }
     }
 }

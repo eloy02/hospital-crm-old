@@ -41,6 +41,8 @@ namespace DB.EF
 
         public string ParentPatronymicName { get; set; }
 
+        public string ParentPhoneNumber { get; set; }
+
         public virtual ICollection<Documents> Documents { get; set; }
 
         public virtual ICollection<VisitLogs> VisitLogs { get; set; }
