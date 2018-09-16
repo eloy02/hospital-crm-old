@@ -158,12 +158,8 @@
                                     <Button
                                         x:Name="ShowPacientDocumet"
                                         Style="{StaticResource MaterialDesignRaisedLightButton}"
-                                        Width="300">
-                                        <i:Interaction.Triggers>
-                                            <i:EventTrigger EventName="Click">
-                                                <cal:ActionMessage MethodName="ShowPacientDocumet" />
-                                            </i:EventTrigger>
-                                        </i:Interaction.Triggers>
+                                        Width="300"
+                                        cal:Message.Attach="[Event Click] = [Action ShowPacientDocumet]">
                                         Просмотреть документ пациента
                                     </Button>
 
