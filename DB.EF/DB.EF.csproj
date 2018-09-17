@@ -54,13 +54,9 @@
     <Compile Include="Doctors.cs" />
     <Compile Include="Documents.cs" />
     <Compile Include="HospitalContext.cs" />
-    <Compile Include="Migrations\201809131749598_InitialMigration.cs" />
-    <Compile Include="Migrations\201809131749598_InitialMigration.Designer.cs">
-      <DependentUpon>201809131749598_InitialMigration.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201809161134189_AddedParentPhoneNumberColumn.cs" />
-    <Compile Include="Migrations\201809161134189_AddedParentPhoneNumberColumn.Designer.cs">
-      <DependentUpon>201809161134189_AddedParentPhoneNumberColumn.cs</DependentUpon>
+    <Compile Include="Migrations\201809171753454_InitMigration.cs" />
+    <Compile Include="Migrations\201809171753454_InitMigration.Designer.cs">
+      <DependentUpon>201809171753454_InitMigration.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Pacients.cs" />
@@ -72,11 +68,8 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Migrations\201809131749598_InitialMigration.resx">
-      <DependentUpon>201809131749598_InitialMigration.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201809161134189_AddedParentPhoneNumberColumn.resx">
-      <DependentUpon>201809161134189_AddedParentPhoneNumberColumn.cs</DependentUpon>
+    <EmbeddedResource Include="Migrations\201809171753454_InitMigration.resx">
+      <DependentUpon>201809171753454_InitMigration.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
