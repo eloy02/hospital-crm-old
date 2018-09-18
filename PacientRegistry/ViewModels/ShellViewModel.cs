@@ -1,4 +1,5 @@
 using Caliburn.Micro;
+using Core.Types;
 using Core.Types.Enumerations;
 using KladrApiClient;
 using PacientRegistry.Models;
@@ -8,7 +9,7 @@ using System.Windows;
 
 namespace PacientRegistry
 {
-    public class ShellViewModel : PropertyChangedBase, IShell
+    public class ShellViewModel : Conductor<object>, IShell
     {
         private static BindableCollection<PacientTypeView> _pacientTypes = new BindableCollection<PacientTypeView>()
         {
@@ -42,6 +43,8 @@ namespace PacientRegistry
         private BindableCollection<StreetsView> _streets = new BindableCollection<StreetsView>();
         private Visibility _streetsLoadingVisibility = Visibility.Collapsed;
         private ShellModel Model;
+        private Pacient _selectedPacient;
+        private BindableCollection<Pacient> pacients = new BindableCollection<Pacient>();
 
         #region Visibility
 
@@ -81,6 +84,31 @@ namespace PacientRegistry
         {
             Model = new ShellModel(this);
             Model.LoadSities();
+        }
+
+        protected override async void OnActivate()
+        {
+            var r = await Model.GetPacientsAsync();
+
+            if (r != null)
+            {
+                Pacients.Clear();
+                Pacients.AddRange(r);
+            }
+
+            base.OnActivate();
+        }
+
+        public Pacient SelectedPacient
+        {
+            get { return _selectedPacient; }
+            set { _selectedPacient = value; NotifyOfPropertyChange(() => SelectedPacient); }
+        }
+
+        public BindableCollection<Pacient> Pacients
+        {
+            get { return pacients; }
+            set { pacients = value; NotifyOfPropertyChange(() => Pacients); }
         }
 
         public static BindableCollection<PacientTypeView> PacientTypes

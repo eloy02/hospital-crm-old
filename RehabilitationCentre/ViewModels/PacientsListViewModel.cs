@@ -192,6 +192,8 @@ namespace RehabilitationCentre.ViewModels
             }
 
             IsPacientsLoading = false;
+
+            base.OnActivate();
         }
 
         public async void ShowPacientDocumet()
@@ -257,7 +259,7 @@ namespace RehabilitationCentre.ViewModels
                     pac = pac.Where(p => p.ParentsPhoneNumber.Contains(ParentPhoneNumberForFilter)).ToList();
                 }
 
-                if(PacientTypeForFilter != null)
+                if (PacientTypeForFilter != null)
                 {
                     pac = pac.Where(p => p.PacientType == PacientTypeForFilter.Value).ToList();
                 }

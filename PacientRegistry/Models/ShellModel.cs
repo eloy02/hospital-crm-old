@@ -1,7 +1,9 @@
 ﻿using Core.Interfaces;
 using Core.Types;
 using KladrApiClient;
+using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace PacientRegistry.Models
@@ -89,6 +91,20 @@ namespace PacientRegistry.Models
             };
 
             await Core.SavePacientAsync(pacient);
+        }
+
+        public async Task<List<Pacient>> GetPacientsAsync()
+        {
+            try
+            {
+                var p = (await Core.GetAllPacientsAsync()).ToList();
+
+                return p;
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
         }
     }
 }
