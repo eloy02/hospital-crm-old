@@ -76,7 +76,71 @@
                 Grid.Row="0">
                 <Expander
                     HorizontalAlignment="Stretch"
-                    Header="Фильтры">
+                    Header="Поиск">
+                    <StackPanel>
+                        <StackPanel
+                            Orientation="Horizontal">
+                            <TextBox
+                                Text="{Binding LastNameForFilter, UpdateSourceTrigger=PropertyChanged}"
+                                Margin="10"
+                                materialDesign:HintAssist.Hint="Фамилия"
+                                MaxWidth="150"
+                                Width="150"
+                                Style="{StaticResource MaterialDesignFloatingHintTextBox}" />
+                            <TextBox
+                                Text="{Binding FirstNameForFilter, UpdateSourceTrigger=PropertyChanged}"
+                                MaxWidth="150"
+                                Width="150"
+                                Margin="10"
+                                materialDesign:HintAssist.Hint="Имя"
+                                Style="{StaticResource MaterialDesignFloatingHintTextBox}" />
+
+                            <TextBox
+                                Text="{Binding PatronymicNameForFilter, UpdateSourceTrigger=PropertyChanged}"
+                                MaxWidth="150"
+                                Width="150"
+                                Margin="10"
+                                materialDesign:HintAssist.Hint="Отчетсво"
+                                Style="{StaticResource MaterialDesignFloatingHintTextBox}" />
+
+                            <ComboBox
+                                ItemsSource="{Binding PacientTypes}"
+                                DisplayMemberPath="Name"
+                                SelectedItem="{Binding PacientTypeForFilter}"
+
+                                materialDesign:HintAssist.Hint="Тип пациента"
+                                IsEditable="False"
+                                MaxWidth="150"
+                                Width="150"
+                                Margin="10"
+                                Style="{StaticResource MaterialDesignFloatingHintComboBox}" />
+                        </StackPanel>
+                        <StackPanel
+                            Orientation="Horizontal">
+                            <TextBox
+                                Text="{Binding PacientPhoneNumberForFilter, UpdateSourceTrigger=PropertyChanged}"
+                                Margin="10"
+                                materialDesign:HintAssist.Hint="Номер телефона пациента"
+                                MaxWidth="250"
+                                Width="250"
+                                Style="{StaticResource MaterialDesignFloatingHintTextBox}"
+                                PreviewTextInput="TextBox_PreviewTextInput" />
+
+                            <TextBox
+                                Text="{Binding ParentPhoneNumberForFilter, UpdateSourceTrigger=PropertyChanged}"
+                                Margin="10"
+                                materialDesign:HintAssist.Hint="Номер телефона родителя"
+                                MaxWidth="250"
+                                Width="250"
+                                Style="{StaticResource MaterialDesignFloatingHintTextBox}"
+                                PreviewTextInput="TextBox_PreviewTextInput" />
+                        </StackPanel>
+                        <Button
+                            x:Name="ClearFilter"
+                            Width="auto"
+                            Margin="10"
+                            HorizontalAlignment="Left">Очистить формы поиска</Button>
+                    </StackPanel>
                 </Expander>
             </materialDesign:Card>
 

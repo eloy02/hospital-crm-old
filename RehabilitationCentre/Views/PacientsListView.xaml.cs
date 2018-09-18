@@ -11,5 +11,10 @@ namespace RehabilitationCentre.Views
         {
             InitializeComponent();
         }
+
+        private void TextBox_PreviewTextInput(object sender, System.Windows.Input.TextCompositionEventArgs e)
+        {
+            e.Handled = "0123456789+".IndexOf(e.Text) < 0;
+        }
     }
 }

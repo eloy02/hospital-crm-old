@@ -1,12 +1,21 @@
 ﻿using Caliburn.Micro;
 using Core.Types;
+using Core.Types.Enumerations;
 using MaterialDesignThemes.Wpf;
 using RehabilitationCentre.Models;
+using System;
+using System.Linq;
 
 namespace RehabilitationCentre.ViewModels
 {
     public class PacientsListViewModel : Screen
     {
+        public class PacientTypeView
+        {
+            public string Name { get; set; }
+            public EPatientType Value { get; set; }
+        }
+
         private BindableCollection<Pacient> pacients = new BindableCollection<Pacient>();
         private bool _chooseDoctor = false;
         private PacientsListModel Model;
@@ -14,6 +23,91 @@ namespace RehabilitationCentre.ViewModels
         private Pacient _selectedPacient;
         private BindableCollection<Doctor> _doctors = new BindableCollection<Doctor>();
         private Doctor _selectedDoctor;
+        private string _lastNameForFilter;
+        private string _firstNameForFilter;
+        private string _patronymicNameForFilter;
+        private string _pacientPhoneNumberForFilter;
+        private string _parentPhoneNumberForFilter;
+        private BindableCollection<PacientTypeView> _pacientTypes = new BindableCollection<PacientTypeView>();
+        private PacientTypeView _pacientTypeForFilter;
+
+        public PacientTypeView PacientTypeForFilter
+        {
+            get { return _pacientTypeForFilter; }
+            set
+            {
+                _pacientTypeForFilter = value;
+                NotifyOfPropertyChange(() => PacientTypeForFilter);
+                NotifyOfPropertyChange(() => CanClearFilter);
+                FilterPacients();
+            }
+        }
+
+        public BindableCollection<PacientTypeView> PacientTypes
+        {
+            get { return _pacientTypes; }
+            set { _pacientTypes = value; NotifyOfPropertyChange(() => PacientTypes); }
+        }
+
+        public string ParentPhoneNumberForFilter
+        {
+            get { return _parentPhoneNumberForFilter; }
+            set
+            {
+                _parentPhoneNumberForFilter = value;
+                NotifyOfPropertyChange(() => ParentPhoneNumberForFilter);
+                NotifyOfPropertyChange(() => CanClearFilter);
+                FilterPacients();
+            }
+        }
+
+        public string PacientPhoneNumberForFilter
+        {
+            get { return _pacientPhoneNumberForFilter; }
+            set
+            {
+                _pacientPhoneNumberForFilter = value;
+                NotifyOfPropertyChange(() => PacientPhoneNumberForFilter);
+                NotifyOfPropertyChange(() => CanClearFilter);
+                FilterPacients();
+            }
+        }
+
+        public string PatronymicNameForFilter
+        {
+            get { return _patronymicNameForFilter; }
+            set
+            {
+                _patronymicNameForFilter = value;
+                NotifyOfPropertyChange(() => PatronymicNameForFilter);
+                NotifyOfPropertyChange(() => CanClearFilter);
+                FilterPacients();
+            }
+        }
+
+        public string FirstNameForFilter
+        {
+            get { return _firstNameForFilter; }
+            set
+            {
+                _firstNameForFilter = value;
+                NotifyOfPropertyChange(() => FirstNameForFilter);
+                NotifyOfPropertyChange(() => CanClearFilter);
+                FilterPacients();
+            }
+        }
+
+        public string LastNameForFilter
+        {
+            get { return _lastNameForFilter; }
+            set
+            {
+                _lastNameForFilter = value;
+                NotifyOfPropertyChange(() => LastNameForFilter);
+                NotifyOfPropertyChange(() => CanClearFilter);
+                FilterPacients();
+            }
+        }
 
         public Doctor SelectedDoctor
         {
@@ -76,6 +170,12 @@ namespace RehabilitationCentre.ViewModels
 
             await Model.GetDoctorsAsync();
 
+            var values = Enum.GetValues(typeof(EPatientType)).Cast<EPatientType>().ToList();
+            values.ForEach(v =>
+            {
+                PacientTypes.Add(new PacientTypeView { Name = v.GetDescription(), Value = v });
+            });
+
             base.OnInitialize();
         }
 
@@ -83,7 +183,13 @@ namespace RehabilitationCentre.ViewModels
         {
             IsPacientsLoading = true;
 
-            await Model.GetPacientsAsync();
+            var r = await Model.GetPacientsAsync();
+
+            if (r != null)
+            {
+                Pacients.Clear();
+                Pacients.AddRange(r);
+            }
 
             IsPacientsLoading = false;
         }
@@ -117,6 +223,71 @@ namespace RehabilitationCentre.ViewModels
             {
                 await Model.SetPacientVisitAsync(SelectedPacient, SelectedDoctor);
             }
+        }
+
+        public async void FilterPacients()
+        {
+            IsPacientsLoading = true;
+            var pac = await Model.GetPacientsAsync();
+
+            if (pac != null)
+            {
+                if (!string.IsNullOrEmpty(LastNameForFilter))
+                {
+                    pac = pac.Where(p => p.LastName.ToLower().Contains(LastNameForFilter.ToLower())).ToList();
+                }
+
+                if (!string.IsNullOrEmpty(FirstNameForFilter))
+                {
+                    pac = pac.Where(p => p.FirstName.ToLower().Contains(FirstNameForFilter.ToLower())).ToList();
+                }
+
+                if (!string.IsNullOrEmpty(PatronymicNameForFilter))
+                {
+                    pac = pac.Where(p => p.PatronymicName.ToLower().Contains(PatronymicNameForFilter.ToLower())).ToList();
+                }
+
+                if (!string.IsNullOrEmpty(PacientPhoneNumberForFilter))
+                {
+                    pac = pac.Where(p => p.PacientPhoneNumber.Contains(PacientPhoneNumberForFilter)).ToList();
+                }
+
+                if (!string.IsNullOrEmpty(ParentPhoneNumberForFilter))
+                {
+                    pac = pac.Where(p => p.ParentsPhoneNumber.Contains(ParentPhoneNumberForFilter)).ToList();
+                }
+
+                if(PacientTypeForFilter != null)
+                {
+                    pac = pac.Where(p => p.PacientType == PacientTypeForFilter.Value).ToList();
+                }
+
+                Pacients.Clear();
+                Pacients.AddRange(pac);
+            }
+            IsPacientsLoading = false;
+        }
+
+        public bool CanClearFilter
+        {
+            get
+            {
+                if (!string.IsNullOrEmpty(FirstNameForFilter) || !string.IsNullOrEmpty(LastNameForFilter) || !string.IsNullOrEmpty(PatronymicNameForFilter)
+                    || !string.IsNullOrEmpty(PacientPhoneNumberForFilter) || !string.IsNullOrEmpty(ParentPhoneNumberForFilter)
+                    || PacientTypeForFilter != null)
+                    return true;
+                else return false;
+            }
+        }
+
+        public void ClearFilter()
+        {
+            FirstNameForFilter = null;
+            LastNameForFilter = null;
+            PatronymicNameForFilter = null;
+            PacientPhoneNumberForFilter = null;
+            ParentPhoneNumberForFilter = null;
+            PacientTypeForFilter = null;
         }
     }
 }

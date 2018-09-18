@@ -3,6 +3,8 @@ using Castle.Windsor.Installer;
 using Core.Interfaces;
 using Core.Types;
 using RehabilitationCentre.ViewModels;
+using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -25,12 +27,18 @@ namespace RehabilitationCentre.Models
             Core = _container.Resolve<ICore>();
         }
 
-        public async Task GetPacientsAsync()
+        public async Task<List<Pacient>> GetPacientsAsync()
         {
-            var p = (await Core.GetAllPacientsAsync()).ToList();
+            try
+            {
+                var p = (await Core.GetAllPacientsAsync()).ToList();
 
-            ViewModel.Pacients.Clear();
-            ViewModel.Pacients.AddRange(p);
+                return p;
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
         }
 
         public async Task OpenPacientDocument(Pacient pacient)

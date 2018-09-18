@@ -56,11 +56,22 @@ namespace Core
 
         public async Task<IEnumerable<Pacient>> GetAllPacientsAsync()
         {
-            var raw = await DB.GetPacientsAsync();
+            try
+            {
+                var raw = await DB.GetPacientsAsync();
 
-            var pacients = raw.Select(p => new Pacient().Assign(p)).ToList();
+                if (raw != null)
+                {
+                    var pacients = raw.Select(p => new Pacient().Assign(p)).ToList();
 
-            return pacients;
+                    return pacients;
+                }
+                else return null;
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
         }
 
         public async Task ShowPdfDocumentAsync(Pacient pacient)
