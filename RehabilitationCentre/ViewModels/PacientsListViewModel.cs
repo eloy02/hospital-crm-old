@@ -5,6 +5,7 @@ using MaterialDesignThemes.Wpf;
 using RehabilitationCentre.Models;
 using System;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace RehabilitationCentre.ViewModels
 {
@@ -179,21 +180,24 @@ namespace RehabilitationCentre.ViewModels
             base.OnInitialize();
         }
 
-        protected override async void OnActivate()
+        protected override void OnActivate()
         {
-            IsPacientsLoading = true;
-
-            var r = await Model.GetPacientsAsync();
-
-            if (r != null)
-            {
-                Pacients.Clear();
-                Pacients.AddRange(r);
-            }
-
-            IsPacientsLoading = false;
-
             base.OnActivate();
+
+            Task.Run(async () =>
+            {
+                IsPacientsLoading = true;
+
+                var r = await Model.GetPacientsAsync();
+
+                if (r != null)
+                {
+                    Pacients.Clear();
+                    Pacients.AddRange(r);
+                }
+
+                IsPacientsLoading = false;
+            });
         }
 
         public async void ShowPacientDocumet()

@@ -1,5 +1,6 @@
 using Caliburn.Micro;
 using RehabilitationCentre.ViewModels;
+using System.IO;
 
 namespace RehabilitationCentre
 {
@@ -37,6 +38,9 @@ namespace RehabilitationCentre
             {
                 new PacientsListViewModel()
             };
+
+            var path = Directory.GetCurrentDirectory() + @"\Temp";
+            Directory.CreateDirectory(path);
 
             base.OnInitialize();
         }
