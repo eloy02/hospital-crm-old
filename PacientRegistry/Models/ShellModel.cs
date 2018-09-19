@@ -17,6 +17,8 @@ namespace PacientRegistry.Models
         private KladrClient kladrClient;
         private ShellViewModel ViewModel;
 
+        public List<Pacient> Pacients = new List<Pacient>();
+
         public ShellModel(ShellViewModel viewModel)
         {
             kladrClient = new KladrClient("some_token", "some_key");
@@ -97,14 +99,26 @@ namespace PacientRegistry.Models
         {
             try
             {
-                var p = (await Core.GetAllPacientsAsync()).ToList();
+                var p = await Core.GetAllPacientsAsync();
 
-                return p;
+                if (p != null)
+                {
+                    Pacients.Clear();
+                    Pacients.AddRange(p);
+
+                    return p.ToList();
+                }
+                else return null;
             }
             catch (Exception ex)
             {
                 throw ex;
             }
+        }
+
+        public async Task UpdatePacientAsync(Pacient pacient)
+        {
+            await Core.UpdatePacientData(pacient);
         }
     }
 }

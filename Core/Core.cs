@@ -110,5 +110,36 @@ namespace Core
 
             await DB.SetPacientVisitAsync(visit);
         }
+
+        public async Task UpdatePacientData(Pacient pacient)
+        {
+            byte[] file = null;
+            Pacients pacientDb = null;
+
+            var t1 = Task.Run(async () =>
+            {
+                if (!string.IsNullOrEmpty(pacient.DocumentPath))
+                {
+                    using (var stream = new FileStream(pacient.DocumentPath, FileMode.Open, FileAccess.Read))
+                    {
+                        using (var reader = new BinaryReader(stream))
+                        {
+                            file = reader.ReadBytes((int)stream.Length);
+                        }
+                    }
+
+                    await DB.UpdatePacientDocumentAsync(file, pacientDb);
+                }
+            });
+
+            var t2 = Task.Run(async () =>
+            {
+                pacientDb = new Pacients().Assign(pacient);
+
+                await DB.UpdatePacientDataAsync(pacientDb);
+            });
+
+            await Task.WhenAll(t1, t2);
+        }
     }
 }

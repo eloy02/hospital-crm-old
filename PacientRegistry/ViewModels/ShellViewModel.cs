@@ -7,6 +7,7 @@ using System;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Threading;
 
 namespace PacientRegistry
 {
@@ -110,10 +111,27 @@ namespace PacientRegistry
             }
         }
 
+        protected override void OnInitialize()
+        {
+            base.OnInitialize();
+
+            var timer = new DispatcherTimer();
+
+            timer.Tick += new EventHandler(timer_Tick);
+
+            timer.Interval = new TimeSpan(0, 0, 30);
+
+            timer.Start();
+        }
+
         public Pacient SelectedPacient
         {
             get { return _selectedPacient; }
-            set { _selectedPacient = value; NotifyOfPropertyChange(() => SelectedPacient); }
+            set
+            {
+                _selectedPacient = value;
+                NotifyOfPropertyChange(() => SelectedPacient);
+            }
         }
 
         public BindableCollection<Pacient> Pacients
@@ -136,6 +154,7 @@ namespace PacientRegistry
                 NotifyOfPropertyChange(() => BuildingNumber);
                 NotifyOfPropertyChange(() => CanClearForms);
                 NotifyOfPropertyChange(() => CanSavePacient);
+                FilterPacients();
             }
         }
 
@@ -154,6 +173,7 @@ namespace PacientRegistry
                 NotifyOfPropertyChange(() => FlatNumber);
                 NotifyOfPropertyChange(() => CanClearForms);
                 NotifyOfPropertyChange(() => CanSavePacient);
+                FilterPacients();
             }
         }
 
@@ -166,6 +186,7 @@ namespace PacientRegistry
                 NotifyOfPropertyChange(() => PacientFirstName);
                 NotifyOfPropertyChange(() => CanClearForms);
                 NotifyOfPropertyChange(() => CanSavePacient);
+                FilterPacients();
             }
         }
 
@@ -178,6 +199,7 @@ namespace PacientRegistry
                 NotifyOfPropertyChange(() => PacientLastName);
                 NotifyOfPropertyChange(() => CanClearForms);
                 NotifyOfPropertyChange(() => CanSavePacient);
+                FilterPacients();
             }
         }
 
@@ -190,6 +212,7 @@ namespace PacientRegistry
                 NotifyOfPropertyChange(() => PacientPatronymicName);
                 NotifyOfPropertyChange(() => CanClearForms);
                 NotifyOfPropertyChange(() => CanSavePacient);
+                FilterPacients();
             }
         }
 
@@ -202,6 +225,7 @@ namespace PacientRegistry
                 NotifyOfPropertyChange(() => PacientPhoneNumber);
                 NotifyOfPropertyChange(() => CanClearForms);
                 NotifyOfPropertyChange(() => CanSavePacient);
+                FilterPacients();
             }
         }
 
@@ -355,6 +379,7 @@ namespace PacientRegistry
 
                 NotifyOfPropertyChange(() => CanClearForms);
                 NotifyOfPropertyChange(() => CanSavePacient);
+                FilterPacients();
             }
         }
 
@@ -373,6 +398,7 @@ namespace PacientRegistry
 
                 NotifyOfPropertyChange(() => CanClearForms);
                 NotifyOfPropertyChange(() => CanSavePacient);
+                FilterPacients();
             }
         }
 
@@ -440,16 +466,11 @@ namespace PacientRegistry
         {
             SavingPacientVisibility = Visibility.Visible;
 
-            try
-            {
-                await Model.SavePacientAsync();
+            await Model.SavePacientAsync();
 
-                ClearForms();
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show(ex.Message, "Регистратура", MessageBoxButton.OK, MessageBoxImage.Error);
-            }
+            ClearForms();
+
+            await UpdatePacients();
 
             SavingPacientVisibility = Visibility.Collapsed;
         }
@@ -512,6 +533,99 @@ namespace PacientRegistry
         {
             public string Code { get; set; }
             public string Name { get; set; }
+        }
+
+        public async void UpdatePacientsData()
+        {
+            if (SelectedPacient != null)
+            {
+                SelectedPacient.BuildingNumber = BuildingNumber ?? SelectedPacient.BuildingNumber;
+                SelectedPacient.DocumentPath = PdfPath ?? SelectedPacient.DocumentPath;
+                SelectedPacient.FirstName = PacientFirstName ?? SelectedPacient.FirstName;
+                SelectedPacient.FlatNumber = FlatNumber ?? SelectedPacient.FlatNumber;
+                SelectedPacient.LastName = PacientLastName ?? SelectedPacient.LastName;
+                SelectedPacient.PacientPhoneNumber = PacientPhoneNumber ?? SelectedPacient.PacientPhoneNumber;
+                SelectedPacient.PacientType = SelectedPacientType ?? SelectedPacient.PacientType;
+                SelectedPacient.ParentFirstName = ParentFirstName ?? SelectedPacient.ParentFirstName;
+                SelectedPacient.ParentLastName = ParentLastName ?? SelectedPacient.ParentLastName;
+                SelectedPacient.ParentPatronymicName = ParentPatronymicName ?? SelectedPacient.ParentPatronymicName;
+                SelectedPacient.ParentsPhoneNumber = ParentPhoneNumber ?? SelectedPacient.ParentsPhoneNumber;
+                SelectedPacient.PatronymicName = PacientPatronymicName ?? SelectedPacient.PatronymicName;
+                SelectedPacient.Sity = Sity ?? SelectedPacient.Sity;
+                SelectedPacient.Street = Street ?? SelectedPacient.Street;
+
+                Pacients.Refresh();
+
+                await Model.UpdatePacientAsync(SelectedPacient);
+            }
+        }
+
+        public async Task UpdatePacients()
+        {
+            await Model.GetPacientsAsync();
+
+            FilterPacients();
+        }
+
+        private async void timer_Tick(object sender, EventArgs e)
+        {
+            await UpdatePacients();
+        }
+
+        private void FilterPacients()
+        {
+            var pac = Model.Pacients.Select(p => p).ToList();
+
+            if (!string.IsNullOrEmpty(Sity))
+            {
+                pac = pac.Where(p => !string.IsNullOrEmpty(p.Sity)).ToList();
+                pac = pac.Where(p => p.Sity.ToLower().Contains(Sity.ToLower())).ToList();
+            }
+
+            if (!string.IsNullOrEmpty(Street))
+            {
+                //pac = pac.Where(p => !string.IsNullOrEmpty(p.Street)).ToList();
+                pac = pac.Where(p => !string.IsNullOrEmpty(p.Street)).ToList().Where(p => p.Street.ToLower().Contains(Street?.ToLower())).ToList();
+            }
+
+            if (!string.IsNullOrEmpty(BuildingNumber))
+            {
+                //pac = pac.Where(p => !string.IsNullOrEmpty(p.BuildingNumber)).ToList();
+                pac = pac.Where(p => !string.IsNullOrEmpty(p.BuildingNumber)).ToList().Where(p => p.BuildingNumber.ToLower().Contains(BuildingNumber.ToLower())).ToList();
+            }
+
+            if (!string.IsNullOrEmpty(FlatNumber))
+            {
+                //pac = pac.Where(p => !string.IsNullOrEmpty(p.FlatNumber)).ToList();
+                pac = pac.Where(p => !string.IsNullOrEmpty(p.FlatNumber)).ToList().Where(p => p.FlatNumber.ToLower().Contains(FlatNumber.ToLower())).ToList();
+            }
+
+            if (!string.IsNullOrEmpty(PacientFirstName))
+            {
+                //pac = pac.Where(p => !string.IsNullOrEmpty(p.FirstName)).ToList();
+                pac = pac.Where(p => !string.IsNullOrEmpty(p.FirstName)).ToList().Where(p => p.FirstName.ToLower().Contains(PacientFirstName.ToLower())).ToList();
+            }
+
+            if (!string.IsNullOrEmpty(PacientLastName))
+            {
+                //pac = pac.Where(p => !string.IsNullOrEmpty(p.LastName)).ToList();
+                pac = pac.Where(p => !string.IsNullOrEmpty(p.LastName)).ToList().Where(p => p.LastName.ToLower().Contains(PacientLastName.ToLower())).ToList();
+            }
+
+            if (!string.IsNullOrEmpty(PacientPatronymicName))
+            {
+                //pac = pac.Where(p => !string.IsNullOrEmpty(p.PatronymicName)).ToList();
+                pac = pac.Where(p => !string.IsNullOrEmpty(p.PatronymicName)).ToList().Where(p => p.PatronymicName.ToLower().Contains(PacientPatronymicName.ToLower())).ToList();
+            }
+
+            if (!string.IsNullOrEmpty(PacientPhoneNumber))
+            {
+                //pac = pac.Where(p => !string.IsNullOrEmpty(p.PacientPhoneNumber)).ToList();
+                pac = pac.Where(p => !string.IsNullOrEmpty(p.PacientPhoneNumber)).ToList().Where(p => p.PacientPhoneNumber.ToLower().Contains(PacientPhoneNumber.ToLower())).ToList();
+            }
+
+            Pacients.Clear();
+            Pacients.AddRange(pac);
         }
     }
 }

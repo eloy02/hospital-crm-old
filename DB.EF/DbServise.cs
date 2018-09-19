@@ -41,6 +41,21 @@ namespace DB.EF
             }
         }
 
+        public async Task UpdatePacientDocumentAsync(byte[] documentByte, Pacients pacient)
+        {
+            using (var db = new HospitalContext())
+            {
+                var doc = await db.Documents.SingleOrDefaultAsync(d => d.PacientId == pacient.Id);
+
+                if (doc != null)
+                {
+                    doc.Document = documentByte;
+
+                    await db.SaveChangesAsync();
+                }
+            }
+        }
+
         public async Task<IEnumerable<Doctors>> GetDoctorsAsync()
         {
             using (var db = new HospitalContext())
@@ -58,6 +73,33 @@ namespace DB.EF
                 db.VisitLogs.Add(visit);
 
                 await db.SaveChangesAsync();
+            }
+        }
+
+        public async Task UpdatePacientDataAsync(Pacients pacient)
+        {
+            using (var db = new HospitalContext())
+            {
+                var pac = await db.Pacients.FindAsync(pacient.Id);
+
+                if (pac != null)
+                {
+                    pac.BuildingNumber = pacient.BuildingNumber;
+                    pac.FirstName = pacient.FirstName;
+                    pac.FlatNumber = pacient.FlatNumber;
+                    pac.LastName = pacient.LastName;
+                    pac.PacientPhoneNumber = pacient.PacientPhoneNumber;
+                    pac.PacientType = pacient.PacientType;
+                    pac.ParentFirstName = pacient.ParentFirstName;
+                    pac.ParentLastName = pacient.ParentLastName;
+                    pac.ParentPatronymicName = pacient.ParentPatronymicName;
+                    pac.ParentPhoneNumber = pacient.ParentPhoneNumber;
+                    pac.PatronymicName = pacient.PatronymicName;
+                    pac.Sity = pacient.Sity;
+                    pac.Street = pacient.Street;
+
+                    await db.SaveChangesAsync();
+                }
             }
         }
     }

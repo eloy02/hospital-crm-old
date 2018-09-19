@@ -17,5 +17,7 @@ namespace Core.Interfaces
         Task<IEnumerable<Doctor>> GetDoctorsAsync();
 
         Task SetPacientVisit(Pacient pacient, Doctor doctor);
+
+        Task UpdatePacientData(Pacient pacient);
     }
 }
