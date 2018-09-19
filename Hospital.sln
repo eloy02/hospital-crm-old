@@ -11,6 +11,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Core", "Core\Core.csproj", 
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DB.EF", "DB.EF\DB.EF.csproj", "{26D88F5A-1250-4B1D-A411-2D2458080BB3}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "KladrApiClient", "KladrApiClient\KladrApiClient.csproj", "{AE29C5AD-8741-437A-9D78-972B2A4194DA}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -33,6 +35,10 @@ Global
 		{26D88F5A-1250-4B1D-A411-2D2458080BB3}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{26D88F5A-1250-4B1D-A411-2D2458080BB3}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{26D88F5A-1250-4B1D-A411-2D2458080BB3}.Release|Any CPU.Build.0 = Release|Any CPU
+		{AE29C5AD-8741-437A-9D78-972B2A4194DA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AE29C5AD-8741-437A-9D78-972B2A4194DA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{AE29C5AD-8741-437A-9D78-972B2A4194DA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{AE29C5AD-8741-437A-9D78-972B2A4194DA}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

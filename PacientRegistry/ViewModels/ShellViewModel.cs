@@ -5,6 +5,7 @@ using KladrApiClient;
 using PacientRegistry.Models;
 using System;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Windows;
 
 namespace PacientRegistry
@@ -86,17 +87,27 @@ namespace PacientRegistry
             Model.LoadSities();
         }
 
-        protected override async void OnActivate()
+        protected override void OnActivate()
         {
-            var r = await Model.GetPacientsAsync();
-
-            if (r != null)
+            try
             {
-                Pacients.Clear();
-                Pacients.AddRange(r);
-            }
+                base.OnActivate();
 
-            base.OnActivate();
+                Task.Run(async () =>
+                {
+                    var r = await Model.GetPacientsAsync();
+
+                    if (r != null)
+                    {
+                        Pacients.Clear();
+                        Pacients.AddRange(r);
+                    }
+                });
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message, "Ошибка", MessageBoxButton.OK);
+            }
         }
 
         public Pacient SelectedPacient
