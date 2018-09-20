@@ -6,6 +6,8 @@ using RehabilitationCentre.Models;
 using System;
 using System.Linq;
 using System.Threading.Tasks;
+using System.Windows;
+using System.Windows.Threading;
 
 namespace RehabilitationCentre.ViewModels
 {
@@ -139,8 +141,23 @@ namespace RehabilitationCentre.ViewModels
             set { _isPacientsLoading = value; NotifyOfPropertyChange(() => IsPacientsLoading); }
         }
 
+        private DispatcherTimer Timer;
+
         public PacientsListViewModel()
         {
+            Model = new PacientsListModel(this);
+
+            Timer = new DispatcherTimer()
+            {
+                Interval = TimeSpan.FromSeconds(15)
+            };
+            Timer.Tick += Timer_Tick;
+            Timer.Start();
+        }
+
+        private void Timer_Tick(object sender, EventArgs e)
+        {
+            FilterPacients();
         }
 
         public static object Icon
@@ -165,39 +182,41 @@ namespace RehabilitationCentre.ViewModels
             set { pacients = value; NotifyOfPropertyChange(() => Pacients); }
         }
 
-        protected override async void OnInitialize()
+        protected override void OnInitialize()
         {
-            Model = new PacientsListModel(this);
-
-            await Model.GetDoctorsAsync();
-
-            var values = Enum.GetValues(typeof(EPatientType)).Cast<EPatientType>().ToList();
-            values.ForEach(v =>
-            {
-                PacientTypes.Add(new PacientTypeView { Name = v.GetDescription(), Value = v });
-            });
-
             base.OnInitialize();
+
+            Task.Run(async () =>
+            {
+                try
+                {
+                    IsPacientsLoading = true;
+
+                    await Model.GetDoctorsAsync();
+
+                    await Model.GetPacientsAsync();
+
+                    var values = Enum.GetValues(typeof(EPatientType)).Cast<EPatientType>().ToList();
+
+                    values.ForEach(v =>
+                    {
+                        PacientTypes.Add(new PacientTypeView { Name = v.GetDescription(), Value = v });
+                    });
+
+                    FilterPacients();
+
+                    IsPacientsLoading = false;
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show(ex.Message, ex.Source, MessageBoxButton.OK);
+                }
+            });
         }
 
         protected override void OnActivate()
         {
             base.OnActivate();
-
-            Task.Run(async () =>
-            {
-                IsPacientsLoading = true;
-
-                var r = await Model.GetPacientsAsync();
-
-                if (r != null)
-                {
-                    Pacients.Clear();
-                    Pacients.AddRange(r);
-                }
-
-                IsPacientsLoading = false;
-            });
         }
 
         public async void ShowPacientDocumet()
@@ -231,10 +250,11 @@ namespace RehabilitationCentre.ViewModels
             }
         }
 
-        public async void FilterPacients()
+        public void FilterPacients()
         {
             IsPacientsLoading = true;
-            var pac = await Model.GetPacientsAsync();
+
+            var pac = Model.PacientsList.Select(p => p).ToList();
 
             if (pac != null)
             {

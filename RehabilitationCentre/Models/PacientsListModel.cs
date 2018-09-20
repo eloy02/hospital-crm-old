@@ -7,6 +7,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using System.Windows.Threading;
 
 namespace RehabilitationCentre.Models
 {
@@ -15,6 +16,9 @@ namespace RehabilitationCentre.Models
         private PacientsListViewModel ViewModel;
         private static ICore Core;
         private static WindsorContainer _container;
+        private DispatcherTimer Timer;
+
+        public List<Pacient> PacientsList = new List<Pacient>();
 
         public PacientsListModel(PacientsListViewModel viewModel)
         {
@@ -25,15 +29,37 @@ namespace RehabilitationCentre.Models
             _container.Install(FromAssembly.Named("Core"));
 
             Core = _container.Resolve<ICore>();
+
+            Timer = new DispatcherTimer()
+            {
+                Interval = TimeSpan.FromSeconds(10)
+            };
+
+            Timer.Tick += Timer_Tick;
+
+            Timer.Start();
+        }
+
+        private async void Timer_Tick(object sender, EventArgs e)
+        {
+            await GetPacientsAsync();
         }
 
         public async Task<List<Pacient>> GetPacientsAsync()
         {
             try
             {
-                var p = (await Core.GetAllPacientsAsync()).ToList();
+                var p = await Core.GetAllPacientsAsync();
 
-                return p;
+                if (p != null)
+                {
+                    PacientsList.Clear();
+                    PacientsList.AddRange(p);
+
+                    return p.ToList();
+                }
+                else
+                    return null;
             }
             catch (Exception ex)
             {
