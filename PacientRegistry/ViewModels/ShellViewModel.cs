@@ -4,6 +4,7 @@ using Core.Types.Enumerations;
 using KladrApiClient;
 using PacientRegistry.Models;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
@@ -47,6 +48,7 @@ namespace PacientRegistry
         private ShellModel Model;
         private Pacient _selectedPacient;
         private BindableCollection<Pacient> pacients = new BindableCollection<Pacient>();
+        private DispatcherTimer Timer;
 
         #region Visibility
 
@@ -115,13 +117,13 @@ namespace PacientRegistry
         {
             base.OnInitialize();
 
-            var timer = new DispatcherTimer();
+            Timer = new DispatcherTimer();
 
-            timer.Tick += new EventHandler(timer_Tick);
+            Timer.Tick += new EventHandler(timer_Tick);
 
-            timer.Interval = new TimeSpan(0, 0, 30);
+            Timer.Interval = new TimeSpan(0, 0, 30);
 
-            timer.Start();
+            Timer.Start();
         }
 
         public Pacient SelectedPacient
@@ -481,8 +483,13 @@ namespace PacientRegistry
 
             if (rr.Count > 1)
             {
+                var bl = new List<BuildingsView>();
+
+                rr.ForEach(r => { var s = new BuildingsView { Name = $"{r.typeShort}. {r.name}", Code = r.id }; bl.Add(s); });
+
                 Buildings.Clear();
-                rr.ForEach(r => { var s = new BuildingsView { Name = $"{r.typeShort}. {r.name}", Code = r.id }; Buildings.Add(s); });
+
+                Buildings.AddRange(bl);
             }
             BuildingsLoadingVisibility = Visibility.Collapsed;
         }
@@ -494,7 +501,12 @@ namespace PacientRegistry
             if (rr.Count > 1)
             {
                 Sities.Clear();
-                rr.ForEach(r => { var s = new SitiesView { Name = $"{r.typeShort}. {r.name}", Code = r.id }; Sities.Add(s); });
+
+                var sl = new List<SitiesView>();
+
+                rr.ForEach(r => { var s = new SitiesView { Name = $"{r.typeShort}. {r.name}", Code = r.id }; sl.Add(s); });
+
+                Sities.AddRange(sl);
             }
             SitiesLoadingVisibility = Visibility.Collapsed;
         }
@@ -506,7 +518,12 @@ namespace PacientRegistry
             if (rr.Count > 1)
             {
                 Streets.Clear();
-                rr.ForEach(r => { var s = new StreetsView { Name = $"{r.typeShort}. {r.name}", Code = r.id }; Streets.Add(s); });
+
+                var sl = new List<StreetsView>();
+
+                rr.ForEach(r => { var s = new StreetsView { Name = $"{r.typeShort}. {r.name}", Code = r.id }; sl.Add(s); });
+
+                Streets.AddRange(sl);
             }
             StreetsLoadingVisibility = Visibility.Collapsed;
         }
@@ -562,14 +579,27 @@ namespace PacientRegistry
 
         public async Task UpdatePacients()
         {
-            await Model.GetPacientsAsync();
+            try
+            {
+                Timer.Stop();
 
-            FilterPacients();
+                await Model.GetPacientsAsync();
+
+                FilterPacients();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message, "Error", MessageBoxButton.OK);
+            }
+            finally
+            {
+                Timer.Start();
+            }
         }
 
-        private async void timer_Tick(object sender, EventArgs e)
+        private void timer_Tick(object sender, EventArgs e)
         {
-            await UpdatePacients();
+            Task.Run(() => UpdatePacients());
         }
 
         private void FilterPacients()
