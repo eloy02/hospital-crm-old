@@ -92,25 +92,7 @@ namespace PacientRegistry
 
         protected override void OnActivate()
         {
-            try
-            {
-                base.OnActivate();
-
-                Task.Run(async () =>
-                {
-                    var r = await Model.GetPacientsAsync();
-
-                    if (r != null)
-                    {
-                        Pacients.Clear();
-                        Pacients.AddRange(r);
-                    }
-                });
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show(ex.Message, "Ошибка", MessageBoxButton.OK);
-            }
+            base.OnActivate();
         }
 
         protected override void OnInitialize()
@@ -124,6 +106,27 @@ namespace PacientRegistry
             Timer.Interval = new TimeSpan(0, 0, 30);
 
             Timer.Start();
+
+            try
+            {
+                Task.Run(async () =>
+                {
+                    var token = await Model.GetProgrammTokenAsync();
+                    Model.WebToken = token;
+
+                    var r = await Model.GetPacientsAsync();
+
+                    if (r != null)
+                    {
+                        Pacients.Clear();
+                        Pacients.AddRange(r);
+                    }
+                });
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message, "Ошибка", MessageBoxButton.OK);
+            }
         }
 
         public Pacient SelectedPacient
@@ -573,7 +576,7 @@ namespace PacientRegistry
 
                 Pacients.Refresh();
 
-                await Model.UpdatePacientAsync(SelectedPacient);
+                //await Model.UpdatePacientAsync(SelectedPacient);
             }
         }
 
@@ -656,6 +659,13 @@ namespace PacientRegistry
 
             Pacients.Clear();
             Pacients.AddRange(pac);
+        }
+
+        protected override async void OnDeactivate(bool close)
+        {
+            await Model.DeleteToken();
+
+            base.OnDeactivate(close);
         }
     }
 }

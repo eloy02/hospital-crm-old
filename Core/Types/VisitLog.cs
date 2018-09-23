@@ -7,6 +7,6 @@ namespace Core.Types
         public int Id { get; set; }
         public Doctor Doctor { get; set; }
         public Pacient Pacient { get; set; }
-        public DateTime VisitDateTitme { get; set; }
+        public DateTime VisitDateTime { get; set; }
     }
 }

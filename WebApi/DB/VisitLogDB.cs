@@ -24,6 +24,12 @@ namespace WebApi.DB
             {
                 var raw = await db.VisitLogs.Where(v => v.PacientId == pacientId).ToListAsync();
 
+                foreach (var r in raw)
+                {
+                    r.Pacient = await db.Pacients.FindAsync(r.PacientId);
+                    r.Doctor = await db.Doctors.FindAsync(r.DoctorId);
+                }
+
                 return raw;
             }
         }

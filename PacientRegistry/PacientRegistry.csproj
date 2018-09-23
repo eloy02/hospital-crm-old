@@ -149,6 +149,13 @@
       <Project>{ae29c5ad-8741-437a-9d78-972b2a4194da}</Project>
       <Name>KladrApiClient</Name>
     </ProjectReference>
+    <ProjectReference Include="..\WebClient\WebClient.csproj">
+      <Project>{d9365614-0692-4655-8b21-dcc258f7ff30}</Project>
+      <Name>WebClient</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <WCFMetadata Include="Connected Services\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

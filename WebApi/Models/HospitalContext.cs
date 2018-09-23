@@ -1,6 +1,6 @@
-﻿using System;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Metadata;
+﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
+using System.IO;
 
 namespace WebApi.Models
 {
@@ -19,18 +19,29 @@ namespace WebApi.Models
         public virtual DbSet<Documents> Documents { get; set; }
         public virtual DbSet<Pacients> Pacients { get; set; }
         public virtual DbSet<VisitLogs> VisitLogs { get; set; }
+        public virtual DbSet<ProgrammGUID> ProgrammGUID { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
             if (!optionsBuilder.IsConfigured)
             {
-#warning To protect potentially sensitive information in your connection string, you should move it out of source code. See http://go.microsoft.com/fwlink/?LinkId=723263 for guidance on storing connection strings.
-                optionsBuilder.UseSqlServer("Data Source=rehabilitationchentre.czvxsxk4tzy6.us-east-1.rds.amazonaws.com;Initial Catalog=Hospital;Persist Security Info=True;User ID=eloy;Password=D4!QyErt;App=EntityFramework");
+                var builder = new ConfigurationBuilder();
+                builder.SetBasePath(Directory.GetCurrentDirectory());
+                builder.AddJsonFile("appsettings.json");
+                var config = builder.Build();
+                string connectionString = config.GetConnectionString("HospitalDatabase");
+
+                optionsBuilder.UseSqlServer(connectionString);
             }
         }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            modelBuilder.Entity<ProgrammGUID>(entity =>
+            {
+                entity.HasIndex(e => e.Id);
+            });
+
             modelBuilder.Entity<Documents>(entity =>
             {
                 entity.HasIndex(e => e.PacientId)

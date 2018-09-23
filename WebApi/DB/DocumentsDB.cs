@@ -8,15 +8,15 @@ namespace WebApi.DB
 {
     public partial class DBServise
     {
-        public async Task<byte[]> GetDocumentByPacientAsync(Pacients pacient)
+        public async Task<Documents> GetDocumentByPacientAsync(int pacientId)
         {
             using (var db = new HospitalContext())
             {
-                var raw = await db.Documents.Where(p => p.PacientId == pacient.Id).ToListAsync();
+                var raw = await db.Documents.Where(p => p.PacientId == pacientId).ToListAsync();
 
                 if (raw != null)
                 {
-                    return raw.SingleOrDefault().Document;
+                    return raw.SingleOrDefault();
                 }
                 else return null;
             }
@@ -44,6 +44,16 @@ namespace WebApi.DB
                 var raw = await db.Documents.ToListAsync();
 
                 return raw;
+            }
+        }
+
+        public async Task SaveDocumentForPacient(Documents value)
+        {
+            using (var db = new HospitalContext())
+            {
+                db.Documents.Add(value);
+
+                await db.SaveChangesAsync();
             }
         }
     }

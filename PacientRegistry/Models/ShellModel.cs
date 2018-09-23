@@ -1,10 +1,11 @@
-﻿using Core.Interfaces;
-using Core.Types;
+﻿using Core.Types;
 using KladrApiClient;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using WebClient;
 
 namespace PacientRegistry.Models
 {
@@ -12,7 +13,8 @@ namespace PacientRegistry.Models
     {
         private const string RegionId = "0200000000000";
 
-        private ICore Core = new Core.Core();
+        private WebClientApi WebClientApi = new WebClientApi();
+        public Guid WebToken;
 
         private KladrClient kladrClient;
         private ShellViewModel ViewModel;
@@ -92,14 +94,37 @@ namespace PacientRegistry.Models
                 Street = ViewModel.Street
             };
 
-            await Core.SavePacientAsync(pacient);
+            byte[] file = null;
+
+            using (var stream = new FileStream(pacient.DocumentPath, FileMode.Open, FileAccess.Read))
+            {
+                using (var reader = new BinaryReader(stream))
+                {
+                    file = reader.ReadBytes((int)stream.Length);
+                }
+            }
+
+            var doc = new Document
+            {
+                Content = file.ToList(),
+                Name = $"{pacient.LastName}{pacient.FirstName}{pacient.PatronymicName}"
+            };
+
+            pacient.Document = doc;
+
+            await WebClientApi.SavePacientAsync(WebToken, pacient);
+        }
+
+        public async Task<Guid> GetProgrammTokenAsync()
+        {
+            return await WebClientApi.GetProgrammTokenAsync();
         }
 
         public async Task<List<Pacient>> GetPacientsAsync()
         {
             try
             {
-                var p = await Core.GetAllPacientsAsync();
+                var p = await WebClientApi.GetPacientsAsync(WebToken);
 
                 if (p != null)
                 {
@@ -116,9 +141,14 @@ namespace PacientRegistry.Models
             }
         }
 
-        public async Task UpdatePacientAsync(Pacient pacient)
+        public async Task DeleteToken()
         {
-            await Core.UpdatePacientData(pacient);
+            await WebClientApi.DeleteToken(WebToken);
         }
+
+        //public async Task UpdatePacientAsync(Pacient pacient)
+        //{
+        //    await WebClientApi.UpdatePacientData(pacient);
+        //}
     }
 }

@@ -1,11 +1,11 @@
-﻿using System.Windows.Controls;
+﻿using System.Windows;
 
 namespace RehabilitationCentre.Views
 {
     /// <summary>
     /// Логика взаимодействия для PacientsList.xaml
     /// </summary>
-    public partial class PacientsListView : UserControl
+    public partial class PacientsListView : Window
     {
         public PacientsListView()
         {

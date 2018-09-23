@@ -1,8 +1,10 @@
 ﻿using Core.Types;
 using Core.Types.Enumerations;
-using DB.EF;
+using System.Collections.Generic;
+using System.Linq;
+using WebApi.Models;
 
-namespace Core
+namespace WebApi
 {
     public static class Mapper
     {
@@ -23,6 +25,8 @@ namespace Core
             a.FlatNumber = src.FlatNumber;
             a.ParentPhoneNumber = src.ParentsPhoneNumber;
             a.Id = src.Id;
+
+            a.Documents = new List<Documents>() { new Documents().Assign(src.Document) };
 
             return a;
         }
@@ -55,6 +59,54 @@ namespace Core
             a.PatronymicName = src.PatronymicName;
             a.Position = src.Position;
             a.DisplayName = $"{a.LastName} {a.FirstName} {a.PatronymicName} - {a.Position}";
+
+            return a;
+        }
+
+        internal static Doctors Assign(this Doctors a, Doctor src)
+        {
+            a.FirstName = src.FirstName;
+            a.LastName = src.LastName;
+            a.PatronymicName = src.PatronymicName;
+            a.Position = src.Position;
+            a.Id = src.Id;
+
+            return a;
+        }
+
+        internal static Document Assign(this Document a, Documents src)
+        {
+            a.Id = src.Id;
+            a.Content = src.Document.ToList();
+            a.Name = src.FileName;
+
+            return a;
+        }
+
+        internal static Documents Assign(this Documents a, Document src)
+        {
+            a.Document = src.Content.ToArray();
+            a.FileName = src.Name;
+
+            return a;
+        }
+
+        internal static VisitLog Assign(this VisitLog a, VisitLogs src)
+        {
+            a.Id = src.Id;
+            a.Pacient = new Pacient().Assign(src.Pacient);
+            a.Doctor = new Doctor().Assign(src.Doctor);
+            a.VisitDateTime = src.VisitDateTime;
+
+            return a;
+        }
+
+        internal static VisitLogs Assign(this VisitLogs a, VisitLog src)
+        {
+            a.Id = src.Id;
+            a.PacientId = src.Pacient.Id;
+            a.VisitDateTime = src.VisitDateTime;
+            a.DoctorId = src.Doctor.Id;
 
             return a;
         }

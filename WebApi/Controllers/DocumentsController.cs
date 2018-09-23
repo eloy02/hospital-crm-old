@@ -1,5 +1,6 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using System.Collections.Generic;
+﻿using Core.Types;
+using Microsoft.AspNetCore.Mvc;
+using System;
 using System.Threading.Tasks;
 using WebApi.DB;
 using WebApi.Models;
@@ -10,38 +11,105 @@ namespace WebApi.Controllers
     [ApiController]
     public class DocumentsController : ControllerBase
     {
+        private TokenList AuthTokens;
         private DBServise DB = new DBServise();
 
-        // GET: api/Documents
-        [HttpGet("{pacient}")]
-        public async Task<ActionResult<byte[]>> GetDocumentForPacient([FromBody] Pacients pacient)
+        public DocumentsController(TokenList authTokens)
         {
-            var data = await DB.GetDocumentByPacientAsync(pacient);
-
-            if (data == null)
-            {
-                return NotFound();
-            }
-            else return new ActionResult<byte[]>(data);
+            AuthTokens = authTokens;
         }
 
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Documents>>> GetDocuments()
+        public async Task<ActionResult<Document>> GetDocumentForPacient(Guid? token, int? pacientId)
         {
-            var data = await DB.GetAllDocumentsAsync();
+            if (token == null)
+                return Unauthorized();
 
-            if (data == null)
+            if (token.HasValue && !AuthTokens.Contains(token.Value))
+                return Unauthorized();
+
+            if (pacientId == null)
+                return BadRequest();
+
+            var raw = await DB.GetDocumentByPacientAsync(pacientId.Value);
+
+            if (raw == null)
             {
-                return NoContent();
+                return NotFound();
             }
-            else return new ActionResult<IEnumerable<Documents>>(data);
+            else
+            {
+                var data = new Document().Assign(raw);
+
+                return new ActionResult<Document>(data);
+            }
         }
 
-        // POST: api/Documents
-        [HttpPut("{pacientId}")]
-        public async Task UpdateDocumentForPacient(int pacientId, [FromBody] byte[] value)
+        //[HttpGet]
+        //public async Task<ActionResult<IEnumerable<Document>>> GetDocuments(Guid? token)
+        //{
+        //    if (token == null)
+        //        return Unauthorized();
+
+        //    if (token.HasValue && !AuthTokens.Contains(token.Value))
+        //        return Unauthorized();
+
+        //    var rawData = await DB.GetAllDocumentsAsync();
+
+        //    if (rawData == null)
+        //    {
+        //        return NoContent();
+        //    }
+        //    else
+        //    {
+        //        var data = rawData.Select(d => new Document().Assign(d));
+
+        //        return new ActionResult<IEnumerable<Document>>(data);
+        //    }
+        //}
+
+        [HttpPut]
+        public async Task<ActionResult> UpdateDocumentForPacient(Guid? token, int? pacientId, byte[] value)
         {
-            await DB.UpdatePacientDocumentAsync(value, pacientId);
+            if (token == null)
+                return Unauthorized();
+
+            if (token.HasValue && !AuthTokens.Contains(token.Value))
+                return Unauthorized();
+
+            if (pacientId == null)
+                return BadRequest();
+
+            if (value == null)
+                return BadRequest();
+
+            await DB.UpdatePacientDocumentAsync(value, pacientId.Value);
+
+            return Ok();
+        }
+
+        [HttpPost]
+        public async Task<ActionResult> SaveDocumentForPacient(Guid? token, int? pacientId, [FromBody] Document document)
+        {
+            if (token == null)
+                return Unauthorized();
+
+            if (token.HasValue && !AuthTokens.Contains(token.Value))
+                return Unauthorized();
+
+            if (pacientId == null)
+                return BadRequest();
+
+            if (document == null)
+                return BadRequest();
+
+            var doc = new Documents().Assign(document);
+
+            doc.PacientId = pacientId;
+
+            await DB.SaveDocumentForPacient(doc);
+
+            return Ok();
         }
     }
 }

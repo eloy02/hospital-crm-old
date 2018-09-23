@@ -1,5 +1,8 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Core.Types;
+using Microsoft.AspNetCore.Mvc;
+using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using WebApi.DB;
 using WebApi.Models;
@@ -10,26 +13,63 @@ namespace WebApi.Controllers
     [ApiController]
     public class PacientVisitsController : ControllerBase
     {
+        private TokenList AuthTokens;
         private DBServise DB = new DBServise();
 
-        // GET: api/VisitLogs
-        [HttpGet("{pacientId}")]
-        public async Task<ActionResult<IEnumerable<VisitLogs>>> GetVisitLogs(int pacientId)
+        public PacientVisitsController(TokenList authTokens)
         {
-            var data = await DB.GetVisitLogForPacient(pacientId);
+            AuthTokens = authTokens;
+        }
 
-            if (data == null)
+        // GET: api/VisitLogs
+        [HttpGet]
+        public async Task<ActionResult<IEnumerable<VisitLog>>> GetVisitLogs(Guid? token, int? pacientId)
+        {
+            if (token == null)
+                return Unauthorized();
+
+            if (token.HasValue && !AuthTokens.Contains(token.Value))
+                return Unauthorized();
+
+            if (pacientId.HasValue == false)
+                return BadRequest();
+
+            var rawdata = await DB.GetVisitLogForPacient(pacientId.Value);
+
+            if (rawdata == null)
             {
                 return NotFound();
             }
-            else return new ActionResult<IEnumerable<VisitLogs>>(data);
+            else
+            {
+                var data = rawdata.Select(r => new VisitLog().Assign(r));
+
+                return new ActionResult<IEnumerable<VisitLog>>(data);
+            }
         }
 
         // POST: api/VisitLogs
         [HttpPost]
-        public async Task Post([FromBody] VisitLogs value)
+        public async Task<ActionResult> SaveVisit(Guid? token, [FromBody] VisitLog value)
         {
-            await DB.SetPacientVisitAsync(value);
+            if (token == null)
+                return Unauthorized();
+
+            if (token.HasValue && !AuthTokens.Contains(token.Value))
+                return Unauthorized();
+
+            if (value == null)
+            {
+                return BadRequest();
+            }
+            else
+            {
+                var val = new VisitLogs().Assign(value);
+
+                await DB.SetPacientVisitAsync(val);
+
+                return Ok();
+            }
         }
     }
 }

@@ -16,5 +16,19 @@ namespace WebApi.DB
                 return raw;
             }
         }
+
+        public async Task<bool> CheckProgrammGuid(string guid)
+        {
+            using (var db = new HospitalContext())
+            {
+                var raw = await db.ProgrammGUID.SingleOrDefaultAsync(g => g.GUID.Equals(guid));
+
+                if (raw != null)
+                {
+                    return true;
+                }
+                else return false;
+            }
+        }
     }
 }

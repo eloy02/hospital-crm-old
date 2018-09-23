@@ -5,6 +5,16 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Installers\**" />
+    <EmbeddedResource Remove="Installers\**" />
+    <None Remove="Installers\**" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Remove="Core.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="Castle.Core" Version="4.3.1" />
     <PackageReference Include="Castle.Windsor" Version="4.1.0" />
   </ItemGroup>
