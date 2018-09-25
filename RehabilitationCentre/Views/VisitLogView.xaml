@@ -31,7 +31,7 @@
             <DataGrid.Columns>
 
                 <DataGridTextColumn
-                    Binding="{Binding VisitDateTime}"
+                    Binding="{Binding VisitDateTime, StringFormat=dd.MM.yyyy HH.mm}"
                     Header="Дата" />
 
                 <DataGridTextColumn
