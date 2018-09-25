@@ -46,6 +46,7 @@
                         Orientation="Horizontal"
                         HorizontalAlignment="Right">
                     <Button
+                            x:Name="SetVisit"
                             Style="{StaticResource MaterialDesignFlatButton}"
                             IsDefault="True"
                             Margin="0 8 8 0"
