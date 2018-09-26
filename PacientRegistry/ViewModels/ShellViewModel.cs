@@ -6,6 +6,7 @@ using PacientRegistry.Models;
 using PacientRegistry.ViewModels;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
@@ -559,7 +560,7 @@ namespace PacientRegistry
             public string Name { get; set; }
         }
 
-        public void UpdatePacientsData()
+        public async Task UpdatePacientsData()
         {
             if (SelectedPacient != null)
             {
@@ -568,6 +569,8 @@ namespace PacientRegistry
                 var pacientInfoView = new PacientInfoViewModel(SelectedPacient, Model.WebToken);
 
                 WindowManager.ShowDialog(pacientInfoView);
+
+                await UpdatePacients();
 
                 Timer.Start();
             }
@@ -679,6 +682,21 @@ namespace PacientRegistry
         protected override async void OnDeactivate(bool close)
         {
             await Model.DeleteToken();
+
+            var path = Directory.GetCurrentDirectory() + @"\Temp";
+            DirectoryInfo di = new DirectoryInfo(path);
+
+            if (di.Exists)
+            {
+                foreach (FileInfo file in di.EnumerateFiles())
+                {
+                    file.Delete();
+                }
+                foreach (DirectoryInfo dir in di.EnumerateDirectories())
+                {
+                    dir.Delete(true);
+                }
+            }
 
             base.OnDeactivate(close);
         }

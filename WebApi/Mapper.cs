@@ -26,7 +26,8 @@ namespace WebApi
             a.ParentPhoneNumber = src.ParentsPhoneNumber;
             a.Id = src.Id;
 
-            a.Documents = new List<Documents>() { new Documents().Assign(src.Document) };
+            if (src.Document != null)
+                a.Documents = new List<Documents>() { new Documents().Assign(src.Document) };
 
             return a;
         }

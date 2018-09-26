@@ -214,12 +214,20 @@
                             Orientation="Horizontal">
                             <Button
                             x:Name="ShowPDFDocument"
+                            IsEnabled="{Binding DocumentShowEnablement}"
                             Style="{StaticResource MaterialDesignRaisedDarkButton}"
                             Width="200"
                             Margin="10,0,0,10"
                             HorizontalAlignment="Left">
                                 Просмотреть документ
                             </Button>
+
+                            <ProgressBar
+                                Margin="10,0,0,0"
+                                Style="{StaticResource MaterialDesignCircularProgressBar}"
+                                Value="0"
+                                IsIndeterminate="True"
+                                Visibility="{Binding DocumentLoadingVisibility}" />
 
                             <Button
                             x:Name="ChoosePdfPath"
@@ -243,12 +251,25 @@
                 <Grid
                     Margin="0,20,0,0">
 
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="auto" />
+                    </Grid.ColumnDefinitions>
+
                     <Button
-                        x:Name="UpdatePacient"
                         Grid.Column="0"
-                        Style="{StaticResource MaterialDesignRaisedDarkButton}">
+                        x:Name="UpdatePacient"
+                        Style="{StaticResource MaterialDesignRaisedDarkButton}"
+                        IsEnabled="{Binding UpdatingPacientButtonVisibility}">
                         Обновить данные пациента
                     </Button>
+
+                    <ProgressBar
+                                Grid.Column="1"
+                                Style="{StaticResource MaterialDesignCircularProgressBar}"
+                                Value="0"
+                                IsIndeterminate="True"
+                                Visibility="{Binding UpdatingPacientVisibility}" />
                 </Grid>
             </StackPanel>
         </Grid>

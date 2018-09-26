@@ -3,11 +3,12 @@ using Core.Types;
 using Core.Types.Enumerations;
 using PacientRegistry.Models;
 using System;
+using System.Windows;
 using static PacientRegistry.ShellViewModel;
 
 namespace PacientRegistry.ViewModels
 {
-    public class PacientInfoViewModel : Conductor<object>
+    public class PacientInfoViewModel : Screen
     {
         private Guid WebToken;
 
@@ -17,6 +18,44 @@ namespace PacientRegistry.ViewModels
         private EPatientType? _selectedPacientType;
         private PacientInfoModel Model;
         private Pacient _pacient;
+
+        private bool _updatingPacientButtonVisibility = true;
+
+        public bool UpdatingPacientButtonVisibility
+        {
+            get { return _updatingPacientButtonVisibility; }
+            set { _updatingPacientButtonVisibility = value; NotifyOfPropertyChange(() => UpdatingPacientButtonVisibility); }
+        }
+
+        private Visibility _updatingPacientVisibility = Visibility.Collapsed;
+
+        public Visibility UpdatingPacientVisibility
+        {
+            get { return _updatingPacientVisibility; }
+            set { _updatingPacientVisibility = value; NotifyOfPropertyChange(() => UpdatingPacientVisibility); }
+        }
+
+        private bool _documentShowEnablement = true;
+
+        public bool DocumentShowEnablement
+        {
+            get { return _documentShowEnablement; }
+            set { _documentShowEnablement = value; NotifyOfPropertyChange(() => DocumentShowEnablement); }
+        }
+
+        private Visibility _documentLoadingVisibility = Visibility.Hidden;
+
+        public Visibility DocumentLoadingVisibility
+        {
+            get
+            {
+                return _documentLoadingVisibility;
+            }
+            set
+            {
+                _documentLoadingVisibility = value; NotifyOfPropertyChange(() => DocumentLoadingVisibility);
+            }
+        }
 
         public Pacient Pacient
         {
@@ -80,12 +119,7 @@ namespace PacientRegistry.ViewModels
             }
         }
 
-        public static BindableCollection<PacientTypeView> PacientTypes
-        {
-            get { return _pacientTypes; }
-        }
-
-        private static BindableCollection<PacientTypeView> _pacientTypes = new BindableCollection<PacientTypeView>()
+        public static BindableCollection<PacientTypeView> PacientTypes { get; } = new BindableCollection<PacientTypeView>()
         {
             new PacientTypeView{ Type = EPatientType.Invalid, Name = "Инвалид"},
             new PacientTypeView{ Type = EPatientType.OVZ, Name = "ОВЗ"}
@@ -93,11 +127,19 @@ namespace PacientRegistry.ViewModels
 
         public async void ShowPDFDocument()
         {
+            DocumentLoadingVisibility = Visibility.Visible;
+            DocumentShowEnablement = false;
+
             await Model.OpenPacientDocument(PacientOld);
+
+            DocumentLoadingVisibility = Visibility.Hidden;
+            DocumentShowEnablement = true;
         }
 
         public async void UpdatePacient()
         {
+            UpdatingPacientButtonVisibility = false;
+            UpdatingPacientVisibility = Visibility.Visible;
             PacientOld = Pacient;
 
             if (!string.IsNullOrEmpty(PdfPath))
@@ -106,6 +148,11 @@ namespace PacientRegistry.ViewModels
             }
 
             await Model.UpdatePacientAsync(PacientOld);
+
+            UpdatingPacientButtonVisibility = true;
+            UpdatingPacientVisibility = Visibility.Collapsed;
+
+            TryClose();
         }
     }
 }
