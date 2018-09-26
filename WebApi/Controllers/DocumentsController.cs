@@ -69,7 +69,7 @@ namespace WebApi.Controllers
         //}
 
         [HttpPut]
-        public async Task<ActionResult> UpdateDocumentForPacient(Guid? token, int? pacientId, byte[] value)
+        public async Task<ActionResult> UpdateDocumentForPacient(Guid? token, int? pacientId, Document value)
         {
             if (token == null)
                 return Unauthorized();
@@ -83,7 +83,7 @@ namespace WebApi.Controllers
             if (value == null)
                 return BadRequest();
 
-            await DB.UpdatePacientDocumentAsync(value, pacientId.Value);
+            await DB.UpdatePacientDocumentAsync(value.Content.ToArray(), pacientId.Value);
 
             return Ok();
         }

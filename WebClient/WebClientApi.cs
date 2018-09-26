@@ -5,6 +5,7 @@ using RestSharp.Serializers.Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Threading.Tasks;
 using WebClient.Interfaces;
 
@@ -185,6 +186,13 @@ namespace WebClient
                         }
                     }
 
+                    var doc = new Document
+                    {
+                        Content = file.ToList(),
+                        Id = 0,
+                        Name = $"{pacient.LastName}{pacient.FirstName}"
+                    };
+
                     var client = new RestClient(BaseUrl);
 
                     var request = new JsonRest.RestRequest(Method.PUT)
@@ -194,7 +202,7 @@ namespace WebClient
 
                     request.AddParameter("token", token, ParameterType.QueryString);
                     request.AddParameter("pacientId", pacient.Id, ParameterType.QueryString);
-                    request.AddParameter("value", file, ParameterType.QueryString);
+                    request.AddJsonBody(doc);
 
                     var r = await client.ExecuteTaskAsync(request);
                 }
