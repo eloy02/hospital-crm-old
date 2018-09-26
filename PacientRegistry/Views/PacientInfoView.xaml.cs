@@ -1,16 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using Microsoft.Win32;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Shapes;
 
 namespace PacientRegistry.Views
 {
@@ -22,6 +11,23 @@ namespace PacientRegistry.Views
         public PacientInfoView()
         {
             InitializeComponent();
+        }
+
+        private void ChoosePdfPath_Click(object sender, RoutedEventArgs e)
+        {
+            string filePath = string.Empty;
+
+            OpenFileDialog dialog = new OpenFileDialog
+            {
+                Filter = "Pdf Files|*.pdf",
+                Title = "Выберите PDF файлы документов ИПРА или ПМПК"
+            };
+            if (dialog.ShowDialog() == true)
+            {
+                filePath = dialog.FileName;
+            }
+
+            PdfPath.Text = filePath;
         }
     }
 }

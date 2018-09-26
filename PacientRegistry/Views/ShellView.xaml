@@ -436,7 +436,7 @@
                                         Style="{StaticResource MaterialDesignRaisedLightButton}"
                                         cal:Message.Attach="[Event Click] = [Action UpdatePacientsData]"
                                         Width="300">
-                                        Обновить данные из заполненных форм
+                                        Обновить данные пациента
                                     </Button>
                                 </StackPanel>
                             </DataTemplate>

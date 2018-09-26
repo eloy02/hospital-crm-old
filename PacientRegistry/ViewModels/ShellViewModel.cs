@@ -3,6 +3,7 @@ using Core.Types;
 using Core.Types.Enumerations;
 using KladrApiClient;
 using PacientRegistry.Models;
+using PacientRegistry.ViewModels;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -19,6 +20,8 @@ namespace PacientRegistry
             new PacientTypeView{ Type = EPatientType.Invalid, Name = "»Ì‚‡ÎË‰"},
             new PacientTypeView{ Type = EPatientType.OVZ, Name = "Œ¬«"}
         };
+
+        private IWindowManager WindowManager;
 
         private string _buildingNum;
         private BindableCollection<BuildingsView> _buildings = new BindableCollection<BuildingsView>();
@@ -84,10 +87,11 @@ namespace PacientRegistry
 
         #endregion Visibility
 
-        public ShellViewModel()
+        public ShellViewModel(IWindowManager theWindowManager)
         {
             Model = new ShellModel(this);
             Model.LoadSities();
+            WindowManager = theWindowManager;
         }
 
         protected override void OnActivate()
@@ -555,29 +559,40 @@ namespace PacientRegistry
             public string Name { get; set; }
         }
 
-        public async void UpdatePacientsData()
+        public void UpdatePacientsData()
         {
             if (SelectedPacient != null)
             {
-                SelectedPacient.BuildingNumber = BuildingNumber ?? SelectedPacient.BuildingNumber;
-                SelectedPacient.DocumentPath = PdfPath ?? SelectedPacient.DocumentPath;
-                SelectedPacient.FirstName = PacientFirstName ?? SelectedPacient.FirstName;
-                SelectedPacient.FlatNumber = FlatNumber ?? SelectedPacient.FlatNumber;
-                SelectedPacient.LastName = PacientLastName ?? SelectedPacient.LastName;
-                SelectedPacient.PacientPhoneNumber = PacientPhoneNumber ?? SelectedPacient.PacientPhoneNumber;
-                SelectedPacient.PacientType = SelectedPacientType ?? SelectedPacient.PacientType;
-                SelectedPacient.ParentFirstName = ParentFirstName ?? SelectedPacient.ParentFirstName;
-                SelectedPacient.ParentLastName = ParentLastName ?? SelectedPacient.ParentLastName;
-                SelectedPacient.ParentPatronymicName = ParentPatronymicName ?? SelectedPacient.ParentPatronymicName;
-                SelectedPacient.ParentsPhoneNumber = ParentPhoneNumber ?? SelectedPacient.ParentsPhoneNumber;
-                SelectedPacient.PatronymicName = PacientPatronymicName ?? SelectedPacient.PatronymicName;
-                SelectedPacient.Sity = Sity ?? SelectedPacient.Sity;
-                SelectedPacient.Street = Street ?? SelectedPacient.Street;
+                Timer.IsEnabled = false;
 
-                Pacients.Refresh();
+                var pacientInfoView = new PacientInfoViewModel(SelectedPacient, Model.WebToken);
 
-                //await Model.UpdatePacientAsync(SelectedPacient);
+                WindowManager.ShowDialog(pacientInfoView);
+
+                Timer.IsEnabled = true;
             }
+
+            //if (SelectedPacient != null)
+            //{
+            //    SelectedPacient.BuildingNumber = BuildingNumber ?? SelectedPacient.BuildingNumber;
+            //    SelectedPacient.DocumentPath = PdfPath ?? SelectedPacient.DocumentPath;
+            //    SelectedPacient.FirstName = PacientFirstName ?? SelectedPacient.FirstName;
+            //    SelectedPacient.FlatNumber = FlatNumber ?? SelectedPacient.FlatNumber;
+            //    SelectedPacient.LastName = PacientLastName ?? SelectedPacient.LastName;
+            //    SelectedPacient.PacientPhoneNumber = PacientPhoneNumber ?? SelectedPacient.PacientPhoneNumber;
+            //    SelectedPacient.PacientType = SelectedPacientType ?? SelectedPacient.PacientType;
+            //    SelectedPacient.ParentFirstName = ParentFirstName ?? SelectedPacient.ParentFirstName;
+            //    SelectedPacient.ParentLastName = ParentLastName ?? SelectedPacient.ParentLastName;
+            //    SelectedPacient.ParentPatronymicName = ParentPatronymicName ?? SelectedPacient.ParentPatronymicName;
+            //    SelectedPacient.ParentsPhoneNumber = ParentPhoneNumber ?? SelectedPacient.ParentsPhoneNumber;
+            //    SelectedPacient.PatronymicName = PacientPatronymicName ?? SelectedPacient.PatronymicName;
+            //    SelectedPacient.Sity = Sity ?? SelectedPacient.Sity;
+            //    SelectedPacient.Street = Street ?? SelectedPacient.Street;
+
+            //    Pacients.Refresh();
+
+            //    //await Model.UpdatePacientAsync(SelectedPacient);
+            //}
         }
 
         public async Task UpdatePacients()

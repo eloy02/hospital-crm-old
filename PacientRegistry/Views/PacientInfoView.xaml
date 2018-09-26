@@ -134,17 +134,17 @@
                         </TextBlock>
 
                         <TextBox
-                            x:Name="Pacient_PacientLastName"
+                            x:Name="Pacient_LastName"
                             Margin="10"
                             materialDesign:HintAssist.Hint="Фамилия"
                             Style="{StaticResource MaterialDesignFloatingHintTextBox}" />
                         <TextBox
-                            x:Name="Pacient_PacientFirstName"
+                            x:Name="Pacient_FirstName"
                             Margin="10"
                             materialDesign:HintAssist.Hint="Имя"
                             Style="{StaticResource MaterialDesignFloatingHintTextBox}" />
                         <TextBox
-                            x:Name="Pacient_PacientPatronymicName"
+                            x:Name="Pacient_PatronymicName"
                             Margin="10"
                             materialDesign:HintAssist.Hint="Отчество"
                             Style="{StaticResource MaterialDesignFloatingHintTextBox}" />
@@ -194,7 +194,7 @@
                             materialDesign:HintAssist.Hint="Отчество"
                             Style="{StaticResource MaterialDesignFloatingHintTextBox}" />
                         <TextBox
-                            x:Name="Pacient_ParentPhoneNumber"
+                            x:Name="Pacient_ParentsPhoneNumber"
                             Margin="10"
                             materialDesign:HintAssist.Hint="Номер телефона"
                             Style="{StaticResource MaterialDesignFloatingHintTextBox}" />
@@ -217,14 +217,14 @@
                             Style="{StaticResource MaterialDesignRaisedDarkButton}"
                             Width="200"
                             Margin="10,0,0,10"
-                            HorizontalAlignment="Left" Click="ChoosePdfPath_Click">
+                            HorizontalAlignment="Left">
                                 Просмотреть документ
                             </Button>
 
                             <Button
                             x:Name="ChoosePdfPath"
                             Style="{StaticResource MaterialDesignRaisedDarkButton}"
-                            Width="200"
+                            Width="auto"
                             Margin="10,0,0,10"
                             HorizontalAlignment="Left" Click="ChoosePdfPath_Click">
                                 Выбрать файл для обновления

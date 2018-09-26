@@ -173,10 +173,10 @@ namespace WebClient
         {
             var t1 = Task.Run(async () =>
             {
-                byte[] file = null;
-
                 if (!string.IsNullOrEmpty(pacient.DocumentPath))
                 {
+                    byte[] file = null;
+
                     using (var stream = new FileStream(pacient.DocumentPath, FileMode.Open, FileAccess.Read))
                     {
                         using (var reader = new BinaryReader(stream))
