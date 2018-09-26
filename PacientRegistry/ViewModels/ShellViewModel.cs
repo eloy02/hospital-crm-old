@@ -563,13 +563,13 @@ namespace PacientRegistry
         {
             if (SelectedPacient != null)
             {
-                Timer.IsEnabled = false;
+                Timer.Stop();
 
                 var pacientInfoView = new PacientInfoViewModel(SelectedPacient, Model.WebToken);
 
                 WindowManager.ShowDialog(pacientInfoView);
 
-                Timer.IsEnabled = true;
+                Timer.Start();
             }
 
             //if (SelectedPacient != null)

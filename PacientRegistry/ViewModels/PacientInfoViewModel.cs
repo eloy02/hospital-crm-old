@@ -11,25 +11,50 @@ namespace PacientRegistry.ViewModels
     {
         private Guid WebToken;
 
-        private Pacient _pacient;
+        private Pacient _pacientOld;
         private BindableCollection<BuildingsView> _buildings = new BindableCollection<BuildingsView>();
         private string _pdfFilePath;
         private EPatientType? _selectedPacientType;
         private PacientInfoModel Model;
-
-        public PacientInfoViewModel(Pacient pacient, Guid webToken)
-        {
-            this.Pacient = pacient;
-            this.WebToken = webToken;
-            Model = new PacientInfoModel(this, WebToken);
-
-            SelectedPacientType = Pacient.PacientType;
-        }
+        private Pacient _pacient;
 
         public Pacient Pacient
         {
             get { return _pacient; }
             set { _pacient = value; NotifyOfPropertyChange(() => Pacient); }
+        }
+
+        public PacientInfoViewModel(Pacient pacient, Guid webToken)
+        {
+            this.PacientOld = pacient;
+            this.WebToken = webToken;
+            Model = new PacientInfoModel(this, WebToken);
+
+            Pacient = new Pacient()
+            {
+                BuildingNumber = pacient.BuildingNumber,
+                FirstName = pacient.FirstName,
+                FlatNumber = pacient.FlatNumber,
+                Id = pacient.Id,
+                LastName = pacient.LastName,
+                PacientPhoneNumber = pacient.PacientPhoneNumber,
+                PacientType = pacient.PacientType,
+                ParentFirstName = pacient.ParentFirstName,
+                ParentLastName = pacient.ParentLastName,
+                ParentPatronymicName = pacient.ParentPatronymicName,
+                ParentsPhoneNumber = pacient.ParentsPhoneNumber,
+                Sity = pacient.Sity,
+                PatronymicName = pacient.PatronymicName,
+                Street = pacient.Street
+            };
+
+            SelectedPacientType = Pacient.PacientType;
+        }
+
+        public Pacient PacientOld
+        {
+            get { return _pacientOld; }
+            set { _pacientOld = value; NotifyOfPropertyChange(() => PacientOld); }
         }
 
         public string PdfPath
@@ -50,7 +75,7 @@ namespace PacientRegistry.ViewModels
                 _selectedPacientType = value ?? null;
 
                 if (SelectedPacientType != null)
-                    Pacient.PacientType = SelectedPacientType.Value;
+                    PacientOld.PacientType = SelectedPacientType.Value;
                 NotifyOfPropertyChange(() => SelectedPacientType);
             }
         }
@@ -68,20 +93,19 @@ namespace PacientRegistry.ViewModels
 
         public async void ShowPDFDocument()
         {
-            await Model.OpenPacientDocument(Pacient);
+            await Model.OpenPacientDocument(PacientOld);
         }
 
         public async void UpdatePacient()
         {
-            var pacient = new Pacient();
-            pacient = Pacient;
+            PacientOld = Pacient;
 
             if (!string.IsNullOrEmpty(PdfPath))
             {
-                Pacient.DocumentPath = PdfPath;
+                PacientOld.DocumentPath = PdfPath;
             }
 
-            await Model.UpdatePacientAsync(Pacient);
+            await Model.UpdatePacientAsync(PacientOld);
         }
     }
 }

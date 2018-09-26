@@ -197,9 +197,6 @@ namespace WebClient
                     request.AddParameter("value", file, ParameterType.QueryString);
 
                     var r = await client.ExecuteTaskAsync(request);
-
-                    if (!r.IsSuccessful)
-                        throw new Exception($"Request status = {r.ResponseStatus}");
                 }
             });
 
@@ -217,9 +214,6 @@ namespace WebClient
                 request.AddJsonBody(pacient);
 
                 var r = await client.ExecuteTaskAsync(request);
-
-                if (!r.IsSuccessful)
-                    throw new Exception($"Request status = {r.ResponseStatus}");
             });
 
             await Task.WhenAll(t1, t2);
