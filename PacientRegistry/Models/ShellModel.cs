@@ -1,99 +1,25 @@
 ﻿using Core.Types;
-using KladrApiClient;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
-using WebClient;
+using WebClient.Interfaces;
 
 namespace PacientRegistry.Models
 {
     public class ShellModel
     {
-        private const string RegionId = "0200000000000";
-
-        private WebClientApi WebClientApi = new WebClientApi();
-        public Guid WebToken;
-
-        private KladrClient kladrClient;
-        private ShellViewModel ViewModel;
-
         public List<Pacient> Pacients = new List<Pacient>();
+        public readonly IWebClient WebClient;
 
-        public ShellModel(ShellViewModel viewModel)
+        public ShellModel(IWebClient webClient)
         {
-            kladrClient = new KladrClient("some_token", "some_key");
-            ViewModel = viewModel;
+            WebClient = webClient;
         }
 
-        public void LoadSities()
+        public async Task SavePacientAsync(Pacient pacient)
         {
-            kladrClient.FindAddress(new Dictionary<string, string>
-                                        {
-                                            {"contentType", "city"},
-                                            {"regionId", RegionId},
-                                        }, ViewModel.SetKladrSities);
-        }
-
-        public void SearchSity(string text)
-        {
-            kladrClient.FindAddress(new Dictionary<string, string>
-                                        {
-                                            {"query", text },
-                                            {"contentType", "city"},
-                                            {"regionId", RegionId},
-                                        }, ViewModel.SetKladrSities);
-        }
-
-        public void LoadStreetsForSity(string cityId)
-        {
-            kladrClient.FindAddress(new Dictionary<string, string>
-                                        {
-                                            {"contentType", "street"},
-                                            {"cityId", cityId},
-                                        }, ViewModel.SetKladrStreets);
-        }
-
-        public void SearchStreets(string cityId, string text)
-        {
-            kladrClient.FindAddress(new Dictionary<string, string>
-                                        {
-                                            {"query", text },
-                                            {"contentType", "street"},
-                                            {"cityId", cityId},
-                                        }, ViewModel.SetKladrStreets);
-        }
-
-        public void LoadBuildingsForStreet(string streetId)
-        {
-            kladrClient.FindAddress(new Dictionary<string, string>
-                                        {
-                                            {"contentType", "building"},
-                                            {"streetId", streetId},
-                                        }, ViewModel.SetKladrBuildings);
-        }
-
-        public async Task SavePacientAsync()
-        {
-            var pacient = new Pacient()
-            {
-                BuildingNumber = ViewModel.BuildingNumber,
-                DocumentPath = ViewModel.PdfPath,
-                FirstName = ViewModel.PacientFirstName,
-                FlatNumber = ViewModel.FlatNumber,
-                LastName = ViewModel.PacientLastName,
-                PacientPhoneNumber = ViewModel.PacientPhoneNumber,
-                PacientType = ViewModel.SelectedPacientType.Value,
-                ParentFirstName = ViewModel.ParentFirstName,
-                ParentLastName = ViewModel.ParentLastName,
-                ParentPatronymicName = ViewModel.ParentPatronymicName,
-                PatronymicName = ViewModel.PacientPatronymicName,
-                ParentsPhoneNumber = ViewModel.ParentPhoneNumber,
-                Sity = ViewModel.Sity,
-                Street = ViewModel.Street
-            };
-
             byte[] file = null;
 
             using (var stream = new FileStream(pacient.DocumentPath, FileMode.Open, FileAccess.Read))
@@ -112,19 +38,19 @@ namespace PacientRegistry.Models
 
             pacient.Document = doc;
 
-            await WebClientApi.SavePacientAsync(WebToken, pacient);
+            await WebClient.SavePacientAsync(pacient);
         }
 
-        public async Task<Guid> GetProgrammTokenAsync()
+        public async Task GetProgrammTokenAsync()
         {
-            return await WebClientApi.GetProgrammTokenAsync();
+            await WebClient.GetProgrammTokenAsync();
         }
 
         public async Task<List<Pacient>> GetPacientsAsync()
         {
             try
             {
-                var p = await WebClientApi.GetPacientsAsync(WebToken);
+                var p = await WebClient.GetPacientsAsync();
 
                 if (p != null)
                 {
@@ -143,12 +69,7 @@ namespace PacientRegistry.Models
 
         public async Task DeleteToken()
         {
-            await WebClientApi.DeleteToken(WebToken);
+            await WebClient.DeleteToken();
         }
-
-        //public async Task UpdatePacientAsync(Pacient pacient)
-        //{
-        //    await WebClientApi.UpdatePacientData(pacient);
-        //}
     }
 }

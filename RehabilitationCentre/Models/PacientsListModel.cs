@@ -1,35 +1,24 @@
-﻿using Castle.Windsor;
-using Castle.Windsor.Installer;
-using Core.Types;
-using RehabilitationCentre.ViewModels;
+﻿using Core.Types;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Threading;
-using WebClient;
+using WebClient.Interfaces;
 
 namespace RehabilitationCentre.Models
 {
     public class PacientsListModel
     {
-        private PacientsListViewModel ViewModel;
-        private WebClientApi WebClientApi = new WebClientApi();
-        public Guid WebToken;
-
-        private static WindsorContainer _container;
+        public readonly IWebClient WebClient;
         private DispatcherTimer Timer;
 
         public List<Pacient> PacientsList = new List<Pacient>();
 
-        public PacientsListModel(PacientsListViewModel viewModel)
+        public PacientsListModel(IWebClient webClient)
         {
-            ViewModel = viewModel;
-
-            _container = new WindsorContainer();
-
-            _container.Install(FromAssembly.Named("Core"));
+            WebClient = webClient;
 
             Timer = new DispatcherTimer()
             {
@@ -43,7 +32,7 @@ namespace RehabilitationCentre.Models
 
         public async Task GetProgrammTokenAsync()
         {
-            WebToken = await WebClientApi.GetProgrammTokenAsync();
+            await WebClient.GetProgrammTokenAsync();
         }
 
         private async void Timer_Tick(object sender, EventArgs e)
@@ -55,7 +44,7 @@ namespace RehabilitationCentre.Models
         {
             try
             {
-                var p = await WebClientApi.GetPacientsAsync(WebToken);
+                var p = await WebClient.GetPacientsAsync();
 
                 if (p != null)
                 {
@@ -75,7 +64,7 @@ namespace RehabilitationCentre.Models
 
         public async Task OpenPacientDocument(Pacient pacient)
         {
-            var doc = await WebClientApi.GetPacientDocumentAsync(WebToken, pacient);
+            var doc = await WebClient.GetPacientDocumentAsync(pacient);
 
             var path = Directory.GetCurrentDirectory() + @"\Temp";
             Directory.CreateDirectory(path);
@@ -84,22 +73,23 @@ namespace RehabilitationCentre.Models
             var pdfProc = System.Diagnostics.Process.Start(file);
         }
 
-        public async Task GetDoctorsAsync()
+        public async Task<IEnumerable<Doctor>> GetDoctorsAsync()
         {
-            var d = await WebClientApi.GetDoctorsAsync(WebToken);
+            var d = await WebClient.GetDoctorsAsync();
 
             if (d != null)
-                ViewModel.Doctors.AddRange(d);
+                return d;
+            else return null;
         }
 
         public async Task SetPacientVisitAsync(Pacient selectedPacient, Doctor selectedDoctor)
         {
-            await WebClientApi.SavePacientVisitAsync(WebToken, selectedPacient, selectedDoctor);
+            await WebClient.SavePacientVisitAsync(selectedPacient, selectedDoctor);
         }
 
         public async Task DeleteToken()
         {
-            await WebClientApi.DeleteToken(WebToken);
+            await WebClient.DeleteToken();
         }
     }
 }

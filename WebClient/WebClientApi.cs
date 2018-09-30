@@ -17,10 +17,11 @@ namespace WebClient
     {
         private static IWindsorContainer _container;
 
-        private Uri BaseUrl = new Uri("https://localhost:44391/api");
+        //private Uri BaseUrl = new Uri("https://localhost:44391/api");
 
-        //private Uri BaseUrl = new Uri("http://eloy102-001-site1.dtempurl.com/api");
+        private Uri BaseUrl = new Uri("http://eloy102-001-site1.dtempurl.com/api");
         private string ProgrammGuid = "2F5F714611C34EC5A2D6F06DEFD0AB084A940477EBED4BE4BC62-452D6B92D972";
+        private Guid Token;
 
         internal static void Init(IWindsorContainer ioc)
         {
@@ -43,7 +44,7 @@ namespace WebClient
             return response.Data;
         }
 
-        public async Task<Guid> GetProgrammTokenAsync()
+        public async Task GetProgrammTokenAsync()
         {
             var request = new JsonRest.RestRequest(Method.GET)
             {
@@ -57,38 +58,38 @@ namespace WebClient
             if (r == default(Guid))
                 throw new Exception("Ошибка авторизации программы");
 
-            return r;
+            Token = r;
         }
 
-        public async Task<IEnumerable<Pacient>> GetPacientsAsync(Guid token)
+        public async Task<IEnumerable<Pacient>> GetPacientsAsync()
         {
             var request = new JsonRest.RestRequest(Method.GET)
             {
                 Resource = "pacients"
             };
 
-            request.AddParameter("token", token, ParameterType.QueryString);
+            request.AddParameter("token", Token, ParameterType.QueryString);
 
             var r = await ExecuteAsync<List<Pacient>>(request);
 
             return r;
         }
 
-        public async Task<IEnumerable<Doctor>> GetDoctorsAsync(Guid token)
+        public async Task<IEnumerable<Doctor>> GetDoctorsAsync()
         {
             var request = new JsonRest.RestRequest(Method.GET)
             {
                 Resource = "CommonData/doctors"
             };
 
-            request.AddParameter("token", token, ParameterType.QueryString);
+            request.AddParameter("token", Token, ParameterType.QueryString);
 
             var r = await ExecuteAsync<List<Doctor>>(request);
 
             return r;
         }
 
-        public async Task SavePacientAsync(Guid token, Pacient pacient)
+        public async Task SavePacientAsync(Pacient pacient)
         {
             var client = new RestClient(BaseUrl);
 
@@ -97,7 +98,7 @@ namespace WebClient
                 Resource = "pacients"
             };
 
-            request.AddParameter("token", token, ParameterType.QueryString);
+            request.AddParameter("token", Token, ParameterType.QueryString);
             request.AddJsonBody(pacient);
 
             var r = await client.ExecutePostTaskAsync(request);
@@ -106,7 +107,7 @@ namespace WebClient
                 throw new Exception($"Request status = {r.ResponseStatus}");
         }
 
-        public async Task SavePacientsDocumentAsync(Guid token, int pacientId, Document doc)
+        public async Task SavePacientsDocumentAsync(int pacientId, Document doc)
         {
             var client = new RestClient(BaseUrl);
 
@@ -115,7 +116,7 @@ namespace WebClient
                 Resource = "Documents"
             };
 
-            request.AddParameter("token", token, ParameterType.QueryString);
+            request.AddParameter("token", Token, ParameterType.QueryString);
             request.AddParameter("pacientId", pacientId, ParameterType.QueryString);
             request.AddJsonBody(doc);
 
@@ -125,7 +126,7 @@ namespace WebClient
                 throw new Exception($"Request status = {r.ResponseStatus}");
         }
 
-        public async Task<Document> GetPacientDocumentAsync(Guid token, Pacient pacient)
+        public async Task<Document> GetPacientDocumentAsync(Pacient pacient)
         {
             var client = new RestClient(BaseUrl);
 
@@ -134,7 +135,7 @@ namespace WebClient
                 Resource = "Documents"
             };
 
-            request.AddParameter("token", token, ParameterType.QueryString);
+            request.AddParameter("token", Token, ParameterType.QueryString);
 
             request.AddParameter("pacientId", pacient.Id, ParameterType.QueryString);
 
@@ -143,7 +144,7 @@ namespace WebClient
             return r.Data;
         }
 
-        public async Task SavePacientVisitAsync(Guid token, Pacient pacient, Doctor doc)
+        public async Task SavePacientVisitAsync(Pacient pacient, Doctor doc)
         {
             var visit = new VisitLog
             {
@@ -161,7 +162,7 @@ namespace WebClient
 
             request.JsonSerializer = new NewtonsoftJsonSerializer();
 
-            request.AddParameter("token", token, ParameterType.QueryString);
+            request.AddParameter("token", Token, ParameterType.QueryString);
             request.AddJsonBody(visit);
 
             var r = await client.ExecutePostTaskAsync(request);
@@ -170,7 +171,7 @@ namespace WebClient
                 throw new Exception($"Request status = {r.ResponseStatus}");
         }
 
-        public async Task UpdatePacientsDataAsync(Guid token, Pacient pacient)
+        public async Task UpdatePacientsDataAsync(Pacient pacient)
         {
             var t1 = Task.Run(async () =>
             {
@@ -200,7 +201,7 @@ namespace WebClient
                         Resource = "Documents"
                     };
 
-                    request.AddParameter("token", token, ParameterType.QueryString);
+                    request.AddParameter("token", Token, ParameterType.QueryString);
                     request.AddParameter("pacientId", pacient.Id, ParameterType.QueryString);
                     request.AddJsonBody(doc);
 
@@ -217,7 +218,6 @@ namespace WebClient
                     Resource = "Pacients"
                 };
 
-                request.AddParameter("token", token, ParameterType.QueryString);
                 request.AddParameter("pacientId", pacient.Id, ParameterType.QueryString);
                 request.AddJsonBody(pacient);
 
@@ -227,7 +227,7 @@ namespace WebClient
             await Task.WhenAll(t1, t2);
         }
 
-        public async Task DeleteToken(Guid token)
+        public async Task DeleteToken()
         {
             var client = new RestClient(BaseUrl);
 
@@ -236,7 +236,7 @@ namespace WebClient
                 Resource = "Authenticator"
             };
 
-            request.AddParameter("token", token, ParameterType.QueryString);
+            request.AddParameter("token", Token, ParameterType.QueryString);
 
             var r = await client.ExecuteTaskAsync(request);
 
@@ -244,10 +244,8 @@ namespace WebClient
                 throw new Exception($"Request status = {r.ResponseStatus}");
         }
 
-        public async Task<IEnumerable<VisitLog>> GetVisitLogsForPacientAsync(Guid token, Pacient pacient)
+        public async Task<IEnumerable<VisitLog>> GetVisitLogsForPacientAsync(Pacient pacient)
         {
-            var client = new RestClient(BaseUrl);
-
             var request = new JsonRest.RestRequest(Method.GET)
             {
                 Resource = "PacientVisits"
@@ -255,13 +253,13 @@ namespace WebClient
 
             request.JsonSerializer = new NewtonsoftJsonSerializer();
 
-            request.AddParameter("token", token, ParameterType.QueryString);
+            request.AddParameter("token", Token, ParameterType.QueryString);
 
             request.AddParameter("pacientId", pacient.Id, ParameterType.QueryString);
 
-            var r = await client.ExecuteGetTaskAsync<IEnumerable<VisitLog>>(request);
+            var r = await ExecuteAsync<List<VisitLog>>(request);
 
-            return r.Data;
+            return r;
         }
     }
 }

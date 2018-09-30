@@ -1,31 +1,23 @@
 ﻿using Core.Types;
-using KladrApiClient;
-using PacientRegistry.ViewModels;
 using System;
 using System.IO;
 using System.Threading.Tasks;
-using WebClient;
+using WebClient.Interfaces;
 
 namespace PacientRegistry.Models
 {
     public class PacientInfoModel
     {
-        private const string RegionId = "0200000000000";
-        private WebClientApi WebClientApi = new WebClientApi();
-        private Guid WebToken = new Guid();
-        private KladrClient kladrClient;
-        private PacientInfoViewModel ViewModel;
+        private IWebClient WebClientApi;
 
-        public PacientInfoModel(PacientInfoViewModel viewModel, Guid webToken)
+        public PacientInfoModel(IWebClient webclient)
         {
-            WebToken = webToken;
-            kladrClient = new KladrClient("some_token", "some_key");
-            ViewModel = viewModel;
+            WebClientApi = webclient;
         }
 
         public async Task OpenPacientDocument(Pacient pacient)
         {
-            var doc = await WebClientApi.GetPacientDocumentAsync(WebToken, pacient);
+            var doc = await WebClientApi.GetPacientDocumentAsync(pacient);
 
             var path = Directory.GetCurrentDirectory() + @"\Temp";
             Directory.CreateDirectory(path);
@@ -36,7 +28,7 @@ namespace PacientRegistry.Models
 
         public async Task UpdatePacientAsync(Pacient pacient)
         {
-            await WebClientApi.UpdatePacientsDataAsync(WebToken, pacient);
+            await WebClientApi.UpdatePacientsDataAsync(pacient);
         }
     }
 }

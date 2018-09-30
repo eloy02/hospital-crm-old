@@ -2,16 +2,14 @@
 using Core.Types;
 using Core.Types.Enumerations;
 using PacientRegistry.Models;
-using System;
 using System.Windows;
+using WebClient.Interfaces;
 using static PacientRegistry.ShellViewModel;
 
 namespace PacientRegistry.ViewModels
 {
     public class PacientInfoViewModel : Screen
     {
-        private Guid WebToken;
-
         private Pacient _pacientOld;
         private BindableCollection<BuildingsView> _buildings = new BindableCollection<BuildingsView>();
         private string _pdfFilePath;
@@ -63,11 +61,10 @@ namespace PacientRegistry.ViewModels
             set { _pacient = value; NotifyOfPropertyChange(() => Pacient); }
         }
 
-        public PacientInfoViewModel(Pacient pacient, Guid webToken)
+        public PacientInfoViewModel(Pacient pacient, IWebClient webClient)
         {
             this.PacientOld = pacient;
-            this.WebToken = webToken;
-            Model = new PacientInfoModel(this, WebToken);
+            Model = new PacientInfoModel(webClient);
 
             Pacient = new Pacient()
             {

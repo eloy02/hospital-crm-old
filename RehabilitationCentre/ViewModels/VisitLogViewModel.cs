@@ -1,17 +1,16 @@
 ﻿using Caliburn.Micro;
 using Core.Types;
 using RehabilitationCentre.Models;
-using System;
 using System.Threading.Tasks;
+using WebClient.Interfaces;
 
 namespace RehabilitationCentre.ViewModels
 {
-    public class VisitLogViewModel : Conductor<object>
+    public class VisitLogViewModel : Screen
     {
         private Pacient _pacient;
         private BindableCollection<VisitLog> _visitLogs = new BindableCollection<VisitLog>();
-        private VisitLogModel Model = new VisitLogModel();
-        private Guid Token;
+        private VisitLogModel Model;
 
         public BindableCollection<VisitLog> VisitLogs
         {
@@ -19,11 +18,11 @@ namespace RehabilitationCentre.ViewModels
             set { _visitLogs = value; NotifyOfPropertyChange(() => VisitLogs); }
         }
 
-        public VisitLogViewModel(Pacient pacient, Guid token)
+        public VisitLogViewModel(Pacient pacient, IWebClient webClient)
         {
-            Pacient = pacient;
+            Model = new VisitLogModel(webClient);
 
-            this.Token = token;
+            Pacient = pacient;
         }
 
         public Pacient Pacient
@@ -38,8 +37,6 @@ namespace RehabilitationCentre.ViewModels
 
             Task.Run(async () =>
             {
-                Model.WebToken = Token;
-
                 if (Pacient != null)
                 {
                     var v = await Model.GetVisistLogsForPacientAsync(Pacient);

@@ -14,51 +14,27 @@ namespace RehabilitationCentre.ViewModels
 {
     public class PacientsListViewModel : Conductor<object>, IShell
     {
+        #region Private fields
+
         private bool _chooseDoctor = false;
-
-        private BindableCollection<Doctor> _doctors = new BindableCollection<Doctor>();
-
         private string _firstNameForFilter;
-
         private bool _isPacientsLoading = false;
-
         private string _lastNameForFilter;
-
         private string _pacientPhoneNumberForFilter;
-
         private PacientTypeView _pacientTypeForFilter;
-
         private BindableCollection<PacientTypeView> _pacientTypes = new BindableCollection<PacientTypeView>();
-
         private string _parentPhoneNumberForFilter;
-
         private string _patronymicNameForFilter;
-
         private Doctor _selectedDoctor;
-
         private Pacient _selectedPacient;
 
-        private PacientsListModel Model;
-
         private BindableCollection<Pacient> pacients = new BindableCollection<Pacient>();
-
         private DispatcherTimer Timer;
+        private BindableCollection<Doctor> _doctors = new BindableCollection<Doctor>();
 
-        private IWindowManager WindowManager;
+        #endregion Private fields
 
-        public PacientsListViewModel(IWindowManager theWindowManager)
-        {
-            Model = new PacientsListModel(this);
-
-            Timer = new DispatcherTimer()
-            {
-                Interval = TimeSpan.FromSeconds(15)
-            };
-            Timer.Tick += Timer_Tick;
-            Timer.Start();
-
-            WindowManager = theWindowManager;
-        }
+        #region Public properties
 
         public static object Icon
         {
@@ -70,38 +46,10 @@ namespace RehabilitationCentre.ViewModels
             get { return "Список пациентов"; }
         }
 
-        public bool CanClearFilter
-        {
-            get
-            {
-                if (!string.IsNullOrEmpty(FirstNameForFilter) || !string.IsNullOrEmpty(LastNameForFilter) || !string.IsNullOrEmpty(PatronymicNameForFilter)
-                    || !string.IsNullOrEmpty(PacientPhoneNumberForFilter) || !string.IsNullOrEmpty(ParentPhoneNumberForFilter)
-                    || PacientTypeForFilter != null)
-                    return true;
-                else return false;
-            }
-        }
-
-        public bool CanSetVisit
-        {
-            get
-            {
-                if (SelectedPacient != null && SelectedDoctor != null)
-                    return true;
-                else return false;
-            }
-        }
-
         public bool ChooseDoctor
         {
             get { return _chooseDoctor; }
             set { _chooseDoctor = value; NotifyOfPropertyChange(() => ChooseDoctor); }
-        }
-
-        public BindableCollection<Doctor> Doctors
-        {
-            get { return _doctors; }
-            set { _doctors = value; NotifyOfPropertyChange(() => Doctors); }
         }
 
         public string FirstNameForFilter
@@ -146,12 +94,6 @@ namespace RehabilitationCentre.ViewModels
             }
         }
 
-        public BindableCollection<Pacient> Pacients
-        {
-            get { return pacients; }
-            set { pacients = value; NotifyOfPropertyChange(() => Pacients); }
-        }
-
         public PacientTypeView PacientTypeForFilter
         {
             get { return _pacientTypeForFilter; }
@@ -162,12 +104,6 @@ namespace RehabilitationCentre.ViewModels
                 NotifyOfPropertyChange(() => CanClearFilter);
                 FilterPacients();
             }
-        }
-
-        public BindableCollection<PacientTypeView> PacientTypes
-        {
-            get { return _pacientTypes; }
-            set { _pacientTypes = value; NotifyOfPropertyChange(() => PacientTypes); }
         }
 
         public string ParentPhoneNumberForFilter
@@ -211,71 +147,31 @@ namespace RehabilitationCentre.ViewModels
             set { _selectedPacient = value; NotifyOfPropertyChange(() => SelectedPacient); }
         }
 
-        private void Timer_Tick(object sender, EventArgs e)
+        #endregion Public properties
+
+        #region Bindable collections
+
+        public BindableCollection<Doctor> Doctors
         {
-            FilterPacients();
+            get { return _doctors; }
+            set { _doctors = value; NotifyOfPropertyChange(() => Doctors); }
         }
 
-        protected override void OnActivate()
+        public BindableCollection<Pacient> Pacients
         {
-            base.OnActivate();
+            get { return pacients; }
+            set { pacients = value; NotifyOfPropertyChange(() => Pacients); }
         }
 
-        protected override async void OnDeactivate(bool close)
+        public BindableCollection<PacientTypeView> PacientTypes
         {
-            await Model.DeleteToken();
-
-            var path = Directory.GetCurrentDirectory() + @"\Temp";
-            DirectoryInfo di = new DirectoryInfo(path);
-
-            if (di.Exists)
-            {
-                foreach (FileInfo file in di.EnumerateFiles())
-                {
-                    file.Delete();
-                }
-                foreach (DirectoryInfo dir in di.EnumerateDirectories())
-                {
-                    dir.Delete(true);
-                }
-            }
-
-            base.OnDeactivate(close);
+            get { return _pacientTypes; }
+            set { _pacientTypes = value; NotifyOfPropertyChange(() => PacientTypes); }
         }
 
-        protected override void OnInitialize()
-        {
-            base.OnInitialize();
+        #endregion Bindable collections
 
-            Task.Run(async () =>
-            {
-                try
-                {
-                    IsPacientsLoading = true;
-
-                    await Model.GetProgrammTokenAsync();
-
-                    await Model.GetDoctorsAsync();
-
-                    await Model.GetPacientsAsync();
-
-                    var values = Enum.GetValues(typeof(EPatientType)).Cast<EPatientType>().ToList();
-
-                    values.ForEach(v =>
-                    {
-                        PacientTypes.Add(new PacientTypeView { Name = v.GetDescription(), Value = v });
-                    });
-
-                    FilterPacients();
-
-                    IsPacientsLoading = false;
-                }
-                catch (Exception ex)
-                {
-                    MessageBox.Show(ex.Message, ex.Source, MessageBoxButton.OK);
-                }
-            });
-        }
+        #region Methods
 
         public void ClearFilter()
         {
@@ -361,10 +257,117 @@ namespace RehabilitationCentre.ViewModels
         {
             if (SelectedPacient != null)
             {
-                var visitLogViewModel = new VisitLogViewModel(SelectedPacient, Model.WebToken);
+                var visitLogViewModel = new VisitLogViewModel(SelectedPacient, Model.WebClient);
 
                 WindowManager.ShowDialog(visitLogViewModel);
             }
+        }
+
+        private void Timer_Tick(object sender, EventArgs e)
+        {
+            FilterPacients();
+        }
+
+        #endregion Methods
+
+        private PacientsListModel Model;
+        private IWindowManager WindowManager;
+
+        public PacientsListViewModel(IWindowManager theWindowManager, PacientsListModel model)
+        {
+            Model = model;
+
+            Timer = new DispatcherTimer()
+            {
+                Interval = TimeSpan.FromSeconds(15)
+            };
+            Timer.Tick += Timer_Tick;
+            Timer.Start();
+
+            WindowManager = theWindowManager;
+        }
+
+        public bool CanClearFilter
+        {
+            get
+            {
+                if (!string.IsNullOrEmpty(FirstNameForFilter) || !string.IsNullOrEmpty(LastNameForFilter) || !string.IsNullOrEmpty(PatronymicNameForFilter)
+                    || !string.IsNullOrEmpty(PacientPhoneNumberForFilter) || !string.IsNullOrEmpty(ParentPhoneNumberForFilter)
+                    || PacientTypeForFilter != null)
+                    return true;
+                else return false;
+            }
+        }
+
+        public bool CanSetVisit
+        {
+            get
+            {
+                if (SelectedPacient != null && SelectedDoctor != null)
+                    return true;
+                else return false;
+            }
+        }
+
+        protected override void OnActivate()
+        {
+            base.OnActivate();
+        }
+
+        protected override async void OnDeactivate(bool close)
+        {
+            await Model.DeleteToken();
+
+            var path = Directory.GetCurrentDirectory() + @"\Temp";
+            DirectoryInfo di = new DirectoryInfo(path);
+
+            if (di.Exists)
+            {
+                foreach (FileInfo file in di.EnumerateFiles())
+                {
+                    file.Delete();
+                }
+                foreach (DirectoryInfo dir in di.EnumerateDirectories())
+                {
+                    dir.Delete(true);
+                }
+            }
+
+            base.OnDeactivate(close);
+        }
+
+        protected override void OnInitialize()
+        {
+            base.OnInitialize();
+
+            Task.Run(async () =>
+            {
+                try
+                {
+                    IsPacientsLoading = true;
+
+                    await Model.GetProgrammTokenAsync();
+
+                    await Model.GetDoctorsAsync();
+
+                    await Model.GetPacientsAsync();
+
+                    var values = Enum.GetValues(typeof(EPatientType)).Cast<EPatientType>().ToList();
+
+                    values.ForEach(v =>
+                    {
+                        PacientTypes.Add(new PacientTypeView { Name = v.GetDescription(), Value = v });
+                    });
+
+                    FilterPacients();
+
+                    IsPacientsLoading = false;
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show(ex.Message, ex.Source, MessageBoxButton.OK);
+                }
+            });
         }
 
         public class PacientTypeView

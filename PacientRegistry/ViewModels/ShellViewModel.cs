@@ -16,13 +16,42 @@ namespace PacientRegistry
 {
     public class ShellViewModel : Conductor<object>, IShell
     {
+        private IWindowManager WindowManager;
+        private KladrClient kladrClient = new KladrClient("some_token", "some_key");
+        private const string RegionId = "0200000000000";
+        private DispatcherTimer Timer;
+
+        public class BuildingsView
+        {
+            public string Code { get; set; }
+            public string Name { get; set; }
+        }
+
+        public class PacientTypeView
+        {
+            public string Name { get; set; }
+            public EPatientType Type { get; set; }
+        }
+
+        public class SitiesView
+        {
+            public string Code { get; set; }
+            public string Name { get; set; }
+        }
+
+        public class StreetsView
+        {
+            public string Code { get; set; }
+            public string Name { get; set; }
+        }
+
+        #region Private fields
+
         private static BindableCollection<PacientTypeView> _pacientTypes = new BindableCollection<PacientTypeView>()
         {
             new PacientTypeView{ Type = EPatientType.Invalid, Name = "»Ì‚‡ÎË‰"},
             new PacientTypeView{ Type = EPatientType.OVZ, Name = "Œ¬«"}
         };
-
-        private IWindowManager WindowManager;
 
         private string _buildingNum;
         private BindableCollection<BuildingsView> _buildings = new BindableCollection<BuildingsView>();
@@ -52,7 +81,8 @@ namespace PacientRegistry
         private ShellModel Model;
         private Pacient _selectedPacient;
         private BindableCollection<Pacient> pacients = new BindableCollection<Pacient>();
-        private DispatcherTimer Timer;
+
+        #endregion Private fields
 
         #region Visibility
 
@@ -88,51 +118,7 @@ namespace PacientRegistry
 
         #endregion Visibility
 
-        public ShellViewModel(IWindowManager theWindowManager)
-        {
-            Model = new ShellModel(this);
-            Model.LoadSities();
-            WindowManager = theWindowManager;
-        }
-
-        protected override void OnActivate()
-        {
-            base.OnActivate();
-        }
-
-        protected override void OnInitialize()
-        {
-            base.OnInitialize();
-
-            Timer = new DispatcherTimer();
-
-            Timer.Tick += new EventHandler(timer_Tick);
-
-            Timer.Interval = new TimeSpan(0, 0, 30);
-
-            Timer.Start();
-
-            try
-            {
-                Task.Run(async () =>
-                {
-                    var token = await Model.GetProgrammTokenAsync();
-                    Model.WebToken = token;
-
-                    var r = await Model.GetPacientsAsync();
-
-                    if (r != null)
-                    {
-                        Pacients.Clear();
-                        Pacients.AddRange(r);
-                    }
-                });
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show(ex.Message, "Œ¯Ë·Í‡", MessageBoxButton.OK);
-            }
-        }
+        #region Public Properties
 
         public Pacient SelectedPacient
         {
@@ -299,6 +285,46 @@ namespace PacientRegistry
             }
         }
 
+        public SitiesView SelectedSity
+        {
+            get { return _selectedSity; }
+            set
+            {
+                _selectedSity = value;
+                NotifyOfPropertyChange(() => SelectedSity);
+                Buildings.Clear();
+                Streets.Clear();
+                FlatNumber = null;
+
+                if (SelectedSity != null)
+                {
+                    StreetsLoadingVisibility = Visibility.Visible;
+                    LoadStreetsForSity(SelectedSity.Code);
+                }
+                NotifyOfPropertyChange(() => CanClearForms);
+                NotifyOfPropertyChange(() => CanSavePacient);
+            }
+        }
+
+        public StreetsView SelectedStreet
+        {
+            get { return _selectedStreet; }
+            set
+            {
+                _selectedStreet = value;
+                NotifyOfPropertyChange(() => SelectedStreet);
+                Buildings.Clear();
+                FlatNumber = null;
+                if (SelectedStreet != null)
+                {
+                    BuildingsLoadingVisibility = Visibility.Visible;
+                    LoadBuildingsForStreet(SelectedStreet.Code);
+                }
+                NotifyOfPropertyChange(() => CanClearForms);
+                NotifyOfPropertyChange(() => CanSavePacient);
+            }
+        }
+
         public BuildingsView SelectedBuilding
         {
             get { return _selectedBuilding; }
@@ -324,56 +350,6 @@ namespace PacientRegistry
             }
         }
 
-        public SitiesView SelectedSity
-        {
-            get { return _selectedSity; }
-            set
-            {
-                _selectedSity = value;
-                NotifyOfPropertyChange(() => SelectedSity);
-                Buildings.Clear();
-                Streets.Clear();
-                FlatNumber = null;
-
-                if (SelectedSity != null)
-                {
-                    StreetsLoadingVisibility = Visibility.Visible;
-                    Model.LoadStreetsForSity(SelectedSity.Code);
-                }
-                NotifyOfPropertyChange(() => CanClearForms);
-                NotifyOfPropertyChange(() => CanSavePacient);
-            }
-        }
-
-        public StreetsView SelectedStreet
-        {
-            get { return _selectedStreet; }
-            set
-            {
-                _selectedStreet = value;
-                NotifyOfPropertyChange(() => SelectedStreet);
-                Buildings.Clear();
-                FlatNumber = null;
-                if (SelectedStreet != null)
-                {
-                    BuildingsLoadingVisibility = Visibility.Visible;
-                    Model.LoadBuildingsForStreet(SelectedStreet.Code);
-                }
-                NotifyOfPropertyChange(() => CanClearForms);
-                NotifyOfPropertyChange(() => CanSavePacient);
-            }
-        }
-
-        public BindableCollection<SitiesView> Sities
-        {
-            get { return _sities; }
-            set
-            {
-                _sities = value;
-                NotifyOfPropertyChange(() => Sities);
-            }
-        }
-
         public string Sity
         {
             get { return _sity; }
@@ -384,7 +360,7 @@ namespace PacientRegistry
                 if (SelectedSity == null)
                 {
                     SitiesLoadingVisibility = Visibility.Visible;
-                    Model.SearchSity(Sity);
+                    SearchSity(Sity);
                 }
 
                 NotifyOfPropertyChange(() => CanClearForms);
@@ -403,12 +379,26 @@ namespace PacientRegistry
                 if (SelectedStreet == null && SelectedSity != null)
                 {
                     StreetsLoadingVisibility = Visibility.Visible;
-                    Model.SearchStreets(SelectedSity.Code, Street);
+                    SearchStreets(SelectedSity.Code, Street);
                 }
 
                 NotifyOfPropertyChange(() => CanClearForms);
                 NotifyOfPropertyChange(() => CanSavePacient);
                 FilterPacients();
+            }
+        }
+
+        #endregion Public Properties
+
+        #region Bindable Collections
+
+        public BindableCollection<SitiesView> Sities
+        {
+            get { return _sities; }
+            set
+            {
+                _sities = value;
+                NotifyOfPropertyChange(() => Sities);
             }
         }
 
@@ -418,22 +408,152 @@ namespace PacientRegistry
             set { _streets = value; NotifyOfPropertyChange(() => Streets); }
         }
 
-        public bool CanClearForms
+        #endregion Bindable Collections
+
+        public ShellViewModel(IWindowManager theWindowManager, ShellModel model)
         {
-            get
+            Model = model;
+            WindowManager = theWindowManager;
+        }
+
+        protected override void OnActivate()
+        {
+            base.OnActivate();
+        }
+
+        protected override void OnInitialize()
+        {
+            base.OnInitialize();
+
+            Timer = new DispatcherTimer();
+
+            Timer.Tick += new EventHandler(timer_Tick);
+
+            Timer.Interval = new TimeSpan(0, 0, 30);
+
+            Timer.Start();
+
+            try
             {
-                if (
-                    SelectedBuilding != null || SelectedPacientType != null || !string.IsNullOrEmpty(FlatNumber)
-                    || SelectedSity != null || SelectedStreet != null
-                    || !string.IsNullOrEmpty(Street) || !string.IsNullOrEmpty(BuildingNumber)
-                    || !string.IsNullOrEmpty(Sity) || !string.IsNullOrEmpty(PacientFirstName)
-                    || !string.IsNullOrEmpty(PacientLastName) || !string.IsNullOrEmpty(PacientPatronymicName)
-                    || !string.IsNullOrEmpty(PacientPhoneNumber) || !string.IsNullOrEmpty(ParentFirstName)
-                    || !string.IsNullOrEmpty(ParentLastName) || !string.IsNullOrEmpty(ParentPhoneNumber)
-                    || !string.IsNullOrEmpty(ParentPatronymicName) || !string.IsNullOrEmpty(PdfPath))
-                    return true;
-                else return false;
+                Task.Run(async () =>
+                {
+                    await Model.GetProgrammTokenAsync();
+
+                    var r = await Model.GetPacientsAsync();
+
+                    if (r != null)
+                    {
+                        Pacients.Clear();
+                        Pacients.AddRange(r);
+                    }
+                });
             }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message, "Œ¯Ë·Í‡", MessageBoxButton.OK);
+            }
+        }
+
+        protected override async void OnDeactivate(bool close)
+        {
+            await Model.DeleteToken();
+
+            var path = Directory.GetCurrentDirectory() + @"\Temp";
+            DirectoryInfo di = new DirectoryInfo(path);
+
+            if (di.Exists)
+            {
+                foreach (FileInfo file in di.EnumerateFiles())
+                {
+                    file.Delete();
+                }
+                foreach (DirectoryInfo dir in di.EnumerateDirectories())
+                {
+                    dir.Delete(true);
+                }
+            }
+
+            base.OnDeactivate(close);
+        }
+
+        #region Methods
+
+        public void LoadSities()
+        {
+            kladrClient.FindAddress(new Dictionary<string, string>
+                                        {
+                                            {"contentType", "city"},
+                                            {"regionId", RegionId},
+                                        }, SetKladrSities);
+        }
+
+        public void SearchSity(string text)
+        {
+            kladrClient.FindAddress(new Dictionary<string, string>
+                                        {
+                                            {"query", text },
+                                            {"contentType", "city"},
+                                            {"regionId", RegionId},
+                                        }, SetKladrSities);
+        }
+
+        public void LoadStreetsForSity(string cityId)
+        {
+            kladrClient.FindAddress(new Dictionary<string, string>
+                                        {
+                                            {"contentType", "street"},
+                                            {"cityId", cityId},
+                                        }, SetKladrStreets);
+        }
+
+        public void SearchStreets(string cityId, string text)
+        {
+            kladrClient.FindAddress(new Dictionary<string, string>
+                                        {
+                                            {"query", text },
+                                            {"contentType", "street"},
+                                            {"cityId", cityId},
+                                        }, SetKladrStreets);
+        }
+
+        public void LoadBuildingsForStreet(string streetId)
+        {
+            kladrClient.FindAddress(new Dictionary<string, string>
+                                        {
+                                            {"contentType", "building"},
+                                            {"streetId", streetId},
+                                        }, SetKladrBuildings);
+        }
+
+        public async void SavePacient()
+        {
+            SavingPacientVisibility = Visibility.Visible;
+
+            var pacient = new Pacient()
+            {
+                BuildingNumber = this.BuildingNumber,
+                DocumentPath = this.PdfPath,
+                FirstName = this.PacientFirstName,
+                FlatNumber = this.FlatNumber,
+                LastName = this.PacientLastName,
+                PacientPhoneNumber = this.PacientPhoneNumber,
+                PacientType = this.SelectedPacientType.Value,
+                ParentFirstName = this.ParentFirstName,
+                ParentLastName = this.ParentLastName,
+                ParentPatronymicName = this.ParentPatronymicName,
+                PatronymicName = this.PacientPatronymicName,
+                ParentsPhoneNumber = this.ParentPhoneNumber,
+                Sity = this.Sity,
+                Street = this.Street
+            };
+
+            await Model.SavePacientAsync(pacient);
+
+            ClearForms();
+
+            await UpdatePacients();
+
+            SavingPacientVisibility = Visibility.Collapsed;
         }
 
         public void ClearForms()
@@ -456,117 +576,13 @@ namespace PacientRegistry
             PdfPath = null;
         }
 
-        public bool CanSavePacient
-        {
-            get
-            {
-                if (
-                    !string.IsNullOrEmpty(Street) && !string.IsNullOrEmpty(BuildingNumber)
-                    && !string.IsNullOrEmpty(Sity) && !string.IsNullOrEmpty(PacientFirstName)
-                    && !string.IsNullOrEmpty(PacientLastName)
-                    && !string.IsNullOrEmpty(PdfPath)
-                    && (!string.IsNullOrEmpty(ParentPhoneNumber) || !string.IsNullOrEmpty(PacientPhoneNumber)))
-                    return true;
-                else return false;
-            }
-            set { }
-        }
-
-        public async void SavePacient()
-        {
-            SavingPacientVisibility = Visibility.Visible;
-
-            await Model.SavePacientAsync();
-
-            ClearForms();
-
-            await UpdatePacients();
-
-            SavingPacientVisibility = Visibility.Collapsed;
-        }
-
-        public void SetKladrBuildings(KladrResponse response)
-        {
-            var rr = response.result.ToList();
-
-            if (rr.Count > 1)
-            {
-                var bl = new List<BuildingsView>();
-
-                rr.ForEach(r => { var s = new BuildingsView { Name = $"{r.typeShort}. {r.name}", Code = r.id }; bl.Add(s); });
-
-                Buildings.Clear();
-
-                Buildings.AddRange(bl);
-            }
-            BuildingsLoadingVisibility = Visibility.Collapsed;
-        }
-
-        public void SetKladrSities(KladrResponse response)
-        {
-            var rr = response.result.ToList();
-
-            if (rr.Count > 1)
-            {
-                Sities.Clear();
-
-                var sl = new List<SitiesView>();
-
-                rr.ForEach(r => { var s = new SitiesView { Name = $"{r.typeShort}. {r.name}", Code = r.id }; sl.Add(s); });
-
-                Sities.AddRange(sl);
-            }
-            SitiesLoadingVisibility = Visibility.Collapsed;
-        }
-
-        public void SetKladrStreets(KladrResponse response)
-        {
-            var rr = response.result.ToList();
-
-            if (rr.Count > 1)
-            {
-                Streets.Clear();
-
-                var sl = new List<StreetsView>();
-
-                rr.ForEach(r => { var s = new StreetsView { Name = $"{r.typeShort}. {r.name}", Code = r.id }; sl.Add(s); });
-
-                Streets.AddRange(sl);
-            }
-            StreetsLoadingVisibility = Visibility.Collapsed;
-        }
-
-        public class BuildingsView
-        {
-            public string Code { get; set; }
-            public string Name { get; set; }
-        }
-
-        public class PacientTypeView
-        {
-            public string Name { get; set; }
-            public EPatientType Type { get; set; }
-        }
-
-        public class SitiesView
-        {
-            public string Code { get; set; }
-            public string Name { get; set; }
-        }
-
-        public class StreetsView
-        {
-            public string Code { get; set; }
-            public string Name { get; set; }
-        }
-
         public async Task UpdatePacientsData()
         {
             if (SelectedPacient != null)
             {
                 Timer.Stop();
 
-                var pacientInfoView = new PacientInfoViewModel(SelectedPacient, Model.WebToken);
+                var pacientInfoView = new PacientInfoViewModel(SelectedPacient, Model.WebClient);
 
                 WindowManager.ShowDialog(pacientInfoView);
 
@@ -574,28 +590,6 @@ namespace PacientRegistry
 
                 Timer.Start();
             }
-
-            //if (SelectedPacient != null)
-            //{
-            //    SelectedPacient.BuildingNumber = BuildingNumber ?? SelectedPacient.BuildingNumber;
-            //    SelectedPacient.DocumentPath = PdfPath ?? SelectedPacient.DocumentPath;
-            //    SelectedPacient.FirstName = PacientFirstName ?? SelectedPacient.FirstName;
-            //    SelectedPacient.FlatNumber = FlatNumber ?? SelectedPacient.FlatNumber;
-            //    SelectedPacient.LastName = PacientLastName ?? SelectedPacient.LastName;
-            //    SelectedPacient.PacientPhoneNumber = PacientPhoneNumber ?? SelectedPacient.PacientPhoneNumber;
-            //    SelectedPacient.PacientType = SelectedPacientType ?? SelectedPacient.PacientType;
-            //    SelectedPacient.ParentFirstName = ParentFirstName ?? SelectedPacient.ParentFirstName;
-            //    SelectedPacient.ParentLastName = ParentLastName ?? SelectedPacient.ParentLastName;
-            //    SelectedPacient.ParentPatronymicName = ParentPatronymicName ?? SelectedPacient.ParentPatronymicName;
-            //    SelectedPacient.ParentsPhoneNumber = ParentPhoneNumber ?? SelectedPacient.ParentsPhoneNumber;
-            //    SelectedPacient.PatronymicName = PacientPatronymicName ?? SelectedPacient.PatronymicName;
-            //    SelectedPacient.Sity = Sity ?? SelectedPacient.Sity;
-            //    SelectedPacient.Street = Street ?? SelectedPacient.Street;
-
-            //    Pacients.Refresh();
-
-            //    //await Model.UpdatePacientAsync(SelectedPacient);
-            //}
         }
 
         public async Task UpdatePacients()
@@ -616,11 +610,6 @@ namespace PacientRegistry
             {
                 Timer.Start();
             }
-        }
-
-        private void timer_Tick(object sender, EventArgs e)
-        {
-            Task.Run(() => UpdatePacients());
         }
 
         private void FilterPacients()
@@ -679,26 +668,96 @@ namespace PacientRegistry
             Pacients.AddRange(pac);
         }
 
-        protected override async void OnDeactivate(bool close)
+        public void SetKladrBuildings(KladrResponse response)
         {
-            await Model.DeleteToken();
+            var rr = response.result.ToList();
 
-            var path = Directory.GetCurrentDirectory() + @"\Temp";
-            DirectoryInfo di = new DirectoryInfo(path);
-
-            if (di.Exists)
+            if (rr.Count > 1)
             {
-                foreach (FileInfo file in di.EnumerateFiles())
-                {
-                    file.Delete();
-                }
-                foreach (DirectoryInfo dir in di.EnumerateDirectories())
-                {
-                    dir.Delete(true);
-                }
-            }
+                var bl = new List<BuildingsView>();
 
-            base.OnDeactivate(close);
+                rr.ForEach(r => { var s = new BuildingsView { Name = $"{r.typeShort}. {r.name}", Code = r.id }; bl.Add(s); });
+
+                Buildings.Clear();
+
+                Buildings.AddRange(bl);
+            }
+            BuildingsLoadingVisibility = Visibility.Collapsed;
+        }
+
+        public void SetKladrSities(KladrResponse response)
+        {
+            var rr = response.result.ToList();
+
+            if (rr.Count > 1)
+            {
+                Sities.Clear();
+
+                var sl = new List<SitiesView>();
+
+                rr.ForEach(r => { var s = new SitiesView { Name = $"{r.typeShort}. {r.name}", Code = r.id }; sl.Add(s); });
+
+                Sities.AddRange(sl);
+            }
+            SitiesLoadingVisibility = Visibility.Collapsed;
+        }
+
+        public void SetKladrStreets(KladrResponse response)
+        {
+            var rr = response.result.ToList();
+
+            if (rr.Count > 1)
+            {
+                Streets.Clear();
+
+                var sl = new List<StreetsView>();
+
+                rr.ForEach(r => { var s = new StreetsView { Name = $"{r.typeShort}. {r.name}", Code = r.id }; sl.Add(s); });
+
+                Streets.AddRange(sl);
+            }
+            StreetsLoadingVisibility = Visibility.Collapsed;
+        }
+
+        #endregion Methods
+
+        public bool CanClearForms
+        {
+            get
+            {
+                if (
+                    SelectedBuilding != null || SelectedPacientType != null || !string.IsNullOrEmpty(FlatNumber)
+                    || SelectedSity != null || SelectedStreet != null
+                    || !string.IsNullOrEmpty(Street) || !string.IsNullOrEmpty(BuildingNumber)
+                    || !string.IsNullOrEmpty(Sity) || !string.IsNullOrEmpty(PacientFirstName)
+                    || !string.IsNullOrEmpty(PacientLastName) || !string.IsNullOrEmpty(PacientPatronymicName)
+                    || !string.IsNullOrEmpty(PacientPhoneNumber) || !string.IsNullOrEmpty(ParentFirstName)
+                    || !string.IsNullOrEmpty(ParentLastName) || !string.IsNullOrEmpty(ParentPhoneNumber)
+                    || !string.IsNullOrEmpty(ParentPatronymicName) || !string.IsNullOrEmpty(PdfPath))
+                    return true;
+                else return false;
+            }
+        }
+
+        public bool CanSavePacient
+        {
+            get
+            {
+                if (
+                    !string.IsNullOrEmpty(Street) && !string.IsNullOrEmpty(BuildingNumber)
+                    && !string.IsNullOrEmpty(Sity) && !string.IsNullOrEmpty(PacientFirstName)
+                    && !string.IsNullOrEmpty(PacientLastName)
+                    && !string.IsNullOrEmpty(PdfPath)
+                    && (!string.IsNullOrEmpty(ParentPhoneNumber) || !string.IsNullOrEmpty(PacientPhoneNumber)))
+                    return true;
+                else return false;
+            }
+            set { }
+        }
+
+        private void timer_Tick(object sender, EventArgs e)
+        {
+            Task.Run(() => UpdatePacients());
         }
     }
 }
