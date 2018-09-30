@@ -1,5 +1,4 @@
 ﻿using Core.Types;
-using System;
 using System.IO;
 using System.Threading.Tasks;
 using WebClient.Interfaces;
@@ -17,13 +16,22 @@ namespace PacientRegistry.Models
 
         public async Task OpenPacientDocument(Pacient pacient)
         {
-            var doc = await WebClientApi.GetPacientDocumentAsync(pacient);
-
             var path = Directory.GetCurrentDirectory() + @"\Temp";
-            Directory.CreateDirectory(path);
-            var file = $"{path}\\{Guid.NewGuid().ToString()}.pdf";
-            File.WriteAllBytes(file, doc.Content.ToArray());
-            var pdfProc = System.Diagnostics.Process.Start(file);
+            var file = $"{path}\\{pacient.LastName}{pacient.FirstName}{pacient.PatronymicName}.pdf";
+
+            if (File.Exists(file))
+            {
+                var pdfProc = System.Diagnostics.Process.Start(file);
+            }
+            else
+            {
+                var doc = await WebClientApi.GetPacientDocumentAsync(pacient);
+                Directory.CreateDirectory(path);
+
+                File.WriteAllBytes(file, doc.Content.ToArray());
+                var pdfProc = System.Diagnostics.Process.Start(file);
+                doc = null;
+            }
         }
 
         public async Task UpdatePacientAsync(Pacient pacient)

@@ -4,7 +4,6 @@ using Core.Types.Enumerations;
 using MaterialDesignThemes.Wpf;
 using RehabilitationCentre.Models;
 using System;
-using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
@@ -316,24 +315,11 @@ namespace RehabilitationCentre.ViewModels
 
         protected override async void OnDeactivate(bool close)
         {
-            await Model.DeleteToken();
-
-            var path = Directory.GetCurrentDirectory() + @"\Temp";
-            DirectoryInfo di = new DirectoryInfo(path);
-
-            if (di.Exists)
-            {
-                foreach (FileInfo file in di.EnumerateFiles())
-                {
-                    file.Delete();
-                }
-                foreach (DirectoryInfo dir in di.EnumerateDirectories())
-                {
-                    dir.Delete(true);
-                }
-            }
-
             base.OnDeactivate(close);
+
+            Model.ClearTempFolder();
+
+            await Model.DeleteToken();
         }
 
         protected override void OnInitialize()
@@ -348,7 +334,10 @@ namespace RehabilitationCentre.ViewModels
 
                     await Model.GetProgrammTokenAsync();
 
-                    await Model.GetDoctorsAsync();
+                    var doc = await Model.GetDoctorsAsync();
+
+                    if (doc != null)
+                        Doctors.AddRange(doc);
 
                     await Model.GetPacientsAsync();
 

@@ -64,13 +64,22 @@ namespace RehabilitationCentre.Models
 
         public async Task OpenPacientDocument(Pacient pacient)
         {
-            var doc = await WebClient.GetPacientDocumentAsync(pacient);
-
             var path = Directory.GetCurrentDirectory() + @"\Temp";
-            Directory.CreateDirectory(path);
-            var file = $"{path}\\{Guid.NewGuid().ToString()}.pdf";
-            File.WriteAllBytes(file, doc.Content.ToArray());
-            var pdfProc = System.Diagnostics.Process.Start(file);
+            var file = $"{path}\\{pacient.LastName}{pacient.FirstName}{pacient.PatronymicName}.pdf";
+
+            if (File.Exists(file))
+            {
+                var pdfProc = System.Diagnostics.Process.Start(file);
+            }
+            else
+            {
+                var doc = await WebClient.GetPacientDocumentAsync(pacient);
+                Directory.CreateDirectory(path);
+
+                File.WriteAllBytes(file, doc.Content.ToArray());
+                var pdfProc = System.Diagnostics.Process.Start(file);
+                doc = null;
+            }
         }
 
         public async Task<IEnumerable<Doctor>> GetDoctorsAsync()
@@ -90,6 +99,24 @@ namespace RehabilitationCentre.Models
         public async Task DeleteToken()
         {
             await WebClient.DeleteToken();
+        }
+
+        public void ClearTempFolder()
+        {
+            var path = Directory.GetCurrentDirectory() + @"\Temp";
+            DirectoryInfo di = new DirectoryInfo(path);
+
+            if (di.Exists)
+            {
+                foreach (FileInfo file in di.EnumerateFiles())
+                {
+                    file.Delete();
+                }
+                foreach (DirectoryInfo dir in di.EnumerateDirectories())
+                {
+                    dir.Delete(true);
+                }
+            }
         }
     }
 }

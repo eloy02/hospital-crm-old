@@ -36,7 +36,16 @@ namespace WebClient
 
             System.Net.ServicePointManager.ServerCertificateValidationCallback = (senderX, certificate, chain, sslPolicyErrors) => { return true; };
 
+            request.AddParameter("token", Token, ParameterType.QueryString);
+
             IRestResponse<T> response = await client.ExecuteTaskAsync<T>(request);
+
+            if (response.StatusCode == System.Net.HttpStatusCode.Unauthorized)
+            {
+                await GetProgrammTokenAsync();
+
+                await ExecuteAsync<T>(request);
+            }
 
             if (!response.IsSuccessful)
                 return default(T);
@@ -46,6 +55,8 @@ namespace WebClient
 
         public async Task GetProgrammTokenAsync()
         {
+            var client = new RestClient(BaseUrl);
+
             var request = new JsonRest.RestRequest(Method.GET)
             {
                 Resource = "authenticator"
@@ -53,12 +64,12 @@ namespace WebClient
 
             request.AddParameter("programmGuid", ProgrammGuid, ParameterType.QueryString);
 
-            var r = await ExecuteAsync<Guid>(request);
+            var r = await client.ExecuteGetTaskAsync<Guid>(request);
 
-            if (r == default(Guid))
+            if (!r.IsSuccessful)
                 throw new Exception("Ошибка авторизации программы");
 
-            Token = r;
+            Token = r.Data;
         }
 
         public async Task<IEnumerable<Pacient>> GetPacientsAsync()
@@ -67,8 +78,6 @@ namespace WebClient
             {
                 Resource = "pacients"
             };
-
-            request.AddParameter("token", Token, ParameterType.QueryString);
 
             var r = await ExecuteAsync<List<Pacient>>(request);
 
@@ -81,8 +90,6 @@ namespace WebClient
             {
                 Resource = "CommonData/doctors"
             };
-
-            request.AddParameter("token", Token, ParameterType.QueryString);
 
             var r = await ExecuteAsync<List<Doctor>>(request);
 
@@ -98,12 +105,18 @@ namespace WebClient
                 Resource = "pacients"
             };
 
-            request.AddParameter("token", Token, ParameterType.QueryString);
             request.AddJsonBody(pacient);
+            request.AddParameter("token", Token, ParameterType.QueryString);
 
             var r = await client.ExecutePostTaskAsync(request);
 
-            if (!r.IsSuccessful)
+            if (r.StatusCode == System.Net.HttpStatusCode.Unauthorized)
+            {
+                await GetProgrammTokenAsync();
+
+                await SavePacientAsync(pacient);
+            }
+            else if (!r.IsSuccessful)
                 throw new Exception($"Request status = {r.ResponseStatus}");
         }
 
@@ -116,32 +129,33 @@ namespace WebClient
                 Resource = "Documents"
             };
 
-            request.AddParameter("token", Token, ParameterType.QueryString);
             request.AddParameter("pacientId", pacientId, ParameterType.QueryString);
             request.AddJsonBody(doc);
 
             var r = await client.ExecutePostTaskAsync(request);
 
-            if (!r.IsSuccessful)
+            if (r.StatusCode == System.Net.HttpStatusCode.Unauthorized)
+            {
+                await GetProgrammTokenAsync();
+
+                await SavePacientsDocumentAsync(pacientId, doc);
+            }
+            else if (!r.IsSuccessful)
                 throw new Exception($"Request status = {r.ResponseStatus}");
         }
 
         public async Task<Document> GetPacientDocumentAsync(Pacient pacient)
         {
-            var client = new RestClient(BaseUrl);
-
             var request = new JsonRest.RestRequest(Method.GET)
             {
                 Resource = "Documents"
             };
 
-            request.AddParameter("token", Token, ParameterType.QueryString);
-
             request.AddParameter("pacientId", pacient.Id, ParameterType.QueryString);
 
-            var r = await client.ExecuteGetTaskAsync<Document>(request);
+            var r = await ExecuteAsync<Document>(request);
 
-            return r.Data;
+            return r;
         }
 
         public async Task SavePacientVisitAsync(Pacient pacient, Doctor doc)
@@ -162,12 +176,17 @@ namespace WebClient
 
             request.JsonSerializer = new NewtonsoftJsonSerializer();
 
-            request.AddParameter("token", Token, ParameterType.QueryString);
             request.AddJsonBody(visit);
 
             var r = await client.ExecutePostTaskAsync(request);
 
-            if (!r.IsSuccessful)
+            if (r.StatusCode == System.Net.HttpStatusCode.Unauthorized)
+            {
+                await GetProgrammTokenAsync();
+
+                await SavePacientVisitAsync(pacient, doc);
+            }
+            else if (!r.IsSuccessful)
                 throw new Exception($"Request status = {r.ResponseStatus}");
         }
 
@@ -206,6 +225,15 @@ namespace WebClient
                     request.AddJsonBody(doc);
 
                     var r = await client.ExecuteTaskAsync(request);
+
+                    if (r.StatusCode == System.Net.HttpStatusCode.Unauthorized)
+                    {
+                        await GetProgrammTokenAsync();
+
+                        await UpdatePacientsDataAsync(pacient);
+                    }
+                    else if (!r.IsSuccessful)
+                        throw new Exception($"Request status = {r.ResponseStatus}");
                 }
             });
 
@@ -222,6 +250,15 @@ namespace WebClient
                 request.AddJsonBody(pacient);
 
                 var r = await client.ExecuteTaskAsync(request);
+
+                if (r.StatusCode == System.Net.HttpStatusCode.Unauthorized)
+                {
+                    await GetProgrammTokenAsync();
+
+                    await UpdatePacientsDataAsync(pacient);
+                }
+                else if (!r.IsSuccessful)
+                    throw new Exception($"Request status = {r.ResponseStatus}");
             });
 
             await Task.WhenAll(t1, t2);
@@ -252,8 +289,6 @@ namespace WebClient
             };
 
             request.JsonSerializer = new NewtonsoftJsonSerializer();
-
-            request.AddParameter("token", Token, ParameterType.QueryString);
 
             request.AddParameter("pacientId", pacient.Id, ParameterType.QueryString);
 
