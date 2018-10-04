@@ -144,12 +144,16 @@ namespace PacientRegistry.ViewModels
                 PacientOld.DocumentPath = PdfPath;
             }
 
-            await Model.UpdatePacientAsync(PacientOld);
+            var ok = await Model.UpdatePacientAsync(PacientOld);
+
+            if (ok == false)
+                MessageBox.Show("Ошибка сервера. Повторите действие еще раз.");
 
             UpdatingPacientButtonVisibility = true;
             UpdatingPacientVisibility = Visibility.Collapsed;
 
-            TryClose();
+            if (ok)
+                TryClose();
         }
     }
 }

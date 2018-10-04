@@ -235,7 +235,12 @@ namespace RehabilitationCentre.ViewModels
         {
             if (SelectedPacient != null && SelectedDoctor != null)
             {
-                await Model.SetPacientVisitAsync(SelectedPacient, SelectedDoctor);
+                var ok = await Model.SetPacientVisitAsync(SelectedPacient, SelectedDoctor);
+
+                if (ok)
+                    ChooseDoctor = false;
+                else
+                    MessageBox.Show("Ошибка соединения с сервером, повторите действие");
             }
         }
 

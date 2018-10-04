@@ -50,14 +50,8 @@
                             Style="{StaticResource MaterialDesignFlatButton}"
                             IsDefault="True"
                             Margin="0 8 8 0"
-                            Command="materialDesign:DialogHost.CloseDialogCommand"
                             cal:Message.Attach="[Event Click] = [Action SetVisit]"
                             IsEnabled="{Binding CanSetVisit}">
-                        <Button.CommandParameter>
-                            <system:Boolean xmlns:system="clr-namespace:System;assembly=mscorlib">
-                                True
-                            </system:Boolean>
-                        </Button.CommandParameter>
                         Принять
                     </Button>
                     <Button

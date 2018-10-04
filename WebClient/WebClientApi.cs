@@ -53,6 +53,28 @@ namespace WebClient
             return response.Data;
         }
 
+        private async Task<IRestResponse> ExecuteAsync(JsonRest.RestRequest request)
+        {
+            var client = new RestClient(BaseUrl);
+
+            request.RequestFormat = DataFormat.Json;
+
+            System.Net.ServicePointManager.ServerCertificateValidationCallback = (senderX, certificate, chain, sslPolicyErrors) => { return true; };
+
+            request.AddParameter("token", Token, ParameterType.QueryString);
+
+            IRestResponse response = await client.ExecuteTaskAsync(request);
+
+            if (response.StatusCode == System.Net.HttpStatusCode.Unauthorized)
+            {
+                await GetProgrammTokenAsync();
+
+                await ExecuteAsync(request);
+            }
+
+            return response;
+        }
+
         public async Task GetProgrammTokenAsync()
         {
             var client = new RestClient(BaseUrl);
@@ -96,34 +118,24 @@ namespace WebClient
             return r;
         }
 
-        public async Task SavePacientAsync(Pacient pacient)
+        public async Task<bool> SavePacientAsync(Pacient pacient)
         {
-            var client = new RestClient(BaseUrl);
-
             var request = new JsonRest.RestRequest(Method.POST)
             {
                 Resource = "pacients"
             };
 
             request.AddJsonBody(pacient);
-            request.AddParameter("token", Token, ParameterType.QueryString);
 
-            var r = await client.ExecutePostTaskAsync(request);
+            var r = await ExecuteAsync(request);
 
-            if (r.StatusCode == System.Net.HttpStatusCode.Unauthorized)
-            {
-                await GetProgrammTokenAsync();
-
-                await SavePacientAsync(pacient);
-            }
-            else if (!r.IsSuccessful)
-                throw new Exception($"Request status = {r.ResponseStatus}");
+            if (r.StatusCode == System.Net.HttpStatusCode.OK)
+                return true;
+            else return false;
         }
 
-        public async Task SavePacientsDocumentAsync(int pacientId, Document doc)
+        public async Task<bool> SavePacientsDocumentAsync(int pacientId, Document doc)
         {
-            var client = new RestClient(BaseUrl);
-
             var request = new JsonRest.RestRequest(Method.POST)
             {
                 Resource = "Documents"
@@ -132,16 +144,11 @@ namespace WebClient
             request.AddParameter("pacientId", pacientId, ParameterType.QueryString);
             request.AddJsonBody(doc);
 
-            var r = await client.ExecutePostTaskAsync(request);
+            var r = await ExecuteAsync(request);
 
-            if (r.StatusCode == System.Net.HttpStatusCode.Unauthorized)
-            {
-                await GetProgrammTokenAsync();
-
-                await SavePacientsDocumentAsync(pacientId, doc);
-            }
-            else if (!r.IsSuccessful)
-                throw new Exception($"Request status = {r.ResponseStatus}");
+            if (r.StatusCode == System.Net.HttpStatusCode.OK)
+                return true;
+            else return false;
         }
 
         public async Task<Document> GetPacientDocumentAsync(Pacient pacient)
@@ -158,7 +165,7 @@ namespace WebClient
             return r;
         }
 
-        public async Task SavePacientVisitAsync(Pacient pacient, Doctor doc)
+        public async Task<bool> SavePacientVisitAsync(Pacient pacient, Doctor doc)
         {
             var visit = new VisitLog
             {
@@ -166,8 +173,6 @@ namespace WebClient
                 Pacient = pacient,
                 VisitDateTime = DateTime.Now
             };
-
-            var client = new RestClient(BaseUrl);
 
             var request = new JsonRest.RestRequest(Method.POST)
             {
@@ -178,90 +183,66 @@ namespace WebClient
 
             request.AddJsonBody(visit);
 
-            var r = await client.ExecutePostTaskAsync(request);
+            var r = await ExecuteAsync(request);
 
-            if (r.StatusCode == System.Net.HttpStatusCode.Unauthorized)
-            {
-                await GetProgrammTokenAsync();
-
-                await SavePacientVisitAsync(pacient, doc);
-            }
-            else if (!r.IsSuccessful)
-                throw new Exception($"Request status = {r.ResponseStatus}");
+            if (r.StatusCode == System.Net.HttpStatusCode.OK)
+                return true;
+            else return false;
         }
 
-        public async Task UpdatePacientsDataAsync(Pacient pacient)
+        public async Task<bool> UpdatePacientDocumentAsync(string filePath, Pacient pacient)
         {
-            var t1 = Task.Run(async () =>
+            if (!string.IsNullOrEmpty(filePath))
             {
-                if (!string.IsNullOrEmpty(pacient.DocumentPath))
+                byte[] file = null;
+
+                using (var stream = new FileStream(filePath, FileMode.Open, FileAccess.Read))
                 {
-                    byte[] file = null;
-
-                    using (var stream = new FileStream(pacient.DocumentPath, FileMode.Open, FileAccess.Read))
+                    using (var reader = new BinaryReader(stream))
                     {
-                        using (var reader = new BinaryReader(stream))
-                        {
-                            file = reader.ReadBytes((int)stream.Length);
-                        }
+                        file = reader.ReadBytes((int)stream.Length);
                     }
-
-                    var doc = new Document
-                    {
-                        Content = file.ToList(),
-                        Id = 0,
-                        Name = $"{pacient.LastName}{pacient.FirstName}"
-                    };
-
-                    var client = new RestClient(BaseUrl);
-
-                    var request = new JsonRest.RestRequest(Method.PUT)
-                    {
-                        Resource = "Documents"
-                    };
-
-                    request.AddParameter("token", Token, ParameterType.QueryString);
-                    request.AddParameter("pacientId", pacient.Id, ParameterType.QueryString);
-                    request.AddJsonBody(doc);
-
-                    var r = await client.ExecuteTaskAsync(request);
-
-                    if (r.StatusCode == System.Net.HttpStatusCode.Unauthorized)
-                    {
-                        await GetProgrammTokenAsync();
-
-                        await UpdatePacientsDataAsync(pacient);
-                    }
-                    else if (!r.IsSuccessful)
-                        throw new Exception($"Request status = {r.ResponseStatus}");
                 }
-            });
 
-            var t2 = Task.Run(async () =>
-            {
-                var client = new RestClient(BaseUrl);
+                var doc = new Document
+                {
+                    Content = file.ToList(),
+                    Id = 0,
+                    Name = $"{pacient.LastName}{pacient.FirstName}"
+                };
 
                 var request = new JsonRest.RestRequest(Method.PUT)
                 {
-                    Resource = "Pacients"
+                    Resource = "Documents"
                 };
 
                 request.AddParameter("pacientId", pacient.Id, ParameterType.QueryString);
-                request.AddJsonBody(pacient);
+                request.AddJsonBody(doc);
 
-                var r = await client.ExecuteTaskAsync(request);
+                var r = await ExecuteAsync(request);
 
-                if (r.StatusCode == System.Net.HttpStatusCode.Unauthorized)
-                {
-                    await GetProgrammTokenAsync();
+                if (r.StatusCode == System.Net.HttpStatusCode.OK)
+                    return true;
+                else return false;
+            }
+            else return false;
+        }
 
-                    await UpdatePacientsDataAsync(pacient);
-                }
-                else if (!r.IsSuccessful)
-                    throw new Exception($"Request status = {r.ResponseStatus}");
-            });
+        public async Task<bool> UpdatePacientsDataAsync(Pacient pacient)
+        {
+            var request = new JsonRest.RestRequest(Method.PUT)
+            {
+                Resource = "Pacients"
+            };
 
-            await Task.WhenAll(t1, t2);
+            request.AddParameter("pacientId", pacient.Id, ParameterType.QueryString);
+            request.AddJsonBody(pacient);
+
+            var r = await ExecuteAsync(request);
+
+            if (r.StatusCode == System.Net.HttpStatusCode.OK)
+                return true;
+            else return false;
         }
 
         public async Task DeleteToken()

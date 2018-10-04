@@ -18,7 +18,7 @@ namespace PacientRegistry.Models
             WebClient = webClient;
         }
 
-        public async Task SavePacientAsync(Pacient pacient)
+        public async Task<bool> SavePacientAsync(Pacient pacient)
         {
             byte[] file = null;
 
@@ -38,7 +38,9 @@ namespace PacientRegistry.Models
 
             pacient.Document = doc;
 
-            await WebClient.SavePacientAsync(pacient);
+            var r = await WebClient.SavePacientAsync(pacient);
+
+            return r;
         }
 
         public async Task GetProgrammTokenAsync()

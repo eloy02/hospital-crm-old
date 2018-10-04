@@ -446,6 +446,8 @@ namespace PacientRegistry
                         Pacients.Clear();
                         Pacients.AddRange(r);
                     }
+
+                    LoadSities();
                 });
             }
             catch (Exception ex)
@@ -456,7 +458,7 @@ namespace PacientRegistry
 
         protected override async void OnDeactivate(bool close)
         {
-            await Model.DeleteToken();
+            base.OnDeactivate(close);
 
             var path = Directory.GetCurrentDirectory() + @"\Temp";
             DirectoryInfo di = new DirectoryInfo(path);
@@ -473,7 +475,7 @@ namespace PacientRegistry
                 }
             }
 
-            base.OnDeactivate(close);
+            await Model.DeleteToken();
         }
 
         #region Methods
@@ -547,11 +549,16 @@ namespace PacientRegistry
                 Street = this.Street
             };
 
-            await Model.SavePacientAsync(pacient);
+            var ok = await Model.SavePacientAsync(pacient);
 
-            ClearForms();
+            if (ok)
+            {
+                ClearForms();
 
-            await UpdatePacients();
+                await UpdatePacients();
+            }
+            else
+                MessageBox.Show("Ошибка соединения с сервером, повторите действие");
 
             SavingPacientVisibility = Visibility.Collapsed;
         }

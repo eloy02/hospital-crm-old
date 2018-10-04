@@ -78,6 +78,7 @@ namespace RehabilitationCentre.Models
 
                 File.WriteAllBytes(file, doc.Content.ToArray());
                 var pdfProc = System.Diagnostics.Process.Start(file);
+
                 doc = null;
             }
         }
@@ -91,9 +92,11 @@ namespace RehabilitationCentre.Models
             else return null;
         }
 
-        public async Task SetPacientVisitAsync(Pacient selectedPacient, Doctor selectedDoctor)
+        public async Task<bool> SetPacientVisitAsync(Pacient selectedPacient, Doctor selectedDoctor)
         {
-            await WebClient.SavePacientVisitAsync(selectedPacient, selectedDoctor);
+            var r = await WebClient.SavePacientVisitAsync(selectedPacient, selectedDoctor);
+
+            return r;
         }
 
         public async Task DeleteToken()

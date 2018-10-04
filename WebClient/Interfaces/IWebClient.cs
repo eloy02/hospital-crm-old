@@ -14,16 +14,18 @@ namespace WebClient.Interfaces
 
         Task<IEnumerable<Doctor>> GetDoctorsAsync();
 
-        Task SavePacientAsync(Pacient pacient);
+        Task<bool> SavePacientAsync(Pacient pacient);
 
-        Task SavePacientsDocumentAsync(int pacientId, Document doc);
+        Task<bool> SavePacientsDocumentAsync(int pacientId, Document doc);
 
         Task<Document> GetPacientDocumentAsync(Pacient pacient);
 
-        Task SavePacientVisitAsync(Pacient pacient, Doctor doc);
+        Task<bool> SavePacientVisitAsync(Pacient pacient, Doctor doc);
 
-        Task UpdatePacientsDataAsync(Pacient pacient);
+        Task<bool> UpdatePacientsDataAsync(Pacient pacient);
 
         Task DeleteToken();
+
+        Task<bool> UpdatePacientDocumentAsync(string filePath, Pacient pacient);
     }
 }

@@ -34,9 +34,26 @@ namespace PacientRegistry.Models
             }
         }
 
-        public async Task UpdatePacientAsync(Pacient pacient)
+        public async Task<bool> UpdatePacientAsync(Pacient pacient)
         {
-            await WebClientApi.UpdatePacientsDataAsync(pacient);
+            var res1 = false;
+            var res2 = false;
+
+            var t1 = Task.Run(async () =>
+            {
+                if (!string.IsNullOrEmpty(pacient.DocumentPath))
+                {
+                    var r = await WebClientApi.UpdatePacientDocumentAsync(pacient.DocumentPath, pacient);
+                    res1 = r;
+                }
+                else res1 = true;
+            });
+
+            res2 = await WebClientApi.UpdatePacientsDataAsync(pacient);
+
+            if (res1 && res2)
+                return true;
+            else return false;
         }
     }
 }
