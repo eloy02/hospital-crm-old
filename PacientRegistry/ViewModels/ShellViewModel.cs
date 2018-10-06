@@ -433,6 +433,8 @@ namespace PacientRegistry
 
             Timer.Start();
 
+            LoadSities();
+
             try
             {
                 Task.Run(async () =>

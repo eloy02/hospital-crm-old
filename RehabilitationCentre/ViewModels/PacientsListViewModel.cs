@@ -4,6 +4,7 @@ using Core.Types.Enumerations;
 using MaterialDesignThemes.Wpf;
 using RehabilitationCentre.Models;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
@@ -59,7 +60,7 @@ namespace RehabilitationCentre.ViewModels
                 _firstNameForFilter = value;
                 NotifyOfPropertyChange(() => FirstNameForFilter);
                 NotifyOfPropertyChange(() => CanClearFilter);
-                FilterPacients();
+                GetPacients();
             }
         }
 
@@ -77,7 +78,7 @@ namespace RehabilitationCentre.ViewModels
                 _lastNameForFilter = value;
                 NotifyOfPropertyChange(() => LastNameForFilter);
                 NotifyOfPropertyChange(() => CanClearFilter);
-                FilterPacients();
+                GetPacients();
             }
         }
 
@@ -89,7 +90,7 @@ namespace RehabilitationCentre.ViewModels
                 _pacientPhoneNumberForFilter = value;
                 NotifyOfPropertyChange(() => PacientPhoneNumberForFilter);
                 NotifyOfPropertyChange(() => CanClearFilter);
-                FilterPacients();
+                GetPacients();
             }
         }
 
@@ -101,7 +102,7 @@ namespace RehabilitationCentre.ViewModels
                 _pacientTypeForFilter = value;
                 NotifyOfPropertyChange(() => PacientTypeForFilter);
                 NotifyOfPropertyChange(() => CanClearFilter);
-                FilterPacients();
+                GetPacients();
             }
         }
 
@@ -113,7 +114,7 @@ namespace RehabilitationCentre.ViewModels
                 _parentPhoneNumberForFilter = value;
                 NotifyOfPropertyChange(() => ParentPhoneNumberForFilter);
                 NotifyOfPropertyChange(() => CanClearFilter);
-                FilterPacients();
+                GetPacients();
             }
         }
 
@@ -125,7 +126,7 @@ namespace RehabilitationCentre.ViewModels
                 _patronymicNameForFilter = value;
                 NotifyOfPropertyChange(() => PatronymicNameForFilter);
                 NotifyOfPropertyChange(() => CanClearFilter);
-                FilterPacients();
+                GetPacients();
             }
         }
 
@@ -187,11 +188,11 @@ namespace RehabilitationCentre.ViewModels
             await Model.DeleteToken();
         }
 
-        public void FilterPacients()
+        public List<Pacient> FilterPacients(List<Pacient> pacients)
         {
             IsPacientsLoading = true;
 
-            var pac = Model.PacientsList.Select(p => p).ToList();
+            var pac = pacients.Select(p => p).ToList();
 
             if (pac != null)
             {
@@ -224,11 +225,53 @@ namespace RehabilitationCentre.ViewModels
                 {
                     pac = pac.Where(p => p.PacientType == PacientTypeForFilter.Value).ToList();
                 }
-
-                Pacients.Clear();
-                Pacients.AddRange(pac);
             }
+
             IsPacientsLoading = false;
+
+            return pac;
+        }
+
+        public void GetPacients()
+        {
+            //фильтруем данные которые уже есть
+            var filteredRequests = FilterPacients(Pacients.ToList());
+            //удаляем из списка для интерфейса, пациентов которых нет в отфильтрованном списке
+            var temp1 = new List<Pacient>();
+            //ищем тех пациентов, которых нет в отфильтрованном списке, но есть в основном
+            foreach (var r in Pacients)
+            {
+                if (filteredRequests.Contains(r) == false)
+                {
+                    temp1.Add(r);
+                }
+            }
+            //удаляем из основного списка данные из temp
+            temp1.ForEach(r => Pacients.Remove(r));
+
+            //--//
+
+            //дальше обновляем данные из данных модели
+            var rawList = Model.PacientsList.Select(r => r).ToList();
+            var pacientList = FilterPacients(rawList);
+
+            if (pacientList != null || pacientList.Count == 0)
+            {
+                var reqs = pacientList.Select(r => r).ToDictionary(r => r.Id);
+
+                for (int i = 0; i < Pacients.Count; i++)
+                {
+                    if (reqs.TryGetValue(Pacients[i].Id, out var r))
+                    {
+                        Pacients[i] = r; //перебиваем существующих пациентов данными из модели
+                        reqs.Remove(r.Id); // и убираем ее из списка из модели
+                    }
+                }
+                //добавляем оставшихся пациентов из модели в конец списка обращений
+                Pacients.AddRange(reqs.Values);
+
+                Pacients.Refresh();
+            }
         }
 
         public async void SetVisit()
@@ -276,7 +319,7 @@ namespace RehabilitationCentre.ViewModels
 
         private void Timer_Tick(object sender, EventArgs e)
         {
-            FilterPacients();
+            GetPacients();
 
             NotifyOfPropertyChange(() => CanSetVisit);
         }
@@ -362,7 +405,7 @@ namespace RehabilitationCentre.ViewModels
                         PacientTypes.Add(new PacientTypeView { Name = v.GetDescription(), Value = v });
                     });
 
-                    FilterPacients();
+                    GetPacients();
 
                     IsPacientsLoading = false;
                 }
