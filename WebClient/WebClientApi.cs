@@ -275,6 +275,8 @@ namespace WebClient
 
             var r = await ExecuteAsync<List<VisitLog>>(request);
 
+            r.ForEach(d => d.VisitDateTime = d.VisitDateTime.AddHours(3));
+
             return r;
         }
     }

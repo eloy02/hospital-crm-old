@@ -58,12 +58,7 @@
                             Style="{StaticResource MaterialDesignFlatButton}"
                             IsCancel="True"
                             Margin="0 8 8 0"
-                            Command="materialDesign:DialogHost.CloseDialogCommand">
-                        <Button.CommandParameter>
-                            <system:Boolean xmlns:system="clr-namespace:System;assembly=mscorlib">
-                                False
-                            </system:Boolean>
-                        </Button.CommandParameter>
+                            cal:Message.Attach="[Event Click] = [Action CancelSetVisit]">
                         Отмена
                     </Button>
                 </StackPanel>

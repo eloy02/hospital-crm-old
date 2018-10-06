@@ -238,7 +238,11 @@ namespace RehabilitationCentre.ViewModels
                 var ok = await Model.SetPacientVisitAsync(SelectedPacient, SelectedDoctor);
 
                 if (ok)
+                {
                     ChooseDoctor = false;
+
+                    Timer.Start();
+                }
                 else
                     MessageBox.Show("Ошибка соединения с сервером, повторите действие");
             }
@@ -246,6 +250,9 @@ namespace RehabilitationCentre.ViewModels
 
         public void ShowArrivalDialog()
         {
+            Timer.Stop();
+
+            SelectedDoctor = null;
             ChooseDoctor = true;
         }
 
@@ -270,6 +277,8 @@ namespace RehabilitationCentre.ViewModels
         private void Timer_Tick(object sender, EventArgs e)
         {
             FilterPacients();
+
+            NotifyOfPropertyChange(() => CanSetVisit);
         }
 
         #endregion Methods
@@ -368,6 +377,12 @@ namespace RehabilitationCentre.ViewModels
         {
             public string Name { get; set; }
             public EPatientType Value { get; set; }
+        }
+
+        public void CancelSetVisit()
+        {
+            Timer.Start();
+            ChooseDoctor = false;
         }
     }
 }
