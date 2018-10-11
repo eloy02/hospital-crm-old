@@ -19,8 +19,8 @@ namespace WebApi.Controllers
 
         // GET: api/Authenticator
         [HttpGet]
-        [Route("api/[controller]")]
-        public async Task<ActionResult<Guid>> LogInUserAsync(string programmGuid, Core.Types.User user, string password)
+        [Route("api/[controller]/login")]
+        public async Task<ActionResult<Guid>> LogInUserAsync([FromQuery] int userId, [FromQuery]string programmGuid, [FromQuery]string password)
         {
             if (string.IsNullOrEmpty(programmGuid))
                 return BadRequest("Не все данные заполнены");
@@ -32,9 +32,7 @@ namespace WebApi.Controllers
 
             if (checkRes == true)
             {
-                var userDb = new User().Assign(user);
-
-                if (await DB.CheckUserAsync(userDb, password))
+                if (await DB.CheckUserAsync(userId, password))
                 {
                     var token = Guid.NewGuid();
 

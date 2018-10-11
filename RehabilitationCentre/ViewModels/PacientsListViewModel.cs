@@ -9,6 +9,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Threading;
+using WebClient.Interfaces;
 
 namespace RehabilitationCentre.ViewModels
 {
@@ -16,6 +17,7 @@ namespace RehabilitationCentre.ViewModels
     {
         #region Private fields
 
+        public readonly IWebClient WebClient;
         private bool _chooseDoctor = false;
         private string _firstNameForFilter;
         private bool _isPacientsLoading = false;
@@ -329,9 +331,10 @@ namespace RehabilitationCentre.ViewModels
         private PacientsListModel Model;
         private IWindowManager WindowManager;
 
-        public PacientsListViewModel(IWindowManager theWindowManager, PacientsListModel model)
+        public PacientsListViewModel(IWebClient webClient, IWindowManager theWindowManager, PacientsListModel model)
         {
             Model = model;
+            WebClient = webClient;
 
             Timer = new DispatcherTimer()
             {
@@ -382,38 +385,46 @@ namespace RehabilitationCentre.ViewModels
         protected override void OnInitialize()
         {
             base.OnInitialize();
+            var w = WindowManager.ShowDialog(new UserLoginViewModel(WebClient));
 
-            Task.Run(async () =>
+            if (w == false)
             {
-                try
+                Application.Current.Shutdown();
+            }
+            else
+            {
+                Task.Run(async () =>
                 {
-                    IsPacientsLoading = true;
-
-                    await Model.GetProgrammTokenAsync();
-
-                    var doc = await Model.GetDoctorsAsync();
-
-                    if (doc != null)
-                        Doctors.AddRange(doc);
-
-                    await Model.GetPacientsAsync();
-
-                    var values = Enum.GetValues(typeof(EPatientType)).Cast<EPatientType>().ToList();
-
-                    values.ForEach(v =>
+                    try
                     {
-                        PacientTypes.Add(new PacientTypeView { Name = v.GetDescription(), Value = v });
-                    });
+                        IsPacientsLoading = true;
 
-                    GetPacients();
+                        //await Model.GetProgrammTokenAsync();
 
-                    IsPacientsLoading = false;
-                }
-                catch (Exception ex)
-                {
-                    MessageBox.Show(ex.Message, ex.Source, MessageBoxButton.OK);
-                }
-            });
+                        var doc = await Model.GetDoctorsAsync();
+
+                        if (doc != null)
+                            Doctors.AddRange(doc);
+
+                        await Model.GetPacientsAsync();
+
+                        var values = Enum.GetValues(typeof(EPatientType)).Cast<EPatientType>().ToList();
+
+                        values.ForEach(v =>
+                        {
+                            PacientTypes.Add(new PacientTypeView { Name = v.GetDescription(), Value = v });
+                        });
+
+                        GetPacients();
+
+                        IsPacientsLoading = false;
+                    }
+                    catch (Exception ex)
+                    {
+                        MessageBox.Show(ex.Message, ex.Source, MessageBoxButton.OK);
+                    }
+                });
+            }
         }
 
         public class PacientTypeView

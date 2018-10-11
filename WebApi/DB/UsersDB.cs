@@ -32,11 +32,11 @@ namespace WebApi.DB
             }
         }
 
-        public async Task<bool> CheckUserAsync(User user, string password)
+        public async Task<bool> CheckUserAsync(int userId, string password)
         {
             using (var db = new HospitalContext())
             {
-                var dbuser = await db.User.FindAsync(user.Id);
+                var dbuser = await db.User.FindAsync(userId);
 
                 if (dbuser != null)
                 {

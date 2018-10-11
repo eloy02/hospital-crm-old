@@ -64,15 +64,15 @@ namespace WebApi.Controllers
 
         [HttpPost]
         [Route("api/[controller]/users")]
-        public async Task<ActionResult> AddUserAsync(Guid? token, [FromBody] Core.Types.User user, string password)
+        public async Task<ActionResult> AddUserAsync(string programmGuid, [FromBody] Core.Types.User user, string password)
         {
-            if (token == null)
+            if (string.IsNullOrEmpty(programmGuid))
                 return Unauthorized();
 
-            if (token.HasValue && !AuthTokens.Contains(token.Value))
+            if (!await DB.CheckProgrammGuid(programmGuid))
                 return Unauthorized();
 
-            if (token.HasValue && AuthTokens.Contains(token.Value) && user != null)
+            if (await DB.CheckProgrammGuid(programmGuid) && user != null)
             {
                 var userdb = new Models.User().Assign(user);
                 await DB.AddUserAsync(userdb, password);

@@ -17,10 +17,11 @@ namespace WebClient
     {
         private static IWindsorContainer _container;
 
-        //private Uri BaseUrl = new Uri("https://localhost:44391/api");
+        private Uri BaseUrl = new Uri("https://localhost:44391/api");
 
-        private Uri BaseUrl = new Uri("http://eloy102-001-site1.dtempurl.com/api");
+        //private Uri BaseUrl = new Uri("http://eloy102-001-site1.dtempurl.com/api");
         private string ProgrammGuid = "2F5F714611C34EC5A2D6F06DEFD0AB084A940477EBED4BE4BC62-452D6B92D972";
+
         private Guid Token;
         private User CurrentUser;
         private string UserPassword;
@@ -81,25 +82,25 @@ namespace WebClient
         {
             var client = new RestClient(BaseUrl);
 
-            var request = new JsonRest.RestRequest(Method.GET)
+            var request = new RestSharp.RestRequest(Method.GET)
             {
-                Resource = "authenticator"
+                Resource = "authenticator/login"
             };
 
             if (CurrentUser == null && string.IsNullOrEmpty(UserPassword))
             {
                 request.AddParameter("programmGuid", ProgrammGuid, ParameterType.QueryString);
-                request.AddJsonBody(user);
+                request.AddParameter("userId", user.Id, ParameterType.QueryString);
                 request.AddParameter("password", password, ParameterType.QueryString);
             }
             else
             {
                 request.AddParameter("programmGuid", ProgrammGuid, ParameterType.QueryString);
-                request.AddJsonBody(CurrentUser);
+                request.AddParameter("userId", CurrentUser.Id, ParameterType.QueryString);
                 request.AddParameter("password", UserPassword, ParameterType.QueryString);
             }
 
-            var r = await client.ExecuteGetTaskAsync<Guid>(request);
+            var r = await client.ExecuteTaskAsync<Guid>(request);
 
             if (r.StatusCode == System.Net.HttpStatusCode.Unauthorized)
                 throw new UnauthorizedAccessException("Ошибка авторизации программы");
@@ -318,7 +319,7 @@ namespace WebClient
                 Resource = "CommonData/users"
             };
 
-            request.AddParameter(ProgrammGuid, ParameterType.QueryString);
+            request.AddParameter("programmGuid", ProgrammGuid, ParameterType.QueryString);
 
             request.JsonSerializer = new NewtonsoftJsonSerializer();
 
