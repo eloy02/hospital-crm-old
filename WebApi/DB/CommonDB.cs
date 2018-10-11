@@ -17,6 +17,19 @@ namespace WebApi.DB
             }
         }
 
+        public async Task<bool> AddDoctorAsync(Doctors doc)
+        {
+            using (var db = new HospitalContext())
+            {
+                doc.Id = 0;
+
+                db.Doctors.Add(doc);
+                await db.SaveChangesAsync();
+
+                return true;
+            }
+        }
+
         public async Task<bool> CheckProgrammGuid(string guid)
         {
             using (var db = new HospitalContext())
