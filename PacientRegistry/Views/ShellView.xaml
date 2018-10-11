@@ -64,7 +64,6 @@
                     <StackPanel>
                         <TextBlock
                             HorizontalAlignment="Center"
-                            FontSize="20"
                             FontWeight="Bold"
                             Text="Адрес">
                         </TextBlock>

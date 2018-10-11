@@ -428,16 +428,6 @@ namespace PacientRegistry
         {
             base.OnInitialize();
 
-            Timer = new DispatcherTimer();
-
-            Timer.Tick += new EventHandler(timer_Tick);
-
-            Timer.Interval = new TimeSpan(0, 0, 30);
-
-            Timer.Start();
-
-            LoadSities();
-
             try
             {
                 var w = WindowManager.ShowDialog(new UserLoginViewModel(WebClient));
@@ -448,6 +438,16 @@ namespace PacientRegistry
                 }
                 else
                 {
+                    Timer = new DispatcherTimer();
+
+                    Timer.Tick += new EventHandler(timer_Tick);
+
+                    Timer.Interval = new TimeSpan(0, 0, 30);
+
+                    Timer.Start();
+
+                    LoadSities();
+
                     Task.Run(async () =>
                     {
                         //await Model.GetProgrammTokenAsync();

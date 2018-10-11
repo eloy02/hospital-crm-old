@@ -341,7 +341,6 @@ namespace RehabilitationCentre.ViewModels
                 Interval = TimeSpan.FromSeconds(15)
             };
             Timer.Tick += Timer_Tick;
-            Timer.Start();
 
             WindowManager = theWindowManager;
         }
@@ -399,8 +398,6 @@ namespace RehabilitationCentre.ViewModels
                     {
                         IsPacientsLoading = true;
 
-                        //await Model.GetProgrammTokenAsync();
-
                         var doc = await Model.GetDoctorsAsync();
 
                         if (doc != null)
@@ -418,6 +415,8 @@ namespace RehabilitationCentre.ViewModels
                         GetPacients();
 
                         IsPacientsLoading = false;
+
+                        Timer.Start();
                     }
                     catch (Exception ex)
                     {
