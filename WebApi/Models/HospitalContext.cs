@@ -20,6 +20,7 @@ namespace WebApi.Models
         public virtual DbSet<Pacients> Pacients { get; set; }
         public virtual DbSet<VisitLogs> VisitLogs { get; set; }
         public virtual DbSet<ProgrammGUID> ProgrammGUID { get; set; }
+        public virtual DbSet<User> User { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
