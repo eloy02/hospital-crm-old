@@ -11,12 +11,14 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Threading;
+using WebClient.Interfaces;
 
 namespace PacientRegistry
 {
     public class ShellViewModel : Conductor<object>, IShell
     {
         private IWindowManager WindowManager;
+        public readonly IWebClient WebClient;
         private KladrClient kladrClient = new KladrClient("some_token", "some_key");
         private const string RegionId = "0200000000000";
         private DispatcherTimer Timer;
@@ -410,10 +412,11 @@ namespace PacientRegistry
 
         #endregion Bindable Collections
 
-        public ShellViewModel(IWindowManager theWindowManager, ShellModel model)
+        public ShellViewModel(IWebClient webClient, IWindowManager theWindowManager, ShellModel model)
         {
             Model = model;
             WindowManager = theWindowManager;
+            WebClient = webClient;
         }
 
         protected override void OnActivate()
@@ -437,20 +440,29 @@ namespace PacientRegistry
 
             try
             {
-                Task.Run(async () =>
+                var w = WindowManager.ShowDialog(new UserLoginViewModel(WebClient));
+
+                if (w == false)
                 {
-                    await Model.GetProgrammTokenAsync();
-
-                    var r = await Model.GetPacientsAsync();
-
-                    if (r != null)
+                    Application.Current.Shutdown();
+                }
+                else
+                {
+                    Task.Run(async () =>
                     {
-                        Pacients.Clear();
-                        Pacients.AddRange(r);
-                    }
+                        //await Model.GetProgrammTokenAsync();
 
-                    LoadSities();
-                });
+                        var r = await Model.GetPacientsAsync();
+
+                        if (r != null)
+                        {
+                            Pacients.Clear();
+                            Pacients.AddRange(r);
+                        }
+
+                        LoadSities();
+                    });
+                }
             }
             catch (Exception ex)
             {

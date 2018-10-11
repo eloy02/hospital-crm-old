@@ -1,0 +1,70 @@
+﻿<Window x:Class="PacientRegistry.Views.UserLoginView"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:PacientRegistry.Views"
+        xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+        mc:Ignorable="d"
+        Title="Авторизация" Height="400" Width="400"
+
+        WindowStyle="None"
+        TextOptions.TextFormattingMode="Ideal"
+        TextOptions.TextRenderingMode="Auto"
+        Background="{DynamicResource MaterialDesignPaper}"
+        FontFamily="{DynamicResource MaterialDesignFont}">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="140" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+
+        <materialDesign:ColorZone
+            Mode="PrimaryLight"
+            VerticalAlignment="Stretch">
+            <materialDesign:PackIcon
+            Kind="AccountCircle"
+            Height="128"
+            Width="128"
+            VerticalAlignment="Center"
+            HorizontalAlignment="Center" />
+        </materialDesign:ColorZone>
+
+        <StackPanel
+            Margin="10"
+            Grid.Row="1">
+            <ComboBox
+                Margin="0,20,0,0"
+                materialDesign:HintAssist.Hint="Оператор"
+                Style="{StaticResource MaterialDesignFloatingHintComboBox}" />
+            <TextBox
+                Margin="0,20,0,0"
+                materialDesign:HintAssist.Hint="Пароль"
+                Style="{StaticResource MaterialDesignFloatingHintTextBox}" />
+
+            <Button
+                Style="{StaticResource MaterialDesignRaisedButton}"
+                x:Name="Login"
+                HorizontalAlignment="Center"
+                VerticalAlignment="Center"
+                Margin="0,20,0,0"
+                Height="30"
+                Width="300">Вход</Button>
+
+            <Button
+                x:Name="Cancel"
+                Style="{StaticResource MaterialDesignRaisedButton}"
+                HorizontalAlignment="Center"
+                VerticalAlignment="Center"
+                Margin="0,10,0,0"
+                Height="30"
+                Width="300">Отмена</Button>
+
+            <TextBlock
+                Foreground = "Red"
+                HorizontalAlignment= "Center"
+                Margin= "10"
+                Visibility="{Binding IsWrongPassword}">Неверный логиин или пароль.</TextBlock>
+        </StackPanel>
+    </Grid>
+</Window>

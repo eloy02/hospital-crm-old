@@ -8,7 +8,7 @@ namespace WebClient.Interfaces
     {
         Task<IEnumerable<VisitLog>> GetVisitLogsForPacientAsync(Pacient pacient);
 
-        Task GetProgrammTokenAsync(User user = null, string password = null);
+        Task<bool> GetProgrammTokenAsync(User user = null, string password = null);
 
         Task<IEnumerable<Pacient>> GetPacientsAsync();
 

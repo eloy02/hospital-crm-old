@@ -77,7 +77,7 @@ namespace WebClient
             return response;
         }
 
-        public async Task GetProgrammTokenAsync(User user = null, string password = null)
+        public async Task<bool> GetProgrammTokenAsync(User user = null, string password = null)
         {
             var client = new RestClient(BaseUrl);
 
@@ -103,8 +103,22 @@ namespace WebClient
 
             if (r.StatusCode == System.Net.HttpStatusCode.Unauthorized)
                 throw new UnauthorizedAccessException("Ошибка авторизации программы");
+            else if (!r.IsSuccessful)
+            {
+                return false;
+            }
+            else
+            {
+                Token = r.Data;
 
-            Token = r.Data;
+                if (user != null)
+                    CurrentUser = user;
+
+                if (password != null)
+                    UserPassword = password;
+
+                return true;
+            }
         }
 
         public async Task<IEnumerable<Pacient>> GetPacientsAsync()
