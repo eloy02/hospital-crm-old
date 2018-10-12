@@ -8,7 +8,7 @@ namespace WebClient.Interfaces
     {
         Task<IEnumerable<VisitLog>> GetVisitLogsForPacientAsync(Pacient pacient);
 
-        Task GetProgrammTokenAsync();
+        Task<bool> GetProgrammTokenAsync(User user = null, string password = null);
 
         Task<IEnumerable<Pacient>> GetPacientsAsync();
 
@@ -27,5 +27,7 @@ namespace WebClient.Interfaces
         Task DeleteToken();
 
         Task<bool> UpdatePacientDocumentAsync(string filePath, Pacient pacient);
+
+        Task<IEnumerable<User>> GetUsersAsync();
     }
 }

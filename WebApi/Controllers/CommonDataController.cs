@@ -38,5 +38,71 @@ namespace WebApi.Controllers
                 return NotFound();
             else return new ActionResult<IEnumerable<Doctor>>(data);
         }
+
+        [HttpPost]
+        [Route("api/[controller]/doctors")]
+        public async Task<ActionResult> AddDoctorAsync(Guid? token, [FromBody] Doctor doc)
+        {
+            if (token == null)
+                return Unauthorized();
+
+            if (token.HasValue && !AuthTokens.Contains(token.Value))
+                return Unauthorized();
+
+            if (doc == null)
+                return BadRequest("Указаны не все параметры");
+            else
+            {
+                var docdb = new Doctors().Assign(doc);
+
+                if (await DB.AddDoctorAsync(docdb))
+                    return Ok();
+                else
+                    return BadRequest("Ошибка");
+            }
+        }
+
+        [HttpPost]
+        [Route("api/[controller]/users")]
+        public async Task<ActionResult> AddUserAsync(string programmGuid, [FromBody] Core.Types.User user, string password)
+        {
+            if (string.IsNullOrEmpty(programmGuid))
+                return Unauthorized();
+
+            if (!await DB.CheckProgrammGuid(programmGuid))
+                return Unauthorized();
+
+            if (await DB.CheckProgrammGuid(programmGuid) && user != null)
+            {
+                var userdb = new Models.User().Assign(user);
+                await DB.AddUserAsync(userdb, password);
+
+                return Ok();
+            }
+            else
+                return BadRequest("Указаны не все параметры");
+        }
+
+        [HttpGet]
+        [Route("api/[controller]/users")]
+        public async Task<ActionResult<IEnumerable<Core.Types.User>>> GetUsersAsync(string programmGuid)
+        {
+            if (string.IsNullOrEmpty(programmGuid))
+                return Unauthorized();
+            else if (await DB.CheckProgrammGuid(programmGuid))
+            {
+                var raw = await DB.GetUsersAsync();
+
+                if (raw != null)
+                {
+                    var data = raw.Select(u => new Core.Types.User().Assign(u)).ToList();
+
+                    return data;
+                }
+                else
+                    return NoContent();
+            }
+            else return Unauthorized();
+        }
     }
 }

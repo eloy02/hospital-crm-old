@@ -111,5 +111,25 @@ namespace WebApi
 
             return a;
         }
+
+        internal static Core.Types.User Assign(this Core.Types.User a, WebApi.Models.User src)
+        {
+            a.FirstName = src.FirstName;
+            a.Id = src.Id;
+            a.LastName = src.LastName;
+            a.PatronymicName = src.PatronymicName;
+
+            return a;
+        }
+
+        internal static WebApi.Models.User Assign(this WebApi.Models.User a, Core.Types.User src)
+        {
+            a.FirstName = src.FirstName;
+            a.Id = src.Id;
+            a.LastName = src.LastName;
+            a.PatronymicName = src.PatronymicName;
+
+            return a;
+        }
     }
 }

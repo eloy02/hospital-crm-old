@@ -21,7 +21,10 @@ namespace WebClient
 
         private Uri BaseUrl = new Uri("http://eloy102-001-site1.dtempurl.com/api");
         private string ProgrammGuid = "2F5F714611C34EC5A2D6F06DEFD0AB084A940477EBED4BE4BC62-452D6B92D972";
+
         private Guid Token;
+        private User CurrentUser;
+        private string UserPassword;
 
         internal static void Init(IWindsorContainer ioc)
         {
@@ -75,23 +78,48 @@ namespace WebClient
             return response;
         }
 
-        public async Task GetProgrammTokenAsync()
+        public async Task<bool> GetProgrammTokenAsync(User user = null, string password = null)
         {
             var client = new RestClient(BaseUrl);
 
-            var request = new JsonRest.RestRequest(Method.GET)
+            var request = new RestSharp.RestRequest(Method.GET)
             {
-                Resource = "authenticator"
+                Resource = "authenticator/login"
             };
 
-            request.AddParameter("programmGuid", ProgrammGuid, ParameterType.QueryString);
+            if (CurrentUser == null && string.IsNullOrEmpty(UserPassword))
+            {
+                request.AddParameter("programmGuid", ProgrammGuid, ParameterType.QueryString);
+                request.AddParameter("userId", user.Id, ParameterType.QueryString);
+                request.AddParameter("password", password, ParameterType.QueryString);
+            }
+            else
+            {
+                request.AddParameter("programmGuid", ProgrammGuid, ParameterType.QueryString);
+                request.AddParameter("userId", CurrentUser.Id, ParameterType.QueryString);
+                request.AddParameter("password", UserPassword, ParameterType.QueryString);
+            }
 
-            var r = await client.ExecuteGetTaskAsync<Guid>(request);
+            var r = await client.ExecuteTaskAsync<Guid>(request);
 
-            if (!r.IsSuccessful)
-                throw new Exception("Ошибка авторизации программы");
+            if (r.StatusCode == System.Net.HttpStatusCode.Unauthorized)
+                throw new UnauthorizedAccessException("Ошибка авторизации программы");
+            else if (!r.IsSuccessful)
+            {
+                return false;
+            }
+            else
+            {
+                Token = r.Data;
 
-            Token = r.Data;
+                if (user != null)
+                    CurrentUser = user;
+
+                if (password != null)
+                    UserPassword = password;
+
+                return true;
+            }
         }
 
         public async Task<IEnumerable<Pacient>> GetPacientsAsync()
@@ -276,6 +304,26 @@ namespace WebClient
             var r = await ExecuteAsync<List<VisitLog>>(request);
 
             r.ForEach(d => d.VisitDateTime = d.VisitDateTime.AddHours(3));
+
+            return r;
+        }
+
+        public async Task<IEnumerable<User>> GetUsersAsync()
+        {
+            var client = new RestClient(BaseUrl);
+
+            System.Net.ServicePointManager.ServerCertificateValidationCallback = (senderX, certificate, chain, sslPolicyErrors) => { return true; };
+
+            var request = new JsonRest.RestRequest(Method.GET)
+            {
+                Resource = "CommonData/users"
+            };
+
+            request.AddParameter("programmGuid", ProgrammGuid, ParameterType.QueryString);
+
+            request.JsonSerializer = new NewtonsoftJsonSerializer();
+
+            var r = await ExecuteAsync<List<User>>(request);
 
             return r;
         }
