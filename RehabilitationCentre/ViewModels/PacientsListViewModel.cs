@@ -417,6 +417,7 @@ namespace RehabilitationCentre.ViewModels
                         IsPacientsLoading = false;
 
                         Timer.Start();
+                        Model.Timer.Start();
                     }
                     catch (Exception ex)
                     {

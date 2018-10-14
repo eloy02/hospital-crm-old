@@ -12,7 +12,7 @@ namespace RehabilitationCentre.Models
     public class PacientsListModel
     {
         public readonly IWebClient WebClient;
-        private DispatcherTimer Timer;
+        public DispatcherTimer Timer;
 
         public List<Pacient> PacientsList = new List<Pacient>();
 
@@ -26,8 +26,6 @@ namespace RehabilitationCentre.Models
             };
 
             Timer.Tick += Timer_Tick;
-
-            Timer.Start();
         }
 
         public async Task GetProgrammTokenAsync()
