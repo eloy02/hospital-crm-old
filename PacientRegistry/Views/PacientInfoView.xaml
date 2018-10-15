@@ -76,7 +76,7 @@
                         </Grid>
 
                         <Grid
-                    Margin="10">
+                            Margin="10">
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="*" />
                                 <ColumnDefinition Width="10" />
@@ -124,10 +124,10 @@
                     Margin="0,15,0,0">
                     <StackPanel>
                         <TextBlock
-                        Margin="10"
-                        Text="Данные пациента"
-                        HorizontalAlignment="Center"
-                        FontWeight="Bold">
+                            Margin="10"
+                            Text="Данные пациента"
+                            HorizontalAlignment="Center"
+                            FontWeight="Bold">
                         </TextBlock>
 
                         <TextBox
@@ -169,10 +169,10 @@
                 <materialDesign:Card>
                     <StackPanel>
                         <TextBlock
-                        Margin="10"
-                        Text="Данные родителя пациента"
-                        HorizontalAlignment="Center"
-                        FontWeight="Bold">
+                            Margin="10"
+                            Text="Данные родителя пациента"
+                            HorizontalAlignment="Center"
+                            FontWeight="Bold">
                         </TextBlock>
 
                         <TextBox
@@ -210,12 +210,12 @@
                         <StackPanel
                             Orientation="Horizontal">
                             <Button
-                            x:Name="ShowPDFDocument"
-                            IsEnabled="{Binding DocumentShowEnablement}"
-                            Style="{StaticResource MaterialDesignRaisedDarkButton}"
-                            Width="200"
-                            Margin="10,0,0,10"
-                            HorizontalAlignment="Left">
+                                x:Name="ShowPDFDocument"
+                                IsEnabled="{Binding DocumentShowEnablement}"
+                                Style="{StaticResource MaterialDesignRaisedDarkButton}"
+                                Width="200"
+                                Margin="10,0,0,10"
+                                HorizontalAlignment="Left">
                                 Просмотреть документ
                             </Button>
 
@@ -227,11 +227,11 @@
                                 Visibility="{Binding DocumentLoadingVisibility}" />
 
                             <Button
-                            x:Name="ChoosePdfPath"
-                            Style="{StaticResource MaterialDesignRaisedDarkButton}"
-                            Width="auto"
-                            Margin="10,0,0,10"
-                            HorizontalAlignment="Left" Click="ChoosePdfPath_Click">
+                                x:Name="ChoosePdfPath"
+                                Style="{StaticResource MaterialDesignRaisedDarkButton}"
+                                Width="auto"
+                                Margin="10,0,0,10"
+                                HorizontalAlignment="Left" Click="ChoosePdfPath_Click">
                                 Выбрать файл для обновления
                             </Button>
                         </StackPanel>
@@ -262,11 +262,11 @@
                     </Button>
 
                     <ProgressBar
-                                Grid.Column="1"
-                                Style="{StaticResource MaterialDesignCircularProgressBar}"
-                                Value="0"
-                                IsIndeterminate="True"
-                                Visibility="{Binding UpdatingPacientVisibility}" />
+                        Grid.Column="1"
+                        Style="{StaticResource MaterialDesignCircularProgressBar}"
+                        Value="0"
+                        IsIndeterminate="True"
+                        Visibility="{Binding UpdatingPacientVisibility}" />
                 </Grid>
             </StackPanel>
         </Grid>

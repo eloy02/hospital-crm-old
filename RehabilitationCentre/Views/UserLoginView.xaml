@@ -23,11 +23,11 @@
             Mode="PrimaryLight"
             VerticalAlignment="Stretch">
             <materialDesign:PackIcon
-            Kind="AccountCircle"
-            Height="128"
-            Width="128"
-            VerticalAlignment="Center"
-            HorizontalAlignment="Center" />
+                Kind="AccountCircle"
+                Height="128"
+                Width="128"
+                VerticalAlignment="Center"
+                HorizontalAlignment="Center" />
         </materialDesign:ColorZone>
 
         <StackPanel

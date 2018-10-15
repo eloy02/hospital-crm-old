@@ -43,11 +43,11 @@
         </Grid.RowDefinitions>
 
         <TextBlock
-                Grid.Row="1"
-                Grid.Column="1"
-                HorizontalAlignment="Center"
-                FontSize="35"
-                Text="Новый пациент"></TextBlock>
+            Grid.Row="1"
+            Grid.Column="1"
+            HorizontalAlignment="Center"
+            FontSize="35"
+            Text="Новый пациент"></TextBlock>
 
         <Grid
             Grid.Row="3"
@@ -131,7 +131,7 @@
                         </Grid>
 
                         <Grid
-                        Margin="10">
+                            Margin="10">
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="*" />
                                 <ColumnDefinition Width="10" />
@@ -204,10 +204,10 @@
                     Margin="0,15,0,0">
                     <StackPanel>
                         <TextBlock
-                        Margin="10"
-                        Text="Данные пациента"
-                        HorizontalAlignment="Center"
-                        FontWeight="Bold">
+                            Margin="10"
+                            Text="Данные пациента"
+                            HorizontalAlignment="Center"
+                            FontWeight="Bold">
                         </TextBlock>
 
                         <TextBox
@@ -248,10 +248,10 @@
                 <materialDesign:Card>
                     <StackPanel>
                         <TextBlock
-                        Margin="10"
-                        Text="Данные родителя пациента"
-                        HorizontalAlignment="Center"
-                        FontWeight="Bold">
+                            Margin="10"
+                            Text="Данные родителя пациента"
+                            HorizontalAlignment="Center"
+                            FontWeight="Bold">
                         </TextBlock>
 
                         <TextBox
@@ -337,8 +337,8 @@
         </Grid>
 
         <materialDesign:Card
-                Grid.Column="1"
-                Grid.Row="5">
+            Grid.Column="1"
+            Grid.Row="5">
             <DataGrid
                 CanUserSortColumns="True"
                 CanUserAddRows="False"
