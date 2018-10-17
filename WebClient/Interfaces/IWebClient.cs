@@ -1,4 +1,5 @@
 ﻿using Core.Types;
+using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
@@ -20,7 +21,7 @@ namespace WebClient.Interfaces
 
         Task<Document> GetPacientDocumentAsync(Pacient pacient);
 
-        Task<bool> SavePacientVisitAsync(Pacient pacient, Doctor doc);
+        Task<bool> SavePacientVisitAsync(Pacient pacient, Doctor doc, DateTime visitDateTime);
 
         Task<bool> UpdatePacientsDataAsync(Pacient pacient);
 

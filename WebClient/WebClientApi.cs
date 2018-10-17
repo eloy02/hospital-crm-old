@@ -193,13 +193,13 @@ namespace WebClient
             return r;
         }
 
-        public async Task<bool> SavePacientVisitAsync(Pacient pacient, Doctor doc)
+        public async Task<bool> SavePacientVisitAsync(Pacient pacient, Doctor doc, DateTime visitDateTime)
         {
             var visit = new VisitLog
             {
                 Doctor = doc,
                 Pacient = pacient,
-                VisitDateTime = DateTime.Now
+                VisitDateTime = visitDateTime
             };
 
             var request = new JsonRest.RestRequest(Method.POST)

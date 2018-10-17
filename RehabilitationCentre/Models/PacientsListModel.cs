@@ -90,9 +90,9 @@ namespace RehabilitationCentre.Models
             else return null;
         }
 
-        public async Task<bool> SetPacientVisitAsync(Pacient selectedPacient, Doctor selectedDoctor)
+        public async Task<bool> SetPacientVisitAsync(Pacient selectedPacient, Doctor selectedDoctor, DateTime visitDateTime)
         {
-            var r = await WebClient.SavePacientVisitAsync(selectedPacient, selectedDoctor);
+            var r = await WebClient.SavePacientVisitAsync(selectedPacient, selectedDoctor, visitDateTime);
 
             return r;
         }

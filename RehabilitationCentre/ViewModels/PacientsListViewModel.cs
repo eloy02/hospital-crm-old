@@ -15,6 +15,14 @@ namespace RehabilitationCentre.ViewModels
 {
     public class PacientsListViewModel : Conductor<object>, IShell
     {
+        private DateTime? _visitDateTime = DateTime.Now;
+
+        public DateTime? VisitDateTime
+        {
+            get { return _visitDateTime; }
+            set { _visitDateTime = value; NotifyOfPropertyChange(() => VisitDateTime); }
+        }
+
         #region Private fields
 
         public readonly IWebClient WebClient;
@@ -280,7 +288,7 @@ namespace RehabilitationCentre.ViewModels
         {
             if (SelectedPacient != null && SelectedDoctor != null)
             {
-                var ok = await Model.SetPacientVisitAsync(SelectedPacient, SelectedDoctor);
+                var ok = await Model.SetPacientVisitAsync(SelectedPacient, SelectedDoctor, VisitDateTime.Value);
 
                 if (ok)
                 {
