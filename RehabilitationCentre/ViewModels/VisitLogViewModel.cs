@@ -1,6 +1,7 @@
 ﻿using Caliburn.Micro;
 using Core.Types;
 using RehabilitationCentre.Models;
+using System.Linq;
 using System.Threading.Tasks;
 using WebClient.Interfaces;
 
@@ -43,6 +44,8 @@ namespace RehabilitationCentre.ViewModels
 
                     if (v != null)
                     {
+                        v = v.OrderBy(o => o.VisitDateTime);
+
                         VisitLogs.AddRange(v);
                     }
                 }
