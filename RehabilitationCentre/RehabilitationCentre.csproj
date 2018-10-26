@@ -209,6 +209,10 @@
       <Project>{D9365614-0692-4655-8B21-DCC258F7FF30}</Project>
       <Name>WebClient</Name>
     </ProjectReference>
+    <ProjectReference Include="..\XamlConverters\XamlConverters.csproj">
+      <Project>{425bdec2-9b4c-43e9-82b8-bfee6535e9d0}</Project>
+      <Name>XamlConverters</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

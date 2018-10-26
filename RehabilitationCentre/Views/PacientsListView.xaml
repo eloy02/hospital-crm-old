@@ -1,85 +1,83 @@
-﻿<Window x:Class="RehabilitationCentre.Views.PacientsListView"
-        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-        xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
-        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:cal="http://www.caliburnproject.org"
-        xmlns:ValueConverters="clr-namespace:Core.Types.Enumerations;assembly=Core"
-        mc:Ignorable="d"
-        TextElement.Foreground="{DynamicResource MaterialDesignBody}"
-        TextElement.FontWeight="Regular"
-        TextElement.FontSize="18"
-        TextOptions.TextFormattingMode="Ideal"
-        TextOptions.TextRenderingMode="Auto"
-        d:DesignHeight="450" d:DesignWidth="800"
-        Background="{DynamicResource MaterialDesignPaper}"
-        FontFamily="{DynamicResource MaterialDesignFont}"
-        Title="Центр ребиалитации">
+﻿<Window
+    x:Class="RehabilitationCentre.Views.PacientsListView"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:ValueConverters="clr-namespace:XamlConverters;assembly=XamlConverters"
+    xmlns:cal="http://www.caliburnproject.org"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    Title="Центр ребиалитации"
+    d:DesignHeight="450"
+    d:DesignWidth="800"
+    Background="{DynamicResource MaterialDesignPaper}"
+    FontFamily="{DynamicResource MaterialDesignFont}"
+    TextElement.FontSize="18"
+    TextElement.FontWeight="Regular"
+    TextElement.Foreground="{DynamicResource MaterialDesignBody}"
+    TextOptions.TextFormattingMode="Ideal"
+    TextOptions.TextRenderingMode="Auto"
+    mc:Ignorable="d">
 
     <Window.Resources>
         <ResourceDictionary>
             <ValueConverters:EnumDescriptionConverter x:Key="vcEnumToString" />
             <BooleanToVisibilityConverter x:Key="BoolToVis" />
+            <ValueConverters:NullVisibilityConverter x:Key="NullToVisConverter" />
         </ResourceDictionary>
     </Window.Resources>
 
-    <!--{Binding ChooseDoctor}-->
+    <!--  {Binding ChooseDoctor}  -->
 
-    <materialDesign:DialogHost
-        Margin="10"
-        IsOpen="{Binding ChooseDoctor}">
+    <materialDesign:DialogHost Margin="10" IsOpen="{Binding ChooseDoctor}">
         <materialDesign:DialogHost.DialogContent>
-            <StackPanel
-                Margin="16">
+            <StackPanel Margin="16">
                 <TextBlock>
                     Выберите доктора
                 </TextBlock>
                 <ComboBox
-                    Margin="0 8 0 0"
-                    HorizontalAlignment="Stretch"
-                    ItemsSource="{Binding Doctors}"
                     Width="400"
+                    Margin="0,8,0,0"
+                    HorizontalAlignment="Stretch"
                     DisplayMemberPath="DisplayName"
+                    ItemsSource="{Binding Doctors}"
                     SelectedItem="{Binding SelectedDoctor}" />
 
                 <StackPanel
+                    Margin="0,20,0,15"
                     HorizontalAlignment="Left"
-                    Orientation="Horizontal"
-                    Margin="0,20,0,15">
+                    Orientation="Horizontal">
                     <DatePicker
                         Width="150"
                         materialDesign:HintAssist.Hint="Дата посещения"
-                        Style="{StaticResource MaterialDesignFloatingHintDatePicker}"
                         Language="RU-ru"
-                        SelectedDate="{Binding VisitDateTime}" />
+                        SelectedDate="{Binding VisitDateTime}"
+                        Style="{StaticResource MaterialDesignFloatingHintDatePicker}" />
 
                     <materialDesign:TimePicker
-                        Is24Hours="True"
-                        Margin="10,15,0,0"
                         Width="150"
+                        Margin="10,15,0,0"
                         materialDesign:HintAssist.Hint="Время посещения"
+                        Is24Hours="True"
                         Language="Ru-ru"
                         SelectedTime="{Binding VisitDateTime}" />
                 </StackPanel>
 
-                <StackPanel
-                    Orientation="Horizontal"
-                    HorizontalAlignment="Right">
+                <StackPanel HorizontalAlignment="Right" Orientation="Horizontal">
                     <Button
                         x:Name="SetVisit"
-                        Style="{StaticResource MaterialDesignFlatButton}"
-                        IsDefault="True"
-                        Margin="0 8 8 0"
+                        Margin="0,8,8,0"
                         cal:Message.Attach="[Event Click] = [Action SetVisit]"
-                        IsEnabled="{Binding CanSetVisit}">
+                        IsDefault="True"
+                        IsEnabled="{Binding CanSetVisit}"
+                        Style="{StaticResource MaterialDesignFlatButton}">
                         Принять
                     </Button>
                     <Button
-                        Style="{StaticResource MaterialDesignFlatButton}"
+                        Margin="0,8,8,0"
+                        cal:Message.Attach="[Event Click] = [Action CancelSetVisit]"
                         IsCancel="True"
-                        Margin="0 8 8 0"
-                        cal:Message.Attach="[Event Click] = [Action CancelSetVisit]">
+                        Style="{StaticResource MaterialDesignFlatButton}">
                         Отмена
                     </Button>
                 </StackPanel>
@@ -92,74 +90,70 @@
                 <RowDefinition Height="*" />
             </Grid.RowDefinitions>
 
-            <materialDesign:Card
-                Grid.Row="0">
-                <Expander
-                    HorizontalAlignment="Stretch"
-                    Header="Поиск">
+            <materialDesign:Card Grid.Row="0">
+                <Expander HorizontalAlignment="Stretch" Header="Поиск">
                     <StackPanel>
-                        <StackPanel
-                            Orientation="Horizontal">
+                        <StackPanel Orientation="Horizontal">
                             <TextBox
-                                Text="{Binding LastNameForFilter, UpdateSourceTrigger=PropertyChanged}"
+                                Width="150"
+                                MaxWidth="150"
                                 Margin="10"
                                 materialDesign:HintAssist.Hint="Фамилия"
-                                MaxWidth="150"
-                                Width="150"
-                                Style="{StaticResource MaterialDesignFloatingHintTextBox}" />
+                                Style="{StaticResource MaterialDesignFloatingHintTextBox}"
+                                Text="{Binding LastNameForFilter, UpdateSourceTrigger=PropertyChanged}" />
                             <TextBox
-                                Text="{Binding FirstNameForFilter, UpdateSourceTrigger=PropertyChanged}"
-                                MaxWidth="150"
                                 Width="150"
+                                MaxWidth="150"
                                 Margin="10"
                                 materialDesign:HintAssist.Hint="Имя"
-                                Style="{StaticResource MaterialDesignFloatingHintTextBox}" />
+                                Style="{StaticResource MaterialDesignFloatingHintTextBox}"
+                                Text="{Binding FirstNameForFilter, UpdateSourceTrigger=PropertyChanged}" />
 
                             <TextBox
-                                Text="{Binding PatronymicNameForFilter, UpdateSourceTrigger=PropertyChanged}"
-                                MaxWidth="150"
                                 Width="150"
+                                MaxWidth="150"
                                 Margin="10"
                                 materialDesign:HintAssist.Hint="Отчетсво"
-                                Style="{StaticResource MaterialDesignFloatingHintTextBox}" />
+                                Style="{StaticResource MaterialDesignFloatingHintTextBox}"
+                                Text="{Binding PatronymicNameForFilter, UpdateSourceTrigger=PropertyChanged}" />
 
                             <ComboBox
-                                ItemsSource="{Binding PacientTypes}"
-                                DisplayMemberPath="Name"
-                                SelectedItem="{Binding PacientTypeForFilter}"
-
-                                materialDesign:HintAssist.Hint="Тип пациента"
-                                IsEditable="False"
-                                MaxWidth="150"
                                 Width="150"
+                                MaxWidth="150"
                                 Margin="10"
+                                materialDesign:HintAssist.Hint="Тип пациента"
+                                DisplayMemberPath="Name"
+                                IsEditable="False"
+                                ItemsSource="{Binding PacientTypes}"
+                                SelectedItem="{Binding PacientTypeForFilter}"
                                 Style="{StaticResource MaterialDesignFloatingHintComboBox}" />
                         </StackPanel>
-                        <StackPanel
-                            Orientation="Horizontal">
+                        <StackPanel Orientation="Horizontal">
                             <TextBox
-                                Text="{Binding PacientPhoneNumberForFilter, UpdateSourceTrigger=PropertyChanged}"
+                                Width="250"
+                                MaxWidth="250"
                                 Margin="10"
                                 materialDesign:HintAssist.Hint="Номер телефона пациента"
-                                MaxWidth="250"
-                                Width="250"
+                                PreviewTextInput="TextBox_PreviewTextInput"
                                 Style="{StaticResource MaterialDesignFloatingHintTextBox}"
-                                PreviewTextInput="TextBox_PreviewTextInput" />
+                                Text="{Binding PacientPhoneNumberForFilter, UpdateSourceTrigger=PropertyChanged}" />
 
                             <TextBox
-                                Text="{Binding ParentPhoneNumberForFilter, UpdateSourceTrigger=PropertyChanged}"
+                                Width="250"
+                                MaxWidth="250"
                                 Margin="10"
                                 materialDesign:HintAssist.Hint="Номер телефона родителя"
-                                MaxWidth="250"
-                                Width="250"
+                                PreviewTextInput="TextBox_PreviewTextInput"
                                 Style="{StaticResource MaterialDesignFloatingHintTextBox}"
-                                PreviewTextInput="TextBox_PreviewTextInput" />
+                                Text="{Binding ParentPhoneNumberForFilter, UpdateSourceTrigger=PropertyChanged}" />
                         </StackPanel>
                         <Button
                             x:Name="ClearFilter"
                             Width="auto"
                             Margin="10"
-                            HorizontalAlignment="Left">Очистить формы поиска</Button>
+                            HorizontalAlignment="Left">
+                            Очистить формы поиска
+                        </Button>
                     </StackPanel>
                 </Expander>
             </materialDesign:Card>
@@ -170,46 +164,63 @@
                 Visibility="{Binding Path=IsPacientsLoading, Converter={StaticResource BoolToVis}}" />
 
             <DataGrid
-                Margin="0,5,0,0"
+                x:Name="Pacients"
                 Grid.Row="2"
-                CanUserSortColumns="True"
-                CanUserAddRows="False"
-                AutoGenerateColumns="False"
+                Margin="0,5,0,0"
                 materialDesign:DataGridAssist.CellPadding="13 8 8 8"
                 materialDesign:DataGridAssist.ColumnHeaderPadding="8"
+                AutoGenerateColumns="False"
+                CanUserAddRows="False"
+                CanUserSortColumns="True"
                 HeadersVisibility="Column"
-                x:Name="Pacients"
                 SelectedItem="{Binding SelectedPacient, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
                 <DataGrid.Columns>
 
-                    <DataGridTemplateColumn
-                        Header="Адрес">
+                    <DataGridTemplateColumn Header="Адрес">
                         <DataGridTemplateColumn.CellTemplate>
                             <DataTemplate>
-                                <StackPanel
-                                    Margin="10">
+                                <StackPanel Margin="10">
                                     <StackPanel Orientation="Vertical">
-                                        <TextBlock Text="{Binding Sity, StringFormat='Город: {0}'}" Margin="0,10,5,0" />
-                                        <TextBlock Text="{Binding Street, StringFormat='Улица: {0}'}" Margin="0,10,5,0" />
-                                        <TextBlock Text="{Binding BuildingNumber, StringFormat='Дом: {0}'}" Margin="0,10,5,0" />
-                                        <TextBlock Text="{Binding FlatNumber, StringFormat='Квартира: {0}'}" Margin="0,10,5,0" />
+                                        <TextBlock
+                                            Margin="0,0,5,0"
+                                            Text="{Binding Sity, StringFormat='Город: {0}'}"
+                                            Visibility="{Binding Sity, Converter={StaticResource NullToVisConverter}}" />
+                                        <TextBlock
+                                            Margin="0,5,5,0"
+                                            Text="{Binding Street, StringFormat='Улица: {0}'}"
+                                            Visibility="{Binding Street, Converter={StaticResource NullToVisConverter}}" />
+                                        <TextBlock
+                                            Margin="0,5,5,0"
+                                            Text="{Binding BuildingNumber, StringFormat='Дом: {0}'}"
+                                            Visibility="{Binding BuildingNumber, Converter={StaticResource NullToVisConverter}}" />
+                                        <TextBlock
+                                            Margin="0,5,5,0"
+                                            Text="{Binding FlatNumber, StringFormat='Квартира: {0}'}"
+                                            Visibility="{Binding FlatNumber, Converter={StaticResource NullToVisConverter}}" />
                                     </StackPanel>
                                 </StackPanel>
                             </DataTemplate>
                         </DataGridTemplateColumn.CellTemplate>
                     </DataGridTemplateColumn>
 
-                    <DataGridTemplateColumn
-                        Header="Пациент">
+                    <DataGridTemplateColumn Header="Пациент">
                         <DataGridTemplateColumn.CellTemplate>
                             <DataTemplate>
-                                <StackPanel
-                                    Margin="10">
+                                <StackPanel Margin="10">
                                     <StackPanel Orientation="Horizontal">
-                                        <materialDesign:PackIcon Kind="Account" Margin="0,0,10,0" />
-                                        <TextBlock Text="{Binding LastName}" Margin="0,0,5,0" />
-                                        <TextBlock Text="{Binding FirstName}" Margin="0,0,5,0" />
-                                        <TextBlock Text="{Binding PatronymicName}" Margin="0,0,5,0" />
+                                        <materialDesign:PackIcon Margin="0,0,10,0" Kind="Account" />
+                                        <TextBlock
+                                            Margin="0,0,5,0"
+                                            Text="{Binding LastName}"
+                                            Visibility="{Binding LastName, Converter={StaticResource NullToVisConverter}}" />
+                                        <TextBlock
+                                            Margin="0,0,5,0"
+                                            Text="{Binding FirstName}"
+                                            Visibility="{Binding FirstName, Converter={StaticResource NullToVisConverter}}" />
+                                        <TextBlock
+                                            Margin="0,0,5,0"
+                                            Text="{Binding PatronymicName}"
+                                            Visibility="{Binding PatronymicName, Converter={StaticResource NullToVisConverter}}" />
                                     </StackPanel>
                                 </StackPanel>
                             </DataTemplate>
@@ -217,23 +228,26 @@
                     </DataGridTemplateColumn>
 
                     <DataGridTextColumn
-                        IsReadOnly="True"
+                        Binding="{Binding PacientType, Converter={StaticResource vcEnumToString}}"
                         Header="Тип пациента"
-                        Binding="{Binding PacientType, Converter={StaticResource vcEnumToString}}" />
+                        IsReadOnly="True" />
 
-                    <DataGridTemplateColumn
-                        Header="Телефоны">
+                    <DataGridTemplateColumn Header="Телефоны">
                         <DataGridTemplateColumn.CellTemplate>
                             <DataTemplate>
                                 <StackPanel>
-                                    <StackPanel Orientation="Horizontal"
-                                                Margin="10,10,10,10">
-                                        <materialDesign:PackIcon Kind="PhoneClassic" Margin="0,0,10,0" />
+                                    <StackPanel
+                                        Margin="10,0,10,10"
+                                        Orientation="Horizontal"
+                                        Visibility="{Binding PacientPhoneNumber, Converter={StaticResource NullToVisConverter}}">
+                                        <materialDesign:PackIcon Margin="0,0,10,0" Kind="PhoneClassic" />
                                         <TextBlock Text="{Binding PacientPhoneNumber, StringFormat='Номер пацента: {0}'}" />
                                     </StackPanel>
-                                    <StackPanel Orientation="Horizontal"
-                                                Margin="10,10,10,10">
-                                        <materialDesign:PackIcon Kind="PhoneClassic" Margin="0,0,10,0" />
+                                    <StackPanel
+                                        Margin="10,5,10,10"
+                                        Orientation="Horizontal"
+                                        Visibility="{Binding ParentsPhoneNumber, Converter={StaticResource NullToVisConverter}}">
+                                        <materialDesign:PackIcon Margin="0,0,10,0" Kind="PhoneClassic" />
                                         <TextBlock Text="{Binding ParentsPhoneNumber, StringFormat='Номер родителей: {0}'}" />
                                     </StackPanel>
                                 </StackPanel>
@@ -241,16 +255,14 @@
                         </DataGridTemplateColumn.CellTemplate>
                     </DataGridTemplateColumn>
 
-                    <DataGridTemplateColumn
-                        Header="Родители">
+                    <DataGridTemplateColumn Header="Родители">
                         <DataGridTemplateColumn.CellTemplate>
                             <DataTemplate>
-                                <StackPanel
-                                    Margin="10">
+                                <StackPanel Margin="10">
                                     <StackPanel Orientation="Horizontal">
-                                        <TextBlock Text="{Binding ParentLastName}" Margin="0,0,5,0" />
-                                        <TextBlock Text="{Binding ParentFirstName}" Margin="0,0,5,0" />
-                                        <TextBlock Text="{Binding ParentPatronymicName}" Margin="0,0,5,0" />
+                                        <TextBlock Margin="0,0,5,0" Text="{Binding ParentLastName}" />
+                                        <TextBlock Margin="0,0,5,0" Text="{Binding ParentFirstName}" />
+                                        <TextBlock Margin="0,0,5,0" Text="{Binding ParentPatronymicName}" />
                                     </StackPanel>
                                 </StackPanel>
                             </DataTemplate>
@@ -260,30 +272,42 @@
                     <DataGridTemplateColumn>
                         <DataGridTemplateColumn.CellTemplate>
                             <DataTemplate>
-                                <StackPanel>
+                                <StackPanel Orientation="Horizontal">
                                     <Button
-                                        Margin="10"
                                         x:Name="ShowPacientDocumet"
+                                        Height="40"
+                                        Margin="10"
+                                        cal:Message.Attach="[Event Click] = [Action ShowPacientDocumet]"
                                         Style="{StaticResource MaterialDesignRaisedLightButton}"
-                                        Width="300"
-                                        cal:Message.Attach="[Event Click] = [Action ShowPacientDocumet]">
-                                        Просмотреть документ пациента
+                                        ToolTip="Просмотреть документ пациента">
+                                        <materialDesign:PackIcon
+                                            Width="25"
+                                            Height="25"
+                                            Kind="AccountCardDetails" />
                                     </Button>
 
                                     <Button
+                                        Height="40"
                                         Margin="10"
-                                        Style="{StaticResource MaterialDesignRaisedLightButton}"
                                         cal:Message.Attach="[Event Click] = [Action ShowArrivalDialog]"
-                                        Width="300">
-                                        Отметить посещение
+                                        Style="{StaticResource MaterialDesignRaisedLightButton}"
+                                        ToolTip="Отметить посещение">
+                                        <materialDesign:PackIcon
+                                            Width="25"
+                                            Height="25"
+                                            Kind="AccountCheck" />
                                     </Button>
 
                                     <Button
+                                        Height="40"
                                         Margin="10"
-                                        Style="{StaticResource MaterialDesignRaisedLightButton}"
                                         cal:Message.Attach="[Event Click] = [Action ShowVisitLogs]"
-                                        Width="300">
-                                        Просмотреть историю посещений
+                                        Style="{StaticResource MaterialDesignRaisedLightButton}"
+                                        ToolTip="Просмотреть историю посещений">
+                                        <materialDesign:PackIcon
+                                            Width="25"
+                                            Height="25"
+                                            Kind="History" />
                                     </Button>
                                 </StackPanel>
                             </DataTemplate>
