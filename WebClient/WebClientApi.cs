@@ -54,7 +54,7 @@ namespace WebClient
                 await ExecuteAsync<T>(request);
             }
 
-            if (!response.IsSuccessful)
+            if (!response.IsSuccessful && response.ResponseStatus != ResponseStatus.Completed)
                 return default(T);
 
             return response.Data;
@@ -318,7 +318,7 @@ namespace WebClient
 
             var r = await client.ExecuteTaskAsync(request);
 
-            if (!r.IsSuccessful)
+            if (!r.IsSuccessful && r.ResponseStatus != ResponseStatus.Completed)
                 throw new Exception($"Request status = {r.ResponseStatus}");
         }
 
