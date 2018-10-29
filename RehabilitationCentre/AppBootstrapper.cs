@@ -20,11 +20,12 @@ namespace RehabilitationCentre
 
         protected override void Configure()
         {
-            container.Register(Component.For<IShell>().ImplementedBy<PacientsListViewModel>());
-            container.Register(Component.For<PacientsListModel>());
-
             container.Register(Component.For<IWindowManager>().ImplementedBy<WindowManager>());
             container.Register(Component.For<IEventAggregator>().ImplementedBy<EventAggregator>());
+            container.Register(Component.For<IShell>().ImplementedBy<ShellViewModel>());
+            container.Register(Component.For<PacientsListModel>());
+            container.Register(Component.For<PacientsListViewModel>());
+            container.Register(Component.For<ReportsViewModel>());
 
             container.Install(FromAssembly.Named("WebClient"));
         }

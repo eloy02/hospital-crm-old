@@ -41,7 +41,7 @@ namespace WebApi.Controllers
             {
                 var data = new Document().Assign(raw);
 
-                return new ActionResult<Document>(data);
+                return File(data.Content.ToArray(), "application/pdf", $"{data.Name}.pdf");
             }
         }
 

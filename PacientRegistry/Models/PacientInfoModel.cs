@@ -28,8 +28,8 @@ namespace PacientRegistry.Models
                 var doc = await WebClientApi.GetPacientDocumentAsync(pacient);
                 Directory.CreateDirectory(path);
 
-                File.WriteAllBytes(file, doc.Content.ToArray());
-                var pdfProc = System.Diagnostics.Process.Start(file);
+                //File.WriteAllBytes(file, doc.Content.ToArray());
+                var pdfProc = System.Diagnostics.Process.Start(doc);
                 doc = null;
             }
         }

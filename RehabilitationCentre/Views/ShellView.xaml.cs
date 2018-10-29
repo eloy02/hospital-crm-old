@@ -2,7 +2,7 @@
 using System.IO;
 using System.Windows;
 
-namespace RehabilitationCentre
+namespace RehabilitationCentre.Views
 {
     /// <summary>
     /// Логика взаимодействия для PacientsList.xaml

@@ -74,8 +74,8 @@ namespace RehabilitationCentre.Models
                 var doc = await WebClient.GetPacientDocumentAsync(pacient);
                 Directory.CreateDirectory(path);
 
-                File.WriteAllBytes(file, doc.Content.ToArray());
-                var pdfProc = System.Diagnostics.Process.Start(file);
+                //File.WriteAllBytes(file, doc.Content.ToArray());
+                var pdfProc = System.Diagnostics.Process.Start(doc);
 
                 doc = null;
             }

@@ -19,7 +19,7 @@ namespace WebClient.Interfaces
 
         Task<bool> SavePacientsDocumentAsync(int pacientId, Document doc);
 
-        Task<Document> GetPacientDocumentAsync(Pacient pacient);
+        Task<string> GetPacientDocumentAsync(Pacient pacient);
 
         Task<bool> SavePacientVisitAsync(Pacient pacient, Doctor doc, DateTime visitDateTime);
 

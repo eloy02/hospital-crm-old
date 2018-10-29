@@ -37,6 +37,7 @@ namespace WebApi
             }
 
             app.UseHttpsRedirection();
+            app.UseMiddleware<XHttpHeaderOverrideMiddleware>();
             app.UseMvc();
         }
     }

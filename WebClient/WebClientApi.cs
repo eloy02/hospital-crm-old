@@ -6,7 +6,10 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Net;
+using System.Net.Mime;
 using System.Threading.Tasks;
+using System.Web;
 using WebClient.Interfaces;
 
 using JsonRest = RestSharp.Serializers.Newtonsoft.Json;
@@ -18,6 +21,7 @@ namespace WebClient
         private static IWindsorContainer _container;
 
         //private Uri BaseUrl = new Uri("https://localhost:44391/api");
+        private static string TempPath = Directory.GetCurrentDirectory() + @"\Temp";
 
         private Uri BaseUrl = new Uri("http://eloy102-001-site1.dtempurl.com/api");
         private string ProgrammGuid = "2F5F714611C34EC5A2D6F06DEFD0AB084A940477EBED4BE4BC62-452D6B92D972";
@@ -179,18 +183,46 @@ namespace WebClient
             else return false;
         }
 
-        public async Task<Document> GetPacientDocumentAsync(Pacient pacient)
+        public async Task<string> GetPacientDocumentAsync(Pacient pacient)
         {
-            var request = new JsonRest.RestRequest(Method.GET)
+            var uriBuilder = new UriBuilder($"{BaseUrl}/Documents");
+            var parameters = HttpUtility.ParseQueryString(string.Empty);
+            parameters["token"] = Token.ToString();
+            parameters["pacientId"] = pacient.Id.ToString();
+            uriBuilder.Query = parameters.ToString();
+
+            string filename = "";
+            var uri = uriBuilder.Uri;
+            var request = (HttpWebRequest)WebRequest.Create(uri);
+
+            request.Method = "GET";
+
+            if (!Directory.Exists(TempPath))
             {
-                Resource = "Documents"
-            };
+                Directory.CreateDirectory(TempPath);
+            }
 
-            request.AddParameter("pacientId", pacient.Id, ParameterType.QueryString);
+            using (HttpWebResponse response = (HttpWebResponse)await request.GetResponseAsync())
+            {
+                string path = response.Headers["Content-Disposition"];
+                if (string.IsNullOrWhiteSpace(path))
+                {
+                    filename = Path.GetFileName(uri.LocalPath);
+                }
+                else
+                {
+                    ContentDisposition contentDisposition = new ContentDisposition(path);
+                    filename = contentDisposition.FileName;
+                }
 
-            var r = await ExecuteAsync<Document>(request);
+                var responseStream = response.GetResponseStream();
+                using (var fileStream = File.Create(System.IO.Path.Combine(TempPath, filename)))
+                {
+                    responseStream.CopyTo(fileStream);
+                }
+            }
 
-            return r;
+            return Path.Combine(TempPath, filename);
         }
 
         public async Task<bool> SavePacientVisitAsync(Pacient pacient, Doctor doc, DateTime visitDateTime)

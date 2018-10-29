@@ -1,17 +1,18 @@
-﻿<Window x:Class="RehabilitationCentre.ShellView"
-        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
-        xmlns:ValueConverters="clr-namespace:Core.Types.Enumerations;assembly=Core"
-        TextElement.Foreground="{DynamicResource MaterialDesignBody}"
-        TextElement.FontWeight="Regular"
-        TextElement.FontSize="18"
-        TextOptions.TextFormattingMode="Ideal"
-        TextOptions.TextRenderingMode="Auto"
-        Background="{DynamicResource MaterialDesignPaper}"
-        FontFamily="{DynamicResource MaterialDesignFont}"
-        Title="Центр ребиалитации"
-        Closing="Window_Closing">
+﻿<Window
+    x:Class="RehabilitationCentre.Views.ShellView"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:ValueConverters="clr-namespace:Core.Types.Enumerations;assembly=Core"
+    xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+    Title="Центр ребиалитации"
+    Background="{DynamicResource MaterialDesignPaper}"
+    Closing="Window_Closing"
+    FontFamily="{DynamicResource MaterialDesignFont}"
+    TextElement.FontSize="18"
+    TextElement.FontWeight="Regular"
+    TextElement.Foreground="{DynamicResource MaterialDesignBody}"
+    TextOptions.TextFormattingMode="Ideal"
+    TextOptions.TextRenderingMode="Auto">
 
     <Window.Resources>
         <ResourceDictionary>
@@ -27,33 +28,55 @@
         </ResourceDictionary>
     </Window.Resources>
 
-    <Grid Background="#FFDEDEDE">
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="300" />
-            <ColumnDefinition Width="*" />
-        </Grid.ColumnDefinitions>
+    <materialDesign:DialogHost
+        DialogContent="{Binding CurrentDialogView}"
+        Identifier="RootDialog"
+        IsOpen="{Binding IsDialogShown}">
 
-        <Grid  Background="#FF222222" Grid.Column="0">
-            <Grid.RowDefinitions>
-                <RowDefinition Height="100" />
-                <RowDefinition Height="*" />
-            </Grid.RowDefinitions>
+        <Grid Background="#FFDEDEDE">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="250" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
 
-            <ListView Grid.Row="1" x:Name="MenuItems" Foreground="LightGray" FontFamily="Champagne &amp; Limousines" FontSize="18"  SelectedIndex="0">
-                <ListView.ItemTemplate>
-                    <DataTemplate>
-                        <StackPanel Orientation="Horizontal">
-                            <materialDesign:PackIcon x:Name="MenuItems_Icon" Kind="{Binding Icon}" Width="30" Height="30" VerticalAlignment="Center" Margin="5" />
-                            <TextBlock x:Name="MenuItems_Name" Text="{Binding Name}" FontSize="17" VerticalAlignment="Center" Margin="20 0" />
-                        </StackPanel>
-                    </DataTemplate>
-                </ListView.ItemTemplate>
-            </ListView>
+            <Grid Grid.Column="0" Background="#FF222222">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="100" />
+                    <RowDefinition Height="*" />
+                </Grid.RowDefinitions>
+
+                <ListView
+                    x:Name="MenuItems"
+                    Grid.Row="1"
+                    FontFamily="Champagne &amp; Limousines"
+                    FontSize="18"
+                    Foreground="LightGray"
+                    SelectedItem="{Binding CurrentView, Mode=TwoWay}">
+                    <ListView.ItemTemplate>
+                        <DataTemplate>
+                            <StackPanel Orientation="Horizontal">
+                                <materialDesign:PackIcon
+                                    x:Name="MenuItems_Icon"
+                                    Width="30"
+                                    Height="30"
+                                    Margin="5"
+                                    VerticalAlignment="Center"
+                                    Kind="{Binding Icon}" />
+                                <TextBlock
+                                    x:Name="MenuItems_Name"
+                                    Margin="20,0"
+                                    VerticalAlignment="Center"
+                                    FontSize="17"
+                                    Text="{Binding Name}" />
+                            </StackPanel>
+                        </DataTemplate>
+                    </ListView.ItemTemplate>
+                </ListView>
+            </Grid>
+
+            <Grid Grid.Column="1">
+                <ContentControl x:Name="CurrentView" />
+            </Grid>
         </Grid>
-
-        <Grid
-            Grid.Column="1">
-            <ContentControl x:Name="CurrentView" />
-        </Grid>
-    </Grid>
+    </materialDesign:DialogHost>
 </Window>

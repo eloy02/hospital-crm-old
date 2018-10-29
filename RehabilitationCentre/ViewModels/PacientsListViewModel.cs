@@ -13,18 +13,21 @@ using WebClient.Interfaces;
 
 namespace RehabilitationCentre.ViewModels
 {
-    public class PacientsListViewModel : Conductor<object>, IShell
+    public class PacientsListViewModel : Screen
     {
-        private DateTime? _visitDateTime = DateTime.Now;
-
-        public DateTime? VisitDateTime
+        public static object Icon
         {
-            get { return _visitDateTime; }
-            set { _visitDateTime = value; NotifyOfPropertyChange(() => VisitDateTime); }
+            get { return PackIconKind.ViewList; }
+        }
+
+        public static string Name
+        {
+            get { return "Список пациентов"; }
         }
 
         #region Private fields
 
+        private DateTime? _visitDateTime = DateTime.Now;
         public readonly IWebClient WebClient;
         private bool _chooseDoctor = false;
         private string _firstNameForFilter;
@@ -46,14 +49,10 @@ namespace RehabilitationCentre.ViewModels
 
         #region Public properties
 
-        public static object Icon
+        public DateTime? VisitDateTime
         {
-            get { return PackIconKind.ViewList; }
-        }
-
-        public static string Name
-        {
-            get { return "Список пациентов"; }
+            get { return _visitDateTime; }
+            set { _visitDateTime = value; NotifyOfPropertyChange(() => VisitDateTime); }
         }
 
         public bool ChooseDoctor
@@ -380,59 +379,42 @@ namespace RehabilitationCentre.ViewModels
             base.OnActivate();
         }
 
-        protected override async void OnDeactivate(bool close)
-        {
-            base.OnDeactivate(close);
-
-            Model.ClearTempFolder();
-
-            await Model.DeleteToken();
-        }
-
         protected override void OnInitialize()
         {
             base.OnInitialize();
-            var w = WindowManager.ShowDialog(new UserLoginViewModel(WebClient));
 
-            if (w == false)
+            Task.Run(async () =>
             {
-                Application.Current.Shutdown();
-            }
-            else
-            {
-                Task.Run(async () =>
+                try
                 {
-                    try
+                    IsPacientsLoading = true;
+
+                    var doc = await Model.GetDoctorsAsync();
+
+                    if (doc != null)
+                        Doctors.AddRange(doc);
+
+                    await Model.GetPacientsAsync();
+
+                    var values = Enum.GetValues(typeof(EPatientType)).Cast<EPatientType>().ToList();
+
+                    values.ForEach(v =>
                     {
-                        IsPacientsLoading = true;
+                        PacientTypes.Add(new PacientTypeView { Name = v.GetDescription(), Value = v });
+                    });
 
-                        var doc = await Model.GetDoctorsAsync();
+                    GetPacients();
 
-                        if (doc != null)
-                            Doctors.AddRange(doc);
+                    IsPacientsLoading = false;
 
-                        await Model.GetPacientsAsync();
-
-                        var values = Enum.GetValues(typeof(EPatientType)).Cast<EPatientType>().ToList();
-
-                        values.ForEach(v =>
-                        {
-                            PacientTypes.Add(new PacientTypeView { Name = v.GetDescription(), Value = v });
-                        });
-
-                        GetPacients();
-
-                        IsPacientsLoading = false;
-
-                        Timer.Start();
-                        Model.Timer.Start();
-                    }
-                    catch (Exception ex)
-                    {
-                        MessageBox.Show(ex.Message, ex.Source, MessageBoxButton.OK);
-                    }
-                });
-            }
+                    Timer.Start();
+                    Model.Timer.Start();
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show(ex.Message, ex.Source, MessageBoxButton.OK);
+                }
+            });
         }
 
         public class PacientTypeView
