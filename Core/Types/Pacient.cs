@@ -20,6 +20,14 @@ namespace Core.Types
 
         public Document Document { get; set; }
 
+        public string FIO
+        {
+            get
+            {
+                return $"{LastName} {FirstName} {PatronymicName}";
+            }
+        }
+
         public override string ToString()
         {
             return $"{LastName} {FirstName} {PatronymicName}";

@@ -33,5 +33,21 @@ namespace WebApi.DB
                 return raw;
             }
         }
+
+        public async Task<IEnumerable<VisitLogs>> GetVisitLogForDoctor(int doctorId)
+        {
+            using (var db = new HospitalContext())
+            {
+                var raw = await db.VisitLogs.Where(v => v.DoctorId == doctorId).ToListAsync();
+
+                foreach (var r in raw)
+                {
+                    r.Pacient = await db.Pacients.FindAsync(r.PacientId);
+                    r.Doctor = await db.Doctors.FindAsync(r.DoctorId);
+                }
+
+                return raw;
+            }
+        }
     }
 }

@@ -123,6 +123,7 @@
     <Compile Include="AppBootstrapper.cs" />
     <Compile Include="IShell.cs" />
     <Compile Include="Models\PacientsListModel.cs" />
+    <Compile Include="Models\ReportsModel.cs" />
     <Compile Include="Models\VisitLogModel.cs" />
     <Compile Include="ViewModels\PacientsListViewModel.cs" />
     <Compile Include="App.xaml.cs">
@@ -213,6 +214,10 @@
     <ProjectReference Include="..\Core\Core.csproj">
       <Project>{35ef9f12-5790-4ee1-9997-52d5635dbb5a}</Project>
       <Name>Core</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\ExcelReports\ExcelReports.csproj">
+      <Project>{14a7bb1b-e613-4e91-a132-351235d49aca}</Project>
+      <Name>ExcelReports</Name>
     </ProjectReference>
     <ProjectReference Include="..\WebClient\WebClient.csproj">
       <Project>{D9365614-0692-4655-8B21-DCC258F7FF30}</Project>

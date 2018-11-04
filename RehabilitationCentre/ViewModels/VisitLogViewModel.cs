@@ -1,6 +1,7 @@
 ﻿using Caliburn.Micro;
 using Core.Types;
 using RehabilitationCentre.Models;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using WebClient.Interfaces;
@@ -12,6 +13,7 @@ namespace RehabilitationCentre.ViewModels
         private Pacient _pacient;
         private BindableCollection<VisitLog> _visitLogs = new BindableCollection<VisitLog>();
         private VisitLogModel Model;
+        private readonly ExcelReports.ExcelReports excel = new ExcelReports.ExcelReports();
 
         public BindableCollection<VisitLog> VisitLogs
         {
@@ -48,6 +50,24 @@ namespace RehabilitationCentre.ViewModels
 
                         VisitLogs.AddRange(v);
                     }
+                }
+            });
+        }
+
+        public void Close()
+        {
+            this.TryClose();
+        }
+
+        public async void CreateExcelReport()
+        {
+            await Task.Run(() =>
+            {
+                var file = excel.CreateVisitLogReport(VisitLogs.ToList(), _pacient);
+
+                if (File.Exists(file))
+                {
+                    var excel = System.Diagnostics.Process.Start(file);
                 }
             });
         }

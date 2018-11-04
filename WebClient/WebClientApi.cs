@@ -236,7 +236,7 @@ namespace WebClient
 
             var request = new JsonRest.RestRequest(Method.POST)
             {
-                Resource = "PacientVisits"
+                Resource = "VisitLogs"
             };
 
             request.JsonSerializer = new NewtonsoftJsonSerializer();
@@ -322,11 +322,11 @@ namespace WebClient
                 throw new Exception($"Request status = {r.ResponseStatus}");
         }
 
-        public async Task<IEnumerable<VisitLog>> GetVisitLogsForPacientAsync(Pacient pacient)
+        public async Task<IEnumerable<VisitLog>> GetVisitLogAsync(Pacient pacient)
         {
             var request = new JsonRest.RestRequest(Method.GET)
             {
-                Resource = "PacientVisits"
+                Resource = "VisitLogs/pacientsvisitlogs"
             };
 
             request.JsonSerializer = new NewtonsoftJsonSerializer();
@@ -335,7 +335,27 @@ namespace WebClient
 
             var r = await ExecuteAsync<List<VisitLog>>(request);
 
-            r.ForEach(d => d.VisitDateTime = d.VisitDateTime.AddHours(3));
+            if (r != null)
+                r.ForEach(d => d.VisitDateTime = d.VisitDateTime.AddHours(3));
+
+            return r;
+        }
+
+        public async Task<IEnumerable<VisitLog>> GetVisitLogAsync(Doctor doctor)
+        {
+            var request = new JsonRest.RestRequest(Method.GET)
+            {
+                Resource = "VisitLogs/doctorsvisitlogs"
+            };
+
+            request.JsonSerializer = new NewtonsoftJsonSerializer();
+
+            request.AddParameter("doctorId", doctor.Id, ParameterType.QueryString);
+
+            var r = await ExecuteAsync<List<VisitLog>>(request);
+
+            if (r != null)
+                r.ForEach(d => d.VisitDateTime = d.VisitDateTime.AddHours(3));
 
             return r;
         }

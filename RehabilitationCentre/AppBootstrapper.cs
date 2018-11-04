@@ -26,8 +26,10 @@ namespace RehabilitationCentre
             container.Register(Component.For<PacientsListModel>());
             container.Register(Component.For<PacientsListViewModel>());
             container.Register(Component.For<ReportsViewModel>());
+            container.Register(Component.For<ReportsModel>());
 
             container.Install(FromAssembly.Named("WebClient"));
+            container.Install(FromAssembly.Named("ExcelReports"));
         }
 
         protected override object GetInstance(Type service, string key)

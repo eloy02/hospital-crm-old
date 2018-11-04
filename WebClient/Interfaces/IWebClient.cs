@@ -7,7 +7,7 @@ namespace WebClient.Interfaces
 {
     public interface IWebClient
     {
-        Task<IEnumerable<VisitLog>> GetVisitLogsForPacientAsync(Pacient pacient);
+        Task<IEnumerable<VisitLog>> GetVisitLogAsync(Pacient pacient);
 
         Task<bool> GetProgrammTokenAsync(User user = null, string password = null);
 
@@ -30,5 +30,7 @@ namespace WebClient.Interfaces
         Task<bool> UpdatePacientDocumentAsync(string filePath, Pacient pacient);
 
         Task<IEnumerable<User>> GetUsersAsync();
+
+        Task<IEnumerable<VisitLog>> GetVisitLogAsync(Doctor doctor);
     }
 }

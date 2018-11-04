@@ -57,6 +57,16 @@ namespace RehabilitationCentre.ViewModels
                 dir.Delete(true);
             }
 
+            DirectoryInfo di2 = new DirectoryInfo(@".\CompletedReports");
+            foreach (FileInfo file in di2.EnumerateFiles())
+            {
+                file.Delete();
+            }
+            foreach (DirectoryInfo dir in di2.EnumerateDirectories())
+            {
+                dir.Delete(true);
+            }
+
             Task.Run(async () => await WebClient.DeleteToken()).Wait();
         }
 

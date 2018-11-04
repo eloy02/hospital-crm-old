@@ -16,7 +16,7 @@ namespace RehabilitationCentre.Models
 
         public async Task<IEnumerable<VisitLog>> GetVisistLogsForPacientAsync(Pacient pacient)
         {
-            var res = await WebClient.GetVisitLogsForPacientAsync(pacient);
+            var res = await WebClient.GetVisitLogAsync(pacient);
 
             return res;
         }

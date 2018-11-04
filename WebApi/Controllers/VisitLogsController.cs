@@ -9,20 +9,20 @@ using WebApi.Models;
 
 namespace WebApi.Controllers
 {
-    [Route("api/[controller]")]
     [ApiController]
-    public class PacientVisitsController : ControllerBase
+    public class VisitLogsController : ControllerBase
     {
         private TokenList AuthTokens;
         private DBServise DB = new DBServise();
 
-        public PacientVisitsController(TokenList authTokens)
+        public VisitLogsController(TokenList authTokens)
         {
             AuthTokens = authTokens;
         }
 
         // GET: api/VisitLogs
         [HttpGet]
+        [Route("api/[controller]/pacientsvisitlogs")]
         public async Task<ActionResult<IEnumerable<VisitLog>>> GetVisitLogs(Guid? token, int? pacientId)
         {
             if (token == null)
@@ -32,7 +32,7 @@ namespace WebApi.Controllers
                 return Unauthorized();
 
             if (pacientId.HasValue == false)
-                return BadRequest();
+                return BadRequest("pacientId is required");
 
             var rawdata = await DB.GetVisitLogForPacient(pacientId.Value);
 
@@ -48,8 +48,37 @@ namespace WebApi.Controllers
             }
         }
 
+        [HttpGet]
+        [Route("api/[controller]/doctorsvisitlogs")]
+        public async Task<ActionResult<IEnumerable<VisitLog>>> GetVisitLogsForDoctor(Guid? token, int? doctorId)
+        {
+            if (token == null)
+                return Unauthorized();
+
+            if (token.HasValue && !AuthTokens.Contains(token.Value))
+                return Unauthorized();
+
+            if (doctorId.HasValue == false)
+                return BadRequest("Doctor Id is Required");
+
+            var rawdata = await DB.GetVisitLogForDoctor(doctorId.Value);
+
+            if (rawdata == null)
+            {
+                return NotFound();
+            }
+            else
+            {
+                var data = rawdata.Select(r => new VisitLog().Assign(r));
+
+                return new ActionResult<IEnumerable<VisitLog>>(data);
+            }
+        }
+
         // POST: api/VisitLogs
+
         [HttpPost]
+        [Route("api/[controller]")]
         public async Task<ActionResult> SaveVisit(Guid? token, [FromBody] VisitLog value)
         {
             if (token == null)
