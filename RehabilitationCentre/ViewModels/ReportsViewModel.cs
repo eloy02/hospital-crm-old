@@ -2,6 +2,7 @@
 using Core.Types;
 using MaterialDesignThemes.Wpf;
 using RehabilitationCentre.Models;
+using System.Linq;
 
 namespace RehabilitationCentre.ViewModels
 {
@@ -73,13 +74,17 @@ namespace RehabilitationCentre.ViewModels
         public string PacientFioForSearch
         {
             get { return _pacientFioForSearch; }
-            set { _pacientFioForSearch = value; NotifyOfPropertyChange(() => PacientFioForSearch); }
+            set { _pacientFioForSearch = value; NotifyOfPropertyChange(() => PacientFioForSearch); SearchPacient(); }
         }
 
         public string DoctorFioForSearch
         {
             get { return _doctorFioForSearch; }
-            set { _doctorFioForSearch = value; NotifyOfPropertyChange(() => DoctorFioForSearch); }
+            set
+            {
+                _doctorFioForSearch = value; NotifyOfPropertyChange(() => DoctorFioForSearch);
+                SearchDoctor();
+            }
         }
 
         public ReportsViewModel(ReportsModel model)
@@ -148,6 +153,28 @@ namespace RehabilitationCentre.ViewModels
 
                 IsWaitingReport = false;
             }
+        }
+
+        public void SearchDoctor()
+        {
+            var doctors = Model.Doctors.Select(d => d).ToList();
+
+            var r = doctors.Where(d => !string.IsNullOrEmpty(d.FIO)).Where(d => d.FIO.Contains(DoctorFioForSearch)).ToList();
+
+            Doctors.Clear();
+            Doctors.AddRange(r);
+            Doctors.Refresh();
+        }
+
+        public void SearchPacient()
+        {
+            var pacients = Model.PacientsList.Select(p => p).ToList();
+
+            var r = pacients.Where(p => !string.IsNullOrEmpty(p.FIO)).Where(p => p.FIO.Contains(PacientFioForSearch)).ToList();
+
+            Pacients.Clear();
+            Pacients.AddRange(r);
+            Pacients.Refresh();
         }
     }
 }

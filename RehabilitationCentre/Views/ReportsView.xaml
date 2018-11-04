@@ -38,17 +38,26 @@
             <Grid>
                 <Grid.RowDefinitions>
                     <RowDefinition Height="auto" />
+                    <RowDefinition Height="auto" />
                     <RowDefinition Height="*" />
                     <RowDefinition Height="50" />
                 </Grid.RowDefinitions>
+
+                <TextBlock
+                    Margin="10"
+                    HorizontalAlignment="Center"
+                    VerticalAlignment="Center"
+                    FontSize="20"
+                    Text="Отчет посещений пациентов" />
+
                 <TextBox
-                    Grid.Row="0"
+                    Grid.Row="1"
                     Margin="10"
                     materialDesign:HintAssist.Hint="Поиск"
                     Style="{StaticResource MaterialDesignFloatingHintTextBox}"
-                    Text="{Binding PacientFioForSearch}" />
+                    Text="{Binding PacientFioForSearch, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
 
-                <ScrollViewer Grid.Row="1">
+                <ScrollViewer Grid.Row="2">
                     <ListView
                         ItemsSource="{Binding Pacients}"
                         ScrollViewer.CanContentScroll="True"
@@ -111,7 +120,7 @@
 
                 <Button
                     x:Name="CreateReport"
-                    Grid.Row="2"
+                    Grid.Row="3"
                     Margin="10"
                     Style="{StaticResource MaterialDesignRaisedDarkButton}">
                     Создать отчет
@@ -123,18 +132,26 @@
             <Grid>
                 <Grid.RowDefinitions>
                     <RowDefinition Height="auto" />
+                    <RowDefinition Height="auto" />
                     <RowDefinition Height="*" />
                     <RowDefinition Height="50" />
                 </Grid.RowDefinitions>
 
+                <TextBlock
+                    Margin="10"
+                    HorizontalAlignment="Center"
+                    VerticalAlignment="Center"
+                    FontSize="20"
+                    Text="Отчет посещений по доктору" />
+
                 <TextBox
-                    Grid.Row="0"
+                    Grid.Row="1"
                     Margin="10"
                     materialDesign:HintAssist.Hint="Поиск"
                     Style="{StaticResource MaterialDesignFloatingHintTextBox}"
-                    Text="{Binding DoctorFioForSearch}" />
+                    Text="{Binding DoctorFioForSearch, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
 
-                <ScrollViewer Grid.Row="1">
+                <ScrollViewer Grid.Row="2">
                     <ListView
                         ItemsSource="{Binding Doctors}"
                         ScrollViewer.CanContentScroll="True"
@@ -161,7 +178,7 @@
 
                 <Button
                     x:Name="CreateDoctorsReport"
-                    Grid.Row="2"
+                    Grid.Row="3"
                     Margin="10"
                     Style="{StaticResource MaterialDesignRaisedDarkButton}">
                     Создать отчет
