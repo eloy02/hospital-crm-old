@@ -1,4 +1,5 @@
 ﻿using Core.Types;
+using Core.Types.Enumerations;
 using ExcelReports.Interfaces;
 using OfficeOpenXml;
 using System;
@@ -23,6 +24,7 @@ namespace ExcelReports
             public string PacientFio { get; set; }
             public string Address { get; set; }
             public string PacientPhoneNumber { get; set; }
+            public string PacientType { get; set; }
             public string ParentsFio { get; set; }
             public string ParentsPhoneNumber { get; set; }
         }
@@ -66,8 +68,17 @@ namespace ExcelReports
                     r.Style.Border.Left.Style = OfficeOpenXml.Style.ExcelBorderStyle.Thin;
                     r.Style.Border.Right.Style = OfficeOpenXml.Style.ExcelBorderStyle.Thin;
                 }
+                r = ws.Cells[6, 3];
+                if (r != null)
+                {
+                    r.Value = pacient.PacientType.GetDescription();
 
-                r = ws.Cells[9, 2];
+                    r.Style.Border.Bottom.Style = OfficeOpenXml.Style.ExcelBorderStyle.Thin;
+                    r.Style.Border.Left.Style = OfficeOpenXml.Style.ExcelBorderStyle.Thin;
+                    r.Style.Border.Right.Style = OfficeOpenXml.Style.ExcelBorderStyle.Thin;
+                }
+
+                r = ws.Cells[10, 2];
                 r.LoadFromCollection(items);
                 if (r != null)
                 {
@@ -104,7 +115,8 @@ namespace ExcelReports
                 PacientPhoneNumber = $"{v.Pacient.PacientPhoneNumber}",
                 ParentsFio = $"{v.Pacient.ParentLastName} {v.Pacient.ParentFirstName} {v.Pacient.ParentPatronymicName}",
                 ParentsPhoneNumber = $"{v.Pacient.ParentsPhoneNumber}",
-                VisitDate = v.VisitDateTime
+                VisitDate = v.VisitDateTime,
+                PacientType = v.Pacient.PacientType.GetDescription()
             }).ToList();
 
             using (var p = new ExcelPackage(fi))

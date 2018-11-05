@@ -2,6 +2,7 @@
 using Core.Types;
 using MaterialDesignThemes.Wpf;
 using RehabilitationCentre.Models;
+using System;
 using System.Linq;
 
 namespace RehabilitationCentre.ViewModels
@@ -25,6 +26,52 @@ namespace RehabilitationCentre.ViewModels
         private Pacient _selectedPacient;
         private string _doctorFioForSearch;
         private string _pacientFioForSearch;
+        private DateTime? _visitDateTo;
+        private DateTime? _visitDateFrom;
+        private DateTime? _doctorVisitDateTo;
+        private DateTime? _doctorVisitDateFrom;
+
+        public DateTime? DoctorVisitDateFrom
+        {
+            get { return _doctorVisitDateFrom; }
+            set
+            {
+                _doctorVisitDateFrom = value;
+                NotifyOfPropertyChange(() => DoctorVisitDateFrom);
+                NotifyOfPropertyChange(() => CanClearDoctorVisitDateFrom);
+            }
+        }
+
+        public DateTime? DoctorVisitDateTo
+        {
+            get { return _doctorVisitDateTo; }
+            set
+            {
+                _doctorVisitDateTo = value;
+                NotifyOfPropertyChange(() => DoctorVisitDateTo);
+                NotifyOfPropertyChange(() => CanClearDoctorVisitDateTo);
+            }
+        }
+
+        public DateTime? VisitDateFrom
+        {
+            get { return _visitDateFrom; }
+            set
+            {
+                _visitDateFrom = value; NotifyOfPropertyChange(() => VisitDateFrom);
+                NotifyOfPropertyChange(() => CanClearVisitDateFrom);
+            }
+        }
+
+        public DateTime? VisitDateTo
+        {
+            get { return _visitDateTo; }
+            set
+            {
+                _visitDateTo = value; NotifyOfPropertyChange(() => VisitDateTo);
+                NotifyOfPropertyChange(() => CanClearVisitDateTo);
+            }
+        }
 
         private bool _isWaitingReport = false;
 
@@ -117,7 +164,7 @@ namespace RehabilitationCentre.ViewModels
             {
                 IsWaitingReport = true;
 
-                await Model.CreateVisitReportAsync(SelectedPacient);
+                await Model.CreateVisitReportAsync(SelectedPacient, VisitDateFrom, VisitDateTo);
 
                 IsWaitingReport = false;
             }
@@ -149,7 +196,7 @@ namespace RehabilitationCentre.ViewModels
             {
                 IsWaitingReport = true;
 
-                await Model.CreateVisitReportAsync(SelectedDoctor);
+                await Model.CreateVisitReportAsync(SelectedDoctor, DoctorVisitDateFrom, DoctorVisitDateTo);
 
                 IsWaitingReport = false;
             }
@@ -175,6 +222,60 @@ namespace RehabilitationCentre.ViewModels
             Pacients.Clear();
             Pacients.AddRange(r);
             Pacients.Refresh();
+        }
+
+        public void ClearVisitDateTo()
+        {
+            VisitDateTo = null;
+        }
+
+        public void ClearVisitDateFrom()
+        {
+            VisitDateFrom = null;
+        }
+
+        public bool CanClearVisitDateTo
+        {
+            get
+            {
+                if (VisitDateTo != null)
+                    return true;
+                else return false;
+            }
+        }
+
+        public bool CanClearVisitDateFrom
+        {
+            get
+            {
+                return !(VisitDateFrom is null);
+            }
+        }
+
+        public void ClearDoctorVisitDateFrom()
+        {
+            DoctorVisitDateFrom = null;
+        }
+
+        public void ClearDoctorVisitDateTo()
+        {
+            DoctorVisitDateTo = null;
+        }
+
+        public bool CanClearDoctorVisitDateTo
+        {
+            get
+            {
+                return !(DoctorVisitDateTo is null);
+            }
+        }
+
+        public bool CanClearDoctorVisitDateFrom
+        {
+            get
+            {
+                return !(DoctorVisitDateFrom is null);
+            }
         }
     }
 }

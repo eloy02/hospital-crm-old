@@ -305,6 +305,8 @@ namespace RehabilitationCentre.ViewModels
             Timer.Stop();
 
             SelectedDoctor = null;
+            VisitDateTime = DateTime.Now;
+
             ChooseDoctor = true;
         }
 

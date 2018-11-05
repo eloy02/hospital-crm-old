@@ -144,6 +144,9 @@ namespace PacientRegistry.ViewModels
                 PacientOld.DocumentPath = PdfPath;
             }
 
+            if (SelectedPacientType.HasValue)
+                PacientOld.PacientType = SelectedPacientType.Value;
+
             var ok = await Model.UpdatePacientAsync(PacientOld);
 
             if (ok == false)

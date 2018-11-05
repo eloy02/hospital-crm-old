@@ -1,5 +1,6 @@
 ﻿using Core.Types;
 using ExcelReports.Interfaces;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -49,12 +50,18 @@ namespace RehabilitationCentre.Models
             else return null;
         }
 
-        public async Task CreateVisitReportAsync(Pacient pacient)
+        public async Task CreateVisitReportAsync(Pacient pacient, DateTime? visistDateFrom = null, DateTime? visitDateTo = null)
         {
             var visits = await webClient.GetVisitLogAsync(pacient);
 
             if (visits != null)
             {
+                if (visistDateFrom.HasValue)
+                    visits = visits.Where(v => v.VisitDateTime != null).Where(v => v.VisitDateTime >= visistDateFrom.Value).ToList();
+
+                if (visitDateTo.HasValue)
+                    visits = visits.Where(v => v.VisitDateTime != null).Where(v => v.VisitDateTime <= visitDateTo.Value).ToList();
+
                 await Task.Run(() =>
                 {
                     var file = excelReports.CreateVisitLogReport(visits, pacient);
@@ -67,12 +74,18 @@ namespace RehabilitationCentre.Models
             }
         }
 
-        public async Task CreateVisitReportAsync(Doctor doctor)
+        public async Task CreateVisitReportAsync(Doctor doctor, DateTime? visistDateFrom = null, DateTime? visitDateTo = null)
         {
             var visits = await webClient.GetVisitLogAsync(doctor);
 
             if (visits != null)
             {
+                if (visistDateFrom.HasValue)
+                    visits = visits.Where(v => v.VisitDateTime != null).Where(v => v.VisitDateTime >= visistDateFrom.Value).ToList();
+
+                if (visitDateTo.HasValue)
+                    visits = visits.Where(v => v.VisitDateTime != null).Where(v => v.VisitDateTime <= visitDateTo.Value).ToList();
+
                 await Task.Run(() =>
                 {
                     var file = excelReports.CreateVisitLogReport(visits, doctor);
