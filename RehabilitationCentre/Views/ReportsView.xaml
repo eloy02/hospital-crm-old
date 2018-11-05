@@ -58,7 +58,7 @@
                     Style="{StaticResource MaterialDesignFloatingHintTextBox}"
                     Text="{Binding PacientFioForSearch, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
 
-                <ScrollViewer Grid.Row="2">
+                <ScrollViewer Grid.Row="2" PreviewMouseWheel="ListViewScrollViewer_PreviewMouseWheel">
                     <ListView
                         ItemsSource="{Binding Pacients}"
                         ScrollViewer.CanContentScroll="True"
@@ -202,7 +202,7 @@
                     Style="{StaticResource MaterialDesignFloatingHintTextBox}"
                     Text="{Binding DoctorFioForSearch, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
 
-                <ScrollViewer Grid.Row="2">
+                <ScrollViewer Grid.Row="2" PreviewMouseWheel="ListViewScrollViewer_PreviewMouseWheel">
                     <ListView
                         ItemsSource="{Binding Doctors}"
                         ScrollViewer.CanContentScroll="True"
