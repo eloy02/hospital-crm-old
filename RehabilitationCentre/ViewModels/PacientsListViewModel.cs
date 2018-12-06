@@ -1,14 +1,14 @@
-﻿using Caliburn.Micro;
-using Core.Types;
-using Core.Types.Enumerations;
-using MaterialDesignThemes.Wpf;
-using RehabilitationCentre.Models;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Threading;
+using Caliburn.Micro;
+using Core.Types;
+using Core.Types.Enumerations;
+using MaterialDesignThemes.Wpf;
+using RehabilitationCentre.Models;
 using WebClient.Interfaces;
 
 namespace RehabilitationCentre.ViewModels
@@ -27,7 +27,8 @@ namespace RehabilitationCentre.ViewModels
 
         #region Private fields
 
-        private DateTime? _visitDateTime = DateTime.Now;
+        private DateTime? _visitTime = DateTime.Now;
+        private DateTime? _visitDate = DateTime.Now;
         public readonly IWebClient WebClient;
         private bool _chooseDoctor = false;
         private string _firstNameForFilter;
@@ -49,10 +50,16 @@ namespace RehabilitationCentre.ViewModels
 
         #region Public properties
 
-        public DateTime? VisitDateTime
+        public DateTime? VisitTime
         {
-            get { return _visitDateTime; }
-            set { _visitDateTime = value; NotifyOfPropertyChange(() => VisitDateTime); }
+            get { return _visitTime; }
+            set { _visitTime = value; NotifyOfPropertyChange(() => VisitTime); }
+        }
+
+        public DateTime? VisitDate
+        {
+            get { return _visitDate; }
+            set { _visitDate = value; NotifyOfPropertyChange(() => VisitDate); }
         }
 
         public bool ChooseDoctor
@@ -287,7 +294,15 @@ namespace RehabilitationCentre.ViewModels
         {
             if (SelectedPacient != null && SelectedDoctor != null)
             {
-                var ok = await Model.SetPacientVisitAsync(SelectedPacient, SelectedDoctor, VisitDateTime.Value);
+                var visitDate = new DateTime(
+                    VisitDate.Value.Year,
+                    VisitDate.Value.Month,
+                    VisitDate.Value.Day,
+                    VisitTime.Value.Hour,
+                    VisitTime.Value.Minute,
+                    VisitTime.Value.Second);
+
+                var ok = await Model.SetPacientVisitAsync(SelectedPacient, SelectedDoctor, visitDate);
 
                 if (ok)
                 {
@@ -305,7 +320,7 @@ namespace RehabilitationCentre.ViewModels
             Timer.Stop();
 
             SelectedDoctor = null;
-            VisitDateTime = DateTime.Now;
+            VisitDate = DateTime.Now;
 
             ChooseDoctor = true;
         }

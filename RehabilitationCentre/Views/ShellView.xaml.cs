@@ -19,13 +19,16 @@ namespace RehabilitationCentre.Views
             var path = Directory.GetCurrentDirectory() + @"\Temp";
             DirectoryInfo di = new DirectoryInfo(path);
 
-            foreach (FileInfo file in di.EnumerateFiles())
+            if (di.Exists)
             {
-                file.Delete();
-            }
-            foreach (DirectoryInfo dir in di.EnumerateDirectories())
-            {
-                dir.Delete(true);
+                foreach (FileInfo file in di.EnumerateFiles())
+                {
+                    file.Delete();
+                }
+                foreach (DirectoryInfo dir in di.EnumerateDirectories())
+                {
+                    dir.Delete(true);
+                }
             }
         }
     }

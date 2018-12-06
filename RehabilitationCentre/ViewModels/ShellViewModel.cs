@@ -1,10 +1,10 @@
-﻿using Caliburn.Micro;
-using Core.Types;
-using RehabilitationCentre.Views;
-using System;
+﻿using System;
 using System.IO;
 using System.Threading.Tasks;
 using System.Windows;
+using Caliburn.Micro;
+using Core.Types;
+using RehabilitationCentre.Views;
 using WebClient.Interfaces;
 
 namespace RehabilitationCentre.ViewModels
@@ -48,23 +48,30 @@ namespace RehabilitationCentre.ViewModels
             var path = Directory.GetCurrentDirectory() + @"\Temp";
             DirectoryInfo di = new DirectoryInfo(path);
 
-            foreach (FileInfo file in di.EnumerateFiles())
+            if (di.Exists)
             {
-                file.Delete();
-            }
-            foreach (DirectoryInfo dir in di.EnumerateDirectories())
-            {
-                dir.Delete(true);
+                foreach (FileInfo file in di.EnumerateFiles())
+                {
+                    file.Delete();
+                }
+                foreach (DirectoryInfo dir in di.EnumerateDirectories())
+                {
+                    dir.Delete(true);
+                }
             }
 
             DirectoryInfo di2 = new DirectoryInfo(@".\CompletedReports");
-            foreach (FileInfo file in di2.EnumerateFiles())
+
+            if (di2.Exists)
             {
-                file.Delete();
-            }
-            foreach (DirectoryInfo dir in di2.EnumerateDirectories())
-            {
-                dir.Delete(true);
+                foreach (FileInfo file in di2.EnumerateFiles())
+                {
+                    file.Delete();
+                }
+                foreach (DirectoryInfo dir in di2.EnumerateDirectories())
+                {
+                    dir.Delete(true);
+                }
             }
 
             Task.Run(async () => await WebClient.DeleteToken()).Wait();

@@ -50,7 +50,7 @@
                         Width="150"
                         materialDesign:HintAssist.Hint="Дата посещения"
                         Language="RU-ru"
-                        SelectedDate="{Binding VisitDateTime}"
+                        SelectedDate="{Binding VisitDate}"
                         Style="{StaticResource MaterialDesignFloatingHintDatePicker}" />
 
                     <materialDesign:TimePicker
@@ -59,7 +59,7 @@
                         materialDesign:HintAssist.Hint="Время посещения"
                         Is24Hours="True"
                         Language="Ru-ru"
-                        SelectedTime="{Binding VisitDateTime}" />
+                        SelectedTime="{Binding VisitTime}" />
                 </StackPanel>
 
                 <StackPanel HorizontalAlignment="Right" Orientation="Horizontal">
@@ -117,10 +117,10 @@
                                 Text="{Binding PatronymicNameForFilter, UpdateSourceTrigger=PropertyChanged}" />
 
                             <ComboBox
-                                Width="150"
-                                MaxWidth="150"
+                                Width="200"
+                                MaxWidth="200"
                                 Margin="10"
-                                materialDesign:HintAssist.Hint="Тип пациента"
+                                materialDesign:HintAssist.Hint="Инвалид или лицо с ОВЗ"
                                 DisplayMemberPath="Name"
                                 IsEditable="False"
                                 ItemsSource="{Binding PacientTypes}"
@@ -132,7 +132,7 @@
                                 Width="250"
                                 MaxWidth="250"
                                 Margin="10"
-                                materialDesign:HintAssist.Hint="Номер телефона пациента"
+                                materialDesign:HintAssist.Hint="Номер телефона инвалида или лица с ОВЗ"
                                 PreviewTextInput="TextBox_PreviewTextInput"
                                 Style="{StaticResource MaterialDesignFloatingHintTextBox}"
                                 Text="{Binding PacientPhoneNumberForFilter, UpdateSourceTrigger=PropertyChanged}" />
@@ -168,11 +168,21 @@
                 Margin="0,5,0,0"
                 materialDesign:DataGridAssist.CellPadding="13 8 8 8"
                 materialDesign:DataGridAssist.ColumnHeaderPadding="8"
+                AlternatingRowBackground="#EEEEFF"
+                AlternationCount="2"
                 AutoGenerateColumns="False"
                 CanUserAddRows="False"
                 CanUserSortColumns="True"
+                EnableColumnVirtualization="True"
+                EnableRowVirtualization="True"
                 HeadersVisibility="Column"
-                SelectedItem="{Binding SelectedPacient, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
+                ScrollViewer.CanContentScroll="True"
+                ScrollViewer.IsDeferredScrollingEnabled="True"
+                SelectedItem="{Binding SelectedPacient, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                VirtualizingPanel.IsVirtualizing="True"
+                VirtualizingPanel.IsVirtualizingWhenGrouping="True"
+                VirtualizingPanel.ScrollUnit="Pixel"
+                VirtualizingPanel.VirtualizationMode="Recycling">
                 <DataGrid.Columns>
 
                     <DataGridTemplateColumn Header="Адрес">
@@ -202,7 +212,7 @@
                         </DataGridTemplateColumn.CellTemplate>
                     </DataGridTemplateColumn>
 
-                    <DataGridTemplateColumn Header="Пациент">
+                    <DataGridTemplateColumn Header="ФИО">
                         <DataGridTemplateColumn.CellTemplate>
                             <DataTemplate>
                                 <StackPanel Margin="10">
@@ -228,7 +238,7 @@
 
                     <DataGridTextColumn
                         Binding="{Binding PacientType, Converter={StaticResource vcEnumToString}}"
-                        Header="Тип пациента"
+                        Header="Инвалид или лицо с ОВЗ"
                         IsReadOnly="True" />
 
                     <DataGridTemplateColumn Header="Телефоны">
@@ -278,7 +288,7 @@
                                         Margin="10"
                                         cal:Message.Attach="[Event Click] = [Action ShowPacientDocumet]"
                                         Style="{StaticResource MaterialDesignRaisedLightButton}"
-                                        ToolTip="Просмотреть документ пациента">
+                                        ToolTip="Просмотреть документ инвалида или лица с ОВЗ">
                                         <materialDesign:PackIcon
                                             Width="25"
                                             Height="25"
