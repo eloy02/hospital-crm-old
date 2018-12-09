@@ -1,6 +1,6 @@
-﻿using Core.Types;
-using System;
+﻿using System;
 using System.Threading.Tasks;
+using Core.Types;
 
 namespace AdminApp
 {

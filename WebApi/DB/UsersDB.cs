@@ -1,6 +1,7 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore;
 using WebApi.Models;
 
 namespace WebApi.DB
@@ -9,7 +10,7 @@ namespace WebApi.DB
     {
         public async Task<bool> AddUserAsync(User user, string password)
         {
-            user.UserGuid = new System.Guid();
+            user.UserGuid = Guid.NewGuid();
             user.Password = Security.HashSHA1($"{password}{user.UserGuid}");
 
             using (var db = new HospitalContext())
