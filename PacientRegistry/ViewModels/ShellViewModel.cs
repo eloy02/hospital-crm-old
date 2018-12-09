@@ -1,9 +1,3 @@
-using Caliburn.Micro;
-using Core.Types;
-using Core.Types.Enumerations;
-using KladrApiClient;
-using PacientRegistry.Models;
-using PacientRegistry.ViewModels;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -11,6 +5,12 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Threading;
+using Caliburn.Micro;
+using Core.Types;
+using Core.Types.Enumerations;
+using KladrApiClient;
+using PacientRegistry.Models;
+using PacientRegistry.ViewModels;
 using WebClient.Interfaces;
 
 namespace PacientRegistry
@@ -55,6 +55,7 @@ namespace PacientRegistry
             new PacientTypeView{ Type = EPatientType.OVZ, Name = "ฮยว"}
         };
 
+        private bool _isWorking;
         private string _buildingNum;
         private BindableCollection<BuildingsView> _buildings = new BindableCollection<BuildingsView>();
         private Visibility _buildingsLoadingVisibility = Visibility.Collapsed;
@@ -83,6 +84,9 @@ namespace PacientRegistry
         private ShellModel Model;
         private Pacient _selectedPacient;
         private BindableCollection<Pacient> pacients = new BindableCollection<Pacient>();
+        private string _lastNameForSearch;
+        private string _patronymicNameForFilter;
+        private string _firstNameForSearch;
 
         #endregion Private fields
 
@@ -121,6 +125,30 @@ namespace PacientRegistry
         #endregion Visibility
 
         #region Public Properties
+
+        public string LastNameForSearch
+        {
+            get { return _lastNameForSearch; }
+            set { _lastNameForSearch = value; NotifyOfPropertyChange(() => LastNameForSearch); FilterPacients(); }
+        }
+
+        public string FirstNameForSearch
+        {
+            get { return _firstNameForSearch; }
+            set { _firstNameForSearch = value; NotifyOfPropertyChange(() => FirstNameForSearch); FilterPacients(); }
+        }
+
+        public string PatronymicNameForFilter
+        {
+            get { return _patronymicNameForFilter; }
+            set { _patronymicNameForFilter = value; NotifyOfPropertyChange(() => PatronymicNameForFilter); FilterPacients(); }
+        }
+
+        public bool IsWorking
+        {
+            get { return _isWorking; }
+            set { _isWorking = value; NotifyOfPropertyChange(() => IsWorking); }
+        }
 
         public Pacient SelectedPacient
         {
@@ -560,7 +588,8 @@ namespace PacientRegistry
                 PatronymicName = this.PacientPatronymicName,
                 ParentsPhoneNumber = this.ParentPhoneNumber,
                 Sity = this.Sity,
-                Street = this.Street
+                Street = this.Street,
+                IsWorking = this.IsWorking
             };
 
             var ok = await Model.SavePacientAsync(pacient);
@@ -635,54 +664,63 @@ namespace PacientRegistry
 
         private void FilterPacients()
         {
-            var pac = Model.Pacients.Select(p => p).ToList();
+            var pac = Model.Pacients.Select(p => p);
+
+            if (!string.IsNullOrEmpty(FirstNameForSearch))
+                pac = pac.Where(p => p.FirstName.ToLower().Contains(FirstNameForSearch.ToLower()));
+
+            if (!string.IsNullOrEmpty(LastNameForSearch))
+                pac = pac.Where(p => p.LastName.ToLower().Contains(LastNameForSearch.ToLower()));
+
+            if (!string.IsNullOrEmpty(PatronymicNameForFilter))
+                pac = pac.Where(p => p.PatronymicName.ToLower().Contains(PatronymicNameForFilter.ToLower()));
 
             if (!string.IsNullOrEmpty(Sity))
             {
                 pac = pac.Where(p => !string.IsNullOrEmpty(p.Sity)).ToList();
-                pac = pac.Where(p => p.Sity.ToLower().Contains(Sity.ToLower())).ToList();
+                pac = pac.Where(p => p.Sity.ToLower().Contains(Sity.ToLower()));
             }
 
             if (!string.IsNullOrEmpty(Street))
             {
                 //pac = pac.Where(p => !string.IsNullOrEmpty(p.Street)).ToList();
-                pac = pac.Where(p => !string.IsNullOrEmpty(p.Street)).ToList().Where(p => p.Street.ToLower().Contains(Street?.ToLower())).ToList();
+                pac = pac.Where(p => !string.IsNullOrEmpty(p.Street)).ToList().Where(p => p.Street.ToLower().Contains(Street?.ToLower()));
             }
 
             if (!string.IsNullOrEmpty(BuildingNumber))
             {
                 //pac = pac.Where(p => !string.IsNullOrEmpty(p.BuildingNumber)).ToList();
-                pac = pac.Where(p => !string.IsNullOrEmpty(p.BuildingNumber)).ToList().Where(p => p.BuildingNumber.ToLower().Contains(BuildingNumber.ToLower())).ToList();
+                pac = pac.Where(p => !string.IsNullOrEmpty(p.BuildingNumber)).ToList().Where(p => p.BuildingNumber.ToLower().Contains(BuildingNumber.ToLower()));
             }
 
             if (!string.IsNullOrEmpty(FlatNumber))
             {
                 //pac = pac.Where(p => !string.IsNullOrEmpty(p.FlatNumber)).ToList();
-                pac = pac.Where(p => !string.IsNullOrEmpty(p.FlatNumber)).ToList().Where(p => p.FlatNumber.ToLower().Contains(FlatNumber.ToLower())).ToList();
+                pac = pac.Where(p => !string.IsNullOrEmpty(p.FlatNumber)).ToList().Where(p => p.FlatNumber.ToLower().Contains(FlatNumber.ToLower()));
             }
 
             if (!string.IsNullOrEmpty(PacientFirstName))
             {
                 //pac = pac.Where(p => !string.IsNullOrEmpty(p.FirstName)).ToList();
-                pac = pac.Where(p => !string.IsNullOrEmpty(p.FirstName)).ToList().Where(p => p.FirstName.ToLower().Contains(PacientFirstName.ToLower())).ToList();
+                pac = pac.Where(p => !string.IsNullOrEmpty(p.FirstName)).ToList().Where(p => p.FirstName.ToLower().Contains(PacientFirstName.ToLower()));
             }
 
             if (!string.IsNullOrEmpty(PacientLastName))
             {
                 //pac = pac.Where(p => !string.IsNullOrEmpty(p.LastName)).ToList();
-                pac = pac.Where(p => !string.IsNullOrEmpty(p.LastName)).ToList().Where(p => p.LastName.ToLower().Contains(PacientLastName.ToLower())).ToList();
+                pac = pac.Where(p => !string.IsNullOrEmpty(p.LastName)).ToList().Where(p => p.LastName.ToLower().Contains(PacientLastName.ToLower()));
             }
 
             if (!string.IsNullOrEmpty(PacientPatronymicName))
             {
                 //pac = pac.Where(p => !string.IsNullOrEmpty(p.PatronymicName)).ToList();
-                pac = pac.Where(p => !string.IsNullOrEmpty(p.PatronymicName)).ToList().Where(p => p.PatronymicName.ToLower().Contains(PacientPatronymicName.ToLower())).ToList();
+                pac = pac.Where(p => !string.IsNullOrEmpty(p.PatronymicName)).ToList().Where(p => p.PatronymicName.ToLower().Contains(PacientPatronymicName.ToLower()));
             }
 
             if (!string.IsNullOrEmpty(PacientPhoneNumber))
             {
                 //pac = pac.Where(p => !string.IsNullOrEmpty(p.PacientPhoneNumber)).ToList();
-                pac = pac.Where(p => !string.IsNullOrEmpty(p.PacientPhoneNumber)).ToList().Where(p => p.PacientPhoneNumber.ToLower().Contains(PacientPhoneNumber.ToLower())).ToList();
+                pac = pac.Where(p => !string.IsNullOrEmpty(p.PacientPhoneNumber)).ToList().Where(p => p.PacientPhoneNumber.ToLower().Contains(PacientPhoneNumber.ToLower()));
             }
 
             Pacients.Clear();

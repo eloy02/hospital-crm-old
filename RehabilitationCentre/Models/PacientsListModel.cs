@@ -1,10 +1,10 @@
-﻿using Core.Types;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Threading;
+using Core.Types;
 using WebClient.Interfaces;
 
 namespace RehabilitationCentre.Models
@@ -118,6 +118,11 @@ namespace RehabilitationCentre.Models
                     dir.Delete(true);
                 }
             }
+        }
+
+        public async Task UpdatePacientAsync(Pacient pacient)
+        {
+            await WebClient.UpdatePacientsDataAsync(pacient);
         }
     }
 }

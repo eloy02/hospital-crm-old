@@ -1,8 +1,8 @@
-﻿using Caliburn.Micro;
+﻿using System.Windows;
+using Caliburn.Micro;
 using Core.Types;
 using Core.Types.Enumerations;
 using PacientRegistry.Models;
-using System.Windows;
 using WebClient.Interfaces;
 using static PacientRegistry.ShellViewModel;
 
@@ -81,7 +81,8 @@ namespace PacientRegistry.ViewModels
                 ParentsPhoneNumber = pacient.ParentsPhoneNumber,
                 Sity = pacient.Sity,
                 PatronymicName = pacient.PatronymicName,
-                Street = pacient.Street
+                Street = pacient.Street,
+                IsWorking = pacient.IsWorking
             };
 
             SelectedPacientType = Pacient.PacientType;

@@ -1,8 +1,4 @@
-﻿using Castle.Windsor;
-using Core.Types;
-using RestSharp;
-using RestSharp.Serializers.Newtonsoft.Json;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -10,6 +6,10 @@ using System.Net;
 using System.Net.Mime;
 using System.Threading.Tasks;
 using System.Web;
+using Castle.Windsor;
+using Core.Types;
+using RestSharp;
+using RestSharp.Serializers.Newtonsoft.Json;
 using WebClient.Interfaces;
 
 using JsonRest = RestSharp.Serializers.Newtonsoft.Json;

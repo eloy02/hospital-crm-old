@@ -232,6 +232,13 @@
                     </StackPanel>
                 </materialDesign:Card>
 
+                <CheckBox
+                    Margin="10"
+                    IsChecked="{Binding Pacient.IsWorking, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                    Style="{StaticResource MaterialDesignCheckBox}">
+                    Посещяет специалистов
+                </CheckBox>
+
                 <Grid Margin="0,20,0,0">
 
                     <Grid.ColumnDefinitions>

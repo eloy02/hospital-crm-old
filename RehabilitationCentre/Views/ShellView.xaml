@@ -63,6 +63,8 @@
                                     VerticalAlignment="Center"
                                     Kind="{Binding Icon}" />
                                 <TextBlock
+                                    Width="200"
+                                    TextWrapping="Wrap"
                                     x:Name="MenuItems_Name"
                                     Margin="20,0"
                                     VerticalAlignment="Center"

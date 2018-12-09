@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 
 namespace WebApi.Models
 {
@@ -25,6 +24,7 @@ namespace WebApi.Models
         public string ParentLastName { get; set; }
         public string ParentPatronymicName { get; set; }
         public string ParentPhoneNumber { get; set; }
+        public bool IsWorking { get; set; }
 
         public ICollection<Documents> Documents { get; set; }
         public ICollection<VisitLogs> VisitLogs { get; set; }

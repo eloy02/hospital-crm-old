@@ -1,6 +1,6 @@
-﻿using Microsoft.EntityFrameworkCore;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore;
 using WebApi.Models;
 
 namespace WebApi.DB
@@ -48,6 +48,7 @@ namespace WebApi.DB
                     pac.PatronymicName = pacient.PatronymicName;
                     pac.Sity = pacient.Sity;
                     pac.Street = pacient.Street;
+                    pac.IsWorking = pacient.IsWorking;
 
                     await db.SaveChangesAsync();
                 }

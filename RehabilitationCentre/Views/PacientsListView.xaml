@@ -32,7 +32,7 @@
         <materialDesign:DialogHost.DialogContent>
             <StackPanel Margin="16">
                 <TextBlock>
-                    Выберите доктора
+                    Выберите специалиста
                 </TextBlock>
                 <ComboBox
                     Width="400"
@@ -92,7 +92,7 @@
             <materialDesign:Card Grid.Row="0">
                 <Expander HorizontalAlignment="Stretch" Header="Поиск">
                     <StackPanel>
-                        <StackPanel Orientation="Horizontal">
+                        <WrapPanel Orientation="Horizontal">
                             <TextBox
                                 Width="150"
                                 MaxWidth="150"
@@ -126,8 +126,8 @@
                                 ItemsSource="{Binding PacientTypes}"
                                 SelectedItem="{Binding PacientTypeForFilter}"
                                 Style="{StaticResource MaterialDesignFloatingHintComboBox}" />
-                        </StackPanel>
-                        <StackPanel Orientation="Horizontal">
+                        </WrapPanel>
+                        <WrapPanel Orientation="Horizontal">
                             <TextBox
                                 Width="250"
                                 MaxWidth="250"
@@ -145,7 +145,15 @@
                                 PreviewTextInput="TextBox_PreviewTextInput"
                                 Style="{StaticResource MaterialDesignFloatingHintTextBox}"
                                 Text="{Binding ParentPhoneNumberForFilter, UpdateSourceTrigger=PropertyChanged}" />
-                        </StackPanel>
+                        </WrapPanel>
+                        <WrapPanel Orientation="Horizontal">
+                            <CheckBox
+                                Margin="10"
+                                IsChecked="{Binding IsOnlyWorking, Mode=TwoWay}"
+                                Style="{StaticResource MaterialDesignCheckBox}">
+                                Отображать только посещающих специалистов
+                            </CheckBox>
+                        </WrapPanel>
                         <Button
                             x:Name="ClearFilter"
                             Width="auto"
@@ -185,95 +193,122 @@
                 VirtualizingPanel.VirtualizationMode="Recycling">
                 <DataGrid.Columns>
 
-                    <DataGridTemplateColumn Header="Адрес">
+                    <DataGridTemplateColumn Width="150" Header="Адрес">
                         <DataGridTemplateColumn.CellTemplate>
                             <DataTemplate>
-                                <StackPanel Margin="10">
-                                    <StackPanel Orientation="Vertical">
-                                        <TextBlock
-                                            Margin="0,0,5,0"
-                                            Text="{Binding Sity, StringFormat='Город: {0}'}"
-                                            Visibility="{Binding Sity, Converter={StaticResource NullToVisConverter}}" />
-                                        <TextBlock
-                                            Margin="0,5,5,0"
-                                            Text="{Binding Street, StringFormat='Улица: {0}'}"
-                                            Visibility="{Binding Street, Converter={StaticResource NullToVisConverter}}" />
-                                        <TextBlock
-                                            Margin="0,5,5,0"
-                                            Text="{Binding BuildingNumber, StringFormat='Дом: {0}'}"
-                                            Visibility="{Binding BuildingNumber, Converter={StaticResource NullToVisConverter}}" />
-                                        <TextBlock
-                                            Margin="0,5,5,0"
-                                            Text="{Binding FlatNumber, StringFormat='Квартира: {0}'}"
-                                            Visibility="{Binding FlatNumber, Converter={StaticResource NullToVisConverter}}" />
-                                    </StackPanel>
-                                </StackPanel>
+                                <WrapPanel Margin="10" Orientation="Vertical">
+                                    <TextBlock
+                                        Margin="0,0,5,0"
+                                        Text="{Binding Sity, StringFormat='Город: {0}'}"
+                                        TextWrapping="Wrap"
+                                        Visibility="{Binding Sity, Converter={StaticResource NullToVisConverter}}" />
+                                    <TextBlock
+                                        Margin="0,5,5,0"
+                                        Text="{Binding Street, StringFormat='Улица: {0}'}"
+                                        TextWrapping="Wrap"
+                                        Visibility="{Binding Street, Converter={StaticResource NullToVisConverter}}" />
+                                    <TextBlock
+                                        Margin="0,5,5,0"
+                                        Text="{Binding BuildingNumber, StringFormat='Дом: {0}'}"
+                                        TextWrapping="Wrap"
+                                        Visibility="{Binding BuildingNumber, Converter={StaticResource NullToVisConverter}}" />
+                                    <TextBlock
+                                        Margin="0,5,5,0"
+                                        Text="{Binding FlatNumber, StringFormat='Квартира: {0}'}"
+                                        TextWrapping="Wrap"
+                                        Visibility="{Binding FlatNumber, Converter={StaticResource NullToVisConverter}}" />
+                                </WrapPanel>
                             </DataTemplate>
                         </DataGridTemplateColumn.CellTemplate>
                     </DataGridTemplateColumn>
 
-                    <DataGridTemplateColumn Header="ФИО">
+                    <DataGridTemplateColumn Width="200" Header="ФИО">
                         <DataGridTemplateColumn.CellTemplate>
                             <DataTemplate>
-                                <StackPanel Margin="10">
-                                    <StackPanel Orientation="Horizontal">
-                                        <materialDesign:PackIcon Margin="0,0,10,0" Kind="Account" />
-                                        <TextBlock
-                                            Margin="0,0,5,0"
-                                            Text="{Binding LastName}"
-                                            Visibility="{Binding LastName, Converter={StaticResource NullToVisConverter}}" />
-                                        <TextBlock
-                                            Margin="0,0,5,0"
-                                            Text="{Binding FirstName}"
-                                            Visibility="{Binding FirstName, Converter={StaticResource NullToVisConverter}}" />
-                                        <TextBlock
-                                            Margin="0,0,5,0"
-                                            Text="{Binding PatronymicName}"
-                                            Visibility="{Binding PatronymicName, Converter={StaticResource NullToVisConverter}}" />
-                                    </StackPanel>
-                                </StackPanel>
+                                <WrapPanel Margin="10" Orientation="Horizontal">
+                                    <materialDesign:PackIcon Margin="0,0,10,0" Kind="Account" />
+                                    <TextBlock
+                                        Margin="0,0,5,0"
+                                        Text="{Binding LastName}"
+                                        TextWrapping="Wrap"
+                                        Visibility="{Binding LastName, Converter={StaticResource NullToVisConverter}}" />
+                                    <TextBlock
+                                        Margin="0,0,5,0"
+                                        Text="{Binding FirstName}"
+                                        TextWrapping="Wrap"
+                                        Visibility="{Binding FirstName, Converter={StaticResource NullToVisConverter}}" />
+                                    <TextBlock
+                                        Margin="0,0,5,0"
+                                        Text="{Binding PatronymicName}"
+                                        TextWrapping="Wrap"
+                                        Visibility="{Binding PatronymicName, Converter={StaticResource NullToVisConverter}}" />
+                                </WrapPanel>
                             </DataTemplate>
                         </DataGridTemplateColumn.CellTemplate>
                     </DataGridTemplateColumn>
 
                     <DataGridTextColumn
+                        Width="100"
                         Binding="{Binding PacientType, Converter={StaticResource vcEnumToString}}"
                         Header="Инвалид или лицо с ОВЗ"
                         IsReadOnly="True" />
 
-                    <DataGridTemplateColumn Header="Телефоны">
+                    <DataGridTemplateColumn Width="200" Header="Телефоны">
                         <DataGridTemplateColumn.CellTemplate>
                             <DataTemplate>
-                                <StackPanel>
-                                    <StackPanel
+                                <WrapPanel>
+                                    <WrapPanel
                                         Margin="10,0,10,10"
                                         Orientation="Horizontal"
                                         Visibility="{Binding PacientPhoneNumber, Converter={StaticResource NullToVisConverter}}">
                                         <materialDesign:PackIcon Margin="0,0,10,0" Kind="PhoneClassic" />
-                                        <TextBlock Text="{Binding PacientPhoneNumber, StringFormat='Номер пацента: {0}'}" />
-                                    </StackPanel>
-                                    <StackPanel
+                                        <TextBlock Text="{Binding PacientPhoneNumber, StringFormat='Номер инвалида или лица с ОВЗ: {0}'}" TextWrapping="Wrap" />
+                                    </WrapPanel>
+                                    <WrapPanel
                                         Margin="10,5,10,10"
                                         Orientation="Horizontal"
                                         Visibility="{Binding ParentsPhoneNumber, Converter={StaticResource NullToVisConverter}}">
                                         <materialDesign:PackIcon Margin="0,0,10,0" Kind="PhoneClassic" />
-                                        <TextBlock Text="{Binding ParentsPhoneNumber, StringFormat='Номер родителей: {0}'}" />
-                                    </StackPanel>
+                                        <TextBlock Text="{Binding ParentsPhoneNumber, StringFormat='Номер родителей: {0}'}" TextWrapping="Wrap" />
+                                    </WrapPanel>
+                                </WrapPanel>
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellTemplate>
+                    </DataGridTemplateColumn>
+
+                    <DataGridTemplateColumn Width="150" Header="Родители">
+                        <DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate>
+                                <StackPanel Margin="10">
+                                    <WrapPanel Orientation="Horizontal">
+                                        <TextBlock
+                                            Margin="0,0,5,0"
+                                            Text="{Binding ParentLastName}"
+                                            TextWrapping="Wrap" />
+                                        <TextBlock
+                                            Margin="0,0,5,0"
+                                            Text="{Binding ParentFirstName}"
+                                            TextWrapping="Wrap" />
+                                        <TextBlock
+                                            Margin="0,0,5,0"
+                                            Text="{Binding ParentPatronymicName}"
+                                            TextWrapping="Wrap" />
+                                    </WrapPanel>
                                 </StackPanel>
                             </DataTemplate>
                         </DataGridTemplateColumn.CellTemplate>
                     </DataGridTemplateColumn>
 
-                    <DataGridTemplateColumn Header="Родители">
+                    <DataGridTemplateColumn Width="80" Header="Посещяет специалистов">
                         <DataGridTemplateColumn.CellTemplate>
                             <DataTemplate>
-                                <StackPanel Margin="10">
-                                    <StackPanel Orientation="Horizontal">
-                                        <TextBlock Margin="0,0,5,0" Text="{Binding ParentLastName}" />
-                                        <TextBlock Margin="0,0,5,0" Text="{Binding ParentFirstName}" />
-                                        <TextBlock Margin="0,0,5,0" Text="{Binding ParentPatronymicName}" />
-                                    </StackPanel>
-                                </StackPanel>
+                                <CheckBox
+                                    HorizontalAlignment="Center"
+                                    VerticalAlignment="Center"
+                                    cal:Action.TargetWithoutContext="{Binding DataContext, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=UserControl}}"
+                                    cal:Message.Attach="[Event Checked] = [Action UpdatePacient]"
+                                    IsChecked="{Binding IsWorking, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                    Style="{StaticResource MaterialDesignCheckBox}" />
                             </DataTemplate>
                         </DataGridTemplateColumn.CellTemplate>
                     </DataGridTemplateColumn>

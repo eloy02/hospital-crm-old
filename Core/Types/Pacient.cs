@@ -17,7 +17,7 @@ namespace Core.Types
         public string ParentPatronymicName { get; set; }
         public string ParentsPhoneNumber { get; set; }
         public string DocumentPath { get; set; }
-
+        public bool IsWorking { get; set; }
         public Document Document { get; set; }
 
         public string FIO

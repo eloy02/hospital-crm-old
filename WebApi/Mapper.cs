@@ -1,7 +1,7 @@
-﻿using Core.Types;
-using Core.Types.Enumerations;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
+using Core.Types;
+using Core.Types.Enumerations;
 using WebApi.Models;
 
 namespace WebApi
@@ -25,6 +25,7 @@ namespace WebApi
             a.FlatNumber = src.FlatNumber;
             a.ParentPhoneNumber = src.ParentsPhoneNumber;
             a.Id = src.Id;
+            a.IsWorking = src.IsWorking;
 
             if (src.Document != null)
                 a.Documents = new List<Documents>() { new Documents().Assign(src.Document) };
@@ -48,6 +49,7 @@ namespace WebApi
             a.Sity = src.Sity;
             a.Street = src.Street;
             a.ParentsPhoneNumber = src.ParentPhoneNumber;
+            a.IsWorking = src.IsWorking;
 
             return a;
         }

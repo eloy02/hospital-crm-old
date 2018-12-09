@@ -22,7 +22,7 @@ namespace RehabilitationCentre.ViewModels
 
         public static string Name
         {
-            get { return "Список пациентов"; }
+            get { return "Список инвалидов или лиц с ОВЗ"; }
         }
 
         #region Private fields
@@ -45,10 +45,22 @@ namespace RehabilitationCentre.ViewModels
         private BindableCollection<Pacient> pacients = new BindableCollection<Pacient>();
         private DispatcherTimer Timer;
         private BindableCollection<Doctor> _doctors = new BindableCollection<Doctor>();
+        private bool _isOnlyWorking = false;
 
         #endregion Private fields
 
         #region Public properties
+
+        public bool IsOnlyWorking
+        {
+            get { return _isOnlyWorking; }
+            set
+            {
+                _isOnlyWorking = value;
+                NotifyOfPropertyChange(() => IsOnlyWorking);
+                GetPacients();
+            }
+        }
 
         public DateTime? VisitTime
         {
@@ -208,44 +220,53 @@ namespace RehabilitationCentre.ViewModels
         {
             IsPacientsLoading = true;
 
-            var pac = pacients.Select(p => p).ToList();
+            var _pac = pacients.Select(p => p).ToList();
 
-            if (pac != null)
+            if (_pac != null)
             {
+                var pac = _pac.AsEnumerable();
+
                 if (!string.IsNullOrEmpty(LastNameForFilter))
                 {
-                    pac = pac.Where(p => p.LastName.ToLower().Contains(LastNameForFilter.ToLower())).ToList();
+                    pac = pac.Where(p => p.LastName.ToLower().Contains(LastNameForFilter.ToLower()));
                 }
 
                 if (!string.IsNullOrEmpty(FirstNameForFilter))
                 {
-                    pac = pac.Where(p => p.FirstName.ToLower().Contains(FirstNameForFilter.ToLower())).ToList();
+                    pac = pac.Where(p => p.FirstName.ToLower().Contains(FirstNameForFilter.ToLower()));
                 }
 
                 if (!string.IsNullOrEmpty(PatronymicNameForFilter))
                 {
-                    pac = pac.Where(p => p.PatronymicName.ToLower().Contains(PatronymicNameForFilter.ToLower())).ToList();
+                    pac = pac.Where(p => p.PatronymicName.ToLower().Contains(PatronymicNameForFilter.ToLower()));
                 }
 
                 if (!string.IsNullOrEmpty(PacientPhoneNumberForFilter))
                 {
-                    pac = pac.Where(p => p.PacientPhoneNumber.Contains(PacientPhoneNumberForFilter)).ToList();
+                    pac = pac.Where(p => p.PacientPhoneNumber.Contains(PacientPhoneNumberForFilter));
                 }
 
                 if (!string.IsNullOrEmpty(ParentPhoneNumberForFilter))
                 {
-                    pac = pac.Where(p => p.ParentsPhoneNumber.Contains(ParentPhoneNumberForFilter)).ToList();
+                    pac = pac.Where(p => p.ParentsPhoneNumber.Contains(ParentPhoneNumberForFilter));
                 }
 
                 if (PacientTypeForFilter != null)
                 {
-                    pac = pac.Where(p => p.PacientType == PacientTypeForFilter.Value).ToList();
+                    pac = pac.Where(p => p.PacientType == PacientTypeForFilter.Value);
                 }
+
+                if (IsOnlyWorking == true)
+                {
+                    pac = pac.Where(p => p.IsWorking == IsOnlyWorking);
+                }
+
+                _pac = pac.ToList();
             }
 
             IsPacientsLoading = false;
 
-            return pac;
+            return _pac;
         }
 
         public void GetPacients()
@@ -350,6 +371,14 @@ namespace RehabilitationCentre.ViewModels
             NotifyOfPropertyChange(() => CanSetVisit);
         }
 
+        public async void UpdatePacient()
+        {
+            if (SelectedPacient != null)
+            {
+                await Model.UpdatePacientAsync(SelectedPacient);
+            }
+        }
+
         #endregion Methods
 
         private PacientsListModel Model;
@@ -362,7 +391,7 @@ namespace RehabilitationCentre.ViewModels
 
             Timer = new DispatcherTimer()
             {
-                Interval = TimeSpan.FromSeconds(15)
+                Interval = TimeSpan.FromMinutes(1)
             };
             Timer.Tick += Timer_Tick;
 
