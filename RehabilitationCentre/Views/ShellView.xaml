@@ -36,17 +36,16 @@
 
         <dragablz:TabablzControl
             x:Name="MenuItems"
-            Margin="10"
-            SelectedItem="{Binding CurrentView, Mode=TwoWay}"
-            SelectedIndex="1">
+            SelectedIndex="1"
+            SelectedItem="{Binding CurrentView, Mode=TwoWay}">
             <dragablz:TabablzControl.HeaderItemTemplate>
                 <DataTemplate>
                     <TextBlock
                         x:Name="MenuItems_Name"
                         VerticalAlignment="Center"
                         Text="{Binding Name}"
-                        TextWrapping="Wrap"
-                        TextAlignment="Center" />
+                        TextAlignment="Center"
+                        TextWrapping="Wrap" />
                 </DataTemplate>
             </dragablz:TabablzControl.HeaderItemTemplate>
         </dragablz:TabablzControl>
