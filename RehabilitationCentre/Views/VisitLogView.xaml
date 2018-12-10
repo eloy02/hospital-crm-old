@@ -40,9 +40,9 @@
 
                 <DataGridTextColumn Binding="{Binding VisitDateTime, StringFormat=dd.MM.yyyy HH.mm}" Header="Дата" />
 
-                <DataGridTextColumn Binding="{Binding Pacient}" Header="ФИО пациента" />
+                <DataGridTextColumn Binding="{Binding Pacient}" Header="ФИО инвалида или лица с ОВЗ" />
 
-                <DataGridTextColumn Binding="{Binding Doctor.DisplayName}" Header="Доктор" />
+                <DataGridTextColumn Binding="{Binding Doctor.DisplayName}" Header="Специалист" />
             </DataGrid.Columns>
         </DataGrid>
 

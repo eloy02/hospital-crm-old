@@ -4,8 +4,8 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:ValueConverters="clr-namespace:XamlConverters;assembly=XamlConverters"
     xmlns:cal="http://www.caliburnproject.org"
-    xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
     xmlns:dragablz="clr-namespace:Dragablz;assembly=Dragablz"
+    xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
     Title="Регистратура"
     MinWidth="600"
     MinHeight="800"
@@ -424,11 +424,11 @@
                                     <WrapPanel>
                                         <WrapPanel Margin="10,10,10,10" Orientation="Horizontal">
                                             <materialDesign:PackIcon Margin="0,0,10,0" Kind="PhoneClassic" />
-                                            <TextBlock Text="{Binding PacientPhoneNumber, StringFormat='Номер пацента: {0}'}" />
+                                            <TextBlock Text="{Binding PacientPhoneNumber, StringFormat='Номер телефона: {0}'}" TextWrapping="Wrap" />
                                         </WrapPanel>
                                         <WrapPanel Margin="10,10,10,10" Orientation="Horizontal">
                                             <materialDesign:PackIcon Margin="0,0,10,0" Kind="PhoneClassic" />
-                                            <TextBlock Text="{Binding ParentsPhoneNumber, StringFormat='Номер родителей: {0}'}" />
+                                            <TextBlock Text="{Binding ParentsPhoneNumber, StringFormat='Номер телефона родителей: {0}'}" TextWrapping="Wrap" />
                                         </WrapPanel>
                                     </WrapPanel>
                                 </DataTemplate>
@@ -458,10 +458,10 @@
 
                         <DataGridCheckBoxColumn
                             Width="100"
-                            Header="Посещает специалистов"
                             Binding="{Binding IsWorking}"
                             EditingElementStyle="{StaticResource MaterialDesignDataGridCheckBoxColumnEditingStyle}"
                             ElementStyle="{StaticResource MaterialDesignDataGridCheckBoxColumnStyle}"
+                            Header="Посещает специалистов"
                             IsReadOnly="True" />
 
                         <DataGridTemplateColumn>
@@ -470,10 +470,14 @@
                                     <StackPanel Margin="10">
                                         <Button
                                             Width="300"
+                                            Height="auto"
                                             Margin="10,10,10,10"
                                             cal:Message.Attach="[Event Click] = [Action UpdatePacientsData]"
                                             Style="{StaticResource MaterialDesignRaisedButton}">
-                                            Обновить данные пациента
+                                            <TextBlock Text="Изменить данные инвалида или лица с ОВЗ"
+                                                       TextWrapping="Wrap"
+                                                       HorizontalAlignment="Center"
+                                                       TextAlignment="Center" />
                                         </Button>
                                     </StackPanel>
                                 </DataTemplate>

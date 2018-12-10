@@ -168,6 +168,8 @@ namespace RehabilitationCentre.ViewModels
 
                 if (ok)
                     IsDialogShown = false;
+
+                CurrentView = PacientsListViewModel;
             }
             catch (UnauthorizedAccessException)
             {

@@ -1,9 +1,9 @@
-﻿using Caliburn.Micro;
+﻿using System;
+using System.Linq;
+using Caliburn.Micro;
 using Core.Types;
 using MaterialDesignThemes.Wpf;
 using RehabilitationCentre.Models;
-using System;
-using System.Linq;
 
 namespace RehabilitationCentre.ViewModels
 {
@@ -30,6 +30,22 @@ namespace RehabilitationCentre.ViewModels
         private DateTime? _visitDateFrom;
         private DateTime? _doctorVisitDateTo;
         private DateTime? _doctorVisitDateFrom;
+        private bool _isWorking = false;
+
+        public bool IsWorking
+        {
+            get { return _isWorking; }
+            set
+            {
+                _isWorking = value;
+                NotifyOfPropertyChange(() => IsWorking);
+
+                if (IsWorking)
+                    Pacients = new BindableCollection<Pacient>(Pacients.Where(p => p.IsWorking == IsWorking));
+                else
+                    Pacients = new BindableCollection<Pacient>(Model.PacientsList);
+            }
+        }
 
         public DateTime? DoctorVisitDateFrom
         {
