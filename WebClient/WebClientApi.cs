@@ -1,4 +1,9 @@
-﻿using System;
+﻿using Core.Types;
+using Core.Types.DTO;
+using Core.Types.Enumerations;
+using RestSharp;
+using RestSharp.Serializers.Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -6,10 +11,6 @@ using System.Net;
 using System.Net.Mime;
 using System.Threading.Tasks;
 using System.Web;
-using Castle.Windsor;
-using Core.Types;
-using RestSharp;
-using RestSharp.Serializers.Newtonsoft.Json;
 using WebClient.Interfaces;
 
 using JsonRest = RestSharp.Serializers.Newtonsoft.Json;
@@ -18,22 +19,15 @@ namespace WebClient
 {
     public class WebClientApi : IWebClient
     {
-        private static IWindsorContainer _container;
-
-        //private Uri BaseUrl = new Uri("https://localhost:44391/api");
+        private Uri BaseUrl = new Uri("https://localhost:44391/api");
         private static string TempPath = Directory.GetCurrentDirectory() + @"\Temp";
 
-        private Uri BaseUrl = new Uri("http://eloy102-001-site1.dtempurl.com/api");
+        //private Uri BaseUrl = new Uri("http://eloy102-001-site1.dtempurl.com/api");
         private string ProgrammGuid = "2F5F714611C34EC5A2D6F06DEFD0AB084A940477EBED4BE4BC62-452D6B92D972";
 
         private Guid Token;
         private User CurrentUser;
         private string UserPassword;
-
-        internal static void Init(IWindsorContainer ioc)
-        {
-            _container = ioc;
-        }
 
         private async Task<T> ExecuteAsync<T>(JsonRest.RestRequest request) where T : new()
         {
@@ -82,7 +76,7 @@ namespace WebClient
             return response;
         }
 
-        public async Task<bool> GetProgrammTokenAsync(User user = null, string password = null)
+        public async Task<(bool requestResult, EAccessGroup? accessGroup)> GetProgrammTokenAsync(User user = null, string password = null)
         {
             var client = new RestClient(BaseUrl);
 
@@ -104,17 +98,17 @@ namespace WebClient
                 request.AddParameter("password", UserPassword, ParameterType.QueryString);
             }
 
-            var r = await client.ExecuteTaskAsync<Guid>(request);
+            var r = await client.ExecuteTaskAsync<AuthResult>(request);
 
-            if (r.StatusCode == System.Net.HttpStatusCode.Unauthorized)
+            if (r.StatusCode == HttpStatusCode.Unauthorized)
                 throw new UnauthorizedAccessException("Ошибка авторизации программы");
             else if (!r.IsSuccessful)
             {
-                return false;
+                return (false, null);
             }
             else
             {
-                Token = r.Data;
+                Token = r.Data.SessionGuid;
 
                 if (user != null)
                     CurrentUser = user;
@@ -122,7 +116,7 @@ namespace WebClient
                 if (password != null)
                     UserPassword = password;
 
-                return true;
+                return (true, r.Data.UserAccess);
             }
         }
 
@@ -378,6 +372,103 @@ namespace WebClient
             var r = await ExecuteAsync<List<User>>(request);
 
             return r;
+        }
+
+        public async Task<User> AddUserAsync(User user, string password)
+        {
+            var request = new JsonRest.RestRequest(Method.POST)
+            {
+                Resource = "admin/users"
+            };
+
+            request.AddParameter("password", password, ParameterType.QueryString);
+            request.AddJsonBody(user);
+
+            return await ExecuteAsync<User>(request);
+        }
+
+        public async Task<User> UpdateUserAsync(User user)
+        {
+            var request = new JsonRest.RestRequest(Method.PUT)
+            {
+                Resource = "admin/users"
+            };
+
+            request.AddJsonBody(user);
+
+            return await ExecuteAsync<User>(request);
+        }
+
+        public async Task<bool> DeleteUserAsync(User user)
+        {
+            var request = new JsonRest.RestRequest(Method.DELETE)
+            {
+                Resource = "admin/users"
+            };
+
+            request.AddJsonBody(user);
+
+            var r = await ExecuteAsync(request);
+
+            if (r.StatusCode == HttpStatusCode.OK)
+                return true;
+            else return false;
+        }
+
+        public async Task<Doctor> AddDoctorAsync(Doctor doctor)
+        {
+            var request = new JsonRest.RestRequest(Method.POST)
+            {
+                Resource = "admin/doctors"
+            };
+
+            request.AddJsonBody(doctor);
+
+            return await ExecuteAsync<Doctor>(request);
+        }
+
+        public async Task<Doctor> UpdateDoctorAsync(Doctor doctor)
+        {
+            var request = new JsonRest.RestRequest(Method.PUT)
+            {
+                Resource = "admin/doctors"
+            };
+
+            request.AddJsonBody(doctor);
+
+            return await ExecuteAsync<Doctor>(request);
+        }
+
+        public async Task<bool> DeleteDoctorAsync(Doctor doctor)
+        {
+            var request = new JsonRest.RestRequest(Method.DELETE)
+            {
+                Resource = "admin/doctors"
+            };
+
+            request.AddJsonBody(doctor);
+
+            var r = await ExecuteAsync(request);
+
+            if (r.StatusCode == HttpStatusCode.OK)
+                return true;
+            else return false;
+        }
+
+        public async Task<bool> DeletePacientAsync(Pacient pacient)
+        {
+            var request = new JsonRest.RestRequest(Method.DELETE)
+            {
+                Resource = "pacients"
+            };
+
+            request.AddParameter("pacientId", pacient.Id, ParameterType.QueryString);
+
+            var r = await ExecuteAsync(request);
+
+            if (r.StatusCode == HttpStatusCode.OK)
+                return true;
+            else return false;
         }
     }
 }

@@ -1,10 +1,10 @@
-﻿using System;
+﻿using Caliburn.Micro;
+using Core.Types;
+using RehabilitationCentre.Views;
+using System;
 using System.IO;
 using System.Threading.Tasks;
 using System.Windows;
-using Caliburn.Micro;
-using Core.Types;
-using RehabilitationCentre.Views;
 using WebClient.Interfaces;
 
 namespace RehabilitationCentre.ViewModels
@@ -15,6 +15,7 @@ namespace RehabilitationCentre.ViewModels
 
         private PacientsListViewModel PacientsListViewModel;
         private ReportsViewModel ReportsViewModel;
+        private readonly PacientRegistryViewModel PacientRegistryViewModel;
 
         private UserLoginView UserLoginDialog = new UserLoginView();
 
@@ -31,14 +32,12 @@ namespace RehabilitationCentre.ViewModels
         private string password;
         private bool _isDialogShown;
 
-        public ShellViewModel(IWebClient webClient, PacientsListViewModel pacientsListViewModel, ReportsViewModel reportsViewModel)
+        public ShellViewModel(IWebClient webClient, PacientsListViewModel pacientsListViewModel, ReportsViewModel reportsViewModel, PacientRegistryViewModel pacientRegistryViewModel)
         {
             WebClient = webClient;
             PacientsListViewModel = pacientsListViewModel;
             ReportsViewModel = reportsViewModel;
-
-            MenuItems.Add(PacientsListViewModel);
-            MenuItems.Add(ReportsViewModel);
+            PacientRegistryViewModel = pacientRegistryViewModel;
 
             Application.Current.Exit += CurrentApp_Exit;
         }
@@ -166,8 +165,36 @@ namespace RehabilitationCentre.ViewModels
 
                 var ok = await WebClient.GetProgrammTokenAsync(SelectedUser, Password);
 
-                if (ok)
+                if (ok.requestResult)
+                {
                     IsDialogShown = false;
+
+                    switch (ok.accessGroup)
+                    {
+                        case Core.Types.Enumerations.EAccessGroup.Admin:
+                            {
+                                MenuItems.Add(PacientsListViewModel);
+                                MenuItems.Add(ReportsViewModel);
+                                MenuItems.Add(PacientRegistryViewModel);
+
+                                break;
+                            }
+                        case Core.Types.Enumerations.EAccessGroup.RehabilitationCentre:
+                            {
+                                MenuItems.Add(PacientsListViewModel);
+                                MenuItems.Add(ReportsViewModel);
+
+                                break;
+                            }
+
+                        case Core.Types.Enumerations.EAccessGroup.RegPacients:
+                            {
+                                MenuItems.Add(PacientRegistryViewModel);
+
+                                break;
+                            }
+                    }
+                }
 
                 CurrentView = PacientsListViewModel;
             }

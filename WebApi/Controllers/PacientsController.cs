@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Threading.Tasks;
 using WebApi.DB;
 using WebApi.Models;
@@ -85,6 +86,30 @@ namespace WebApi.Controllers
                 await DB.UpdatePacientDataAsync(val);
 
                 return Ok();
+            }
+        }
+
+        [HttpDelete]
+        public async Task<ActionResult> DeletePacientAsync(Guid? token, int? pacientId)
+        {
+            try
+            {
+                if (token == null)
+                    return Unauthorized();
+
+                if (token.HasValue && !AuthTokens.Contains(token.Value))
+                    return Unauthorized();
+
+                if (pacientId is null)
+                    return BadRequest();
+
+                await DB.DeletePacientAsync(pacientId.Value);
+
+                return Ok();
+            }
+            catch (Exception ex)
+            {
+                return StatusCode((int)HttpStatusCode.InternalServerError, ex);
             }
         }
     }

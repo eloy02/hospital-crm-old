@@ -1,6 +1,7 @@
-﻿using System.Collections.Generic;
+﻿using Microsoft.EntityFrameworkCore;
+using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
-using Microsoft.EntityFrameworkCore;
 using WebApi.Models;
 
 namespace WebApi.DB
@@ -49,6 +50,46 @@ namespace WebApi.DB
                     pac.Sity = pacient.Sity;
                     pac.Street = pacient.Street;
                     pac.IsWorking = pacient.IsWorking;
+
+                    await db.SaveChangesAsync();
+                }
+            }
+        }
+
+        public async Task DeletePacientAsync(Pacients pacient)
+        {
+            using (var db = new HospitalContext())
+            {
+                var pacientDb = await db.Pacients.SingleOrDefaultAsync(p => p.Id == pacient.Id);
+
+                if (pacientDb != null)
+                {
+                    var docs = await db.Documents.Where(d => d.PacientId == pacient.Id).ToListAsync();
+                    var visitLogs = await db.VisitLogs.Where(v => v.PacientId == pacient.Id).ToListAsync();
+
+                    db.Pacients.Remove(pacientDb);
+                    db.Documents.RemoveRange(docs);
+                    db.VisitLogs.RemoveRange(visitLogs);
+
+                    await db.SaveChangesAsync();
+                }
+            }
+        }
+
+        public async Task DeletePacientAsync(int pacientId)
+        {
+            using (var db = new HospitalContext())
+            {
+                var pacientDb = await db.Pacients.SingleOrDefaultAsync(p => p.Id == pacientId);
+
+                if (pacientDb != null)
+                {
+                    var docs = await db.Documents.Where(d => d.PacientId == pacientId).ToListAsync();
+                    var visitLogs = await db.VisitLogs.Where(v => v.PacientId == pacientId).ToListAsync();
+
+                    db.Pacients.Remove(pacientDb);
+                    db.Documents.RemoveRange(docs);
+                    db.VisitLogs.RemoveRange(visitLogs);
 
                     await db.SaveChangesAsync();
                 }

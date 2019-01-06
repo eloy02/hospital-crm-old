@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Core.Types.DTO;
+using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Threading.Tasks;
 using WebApi.DB;
@@ -20,7 +21,7 @@ namespace WebApi.Controllers
         // GET: api/Authenticator
         [HttpGet]
         [Route("api/[controller]/login")]
-        public async Task<ActionResult<Guid>> LogInUserAsync([FromQuery] int userId, [FromQuery]string programmGuid, [FromQuery]string password)
+        public async Task<ActionResult<AuthResult>> LogInUserAsync([FromQuery] int userId, [FromQuery]string programmGuid, [FromQuery]string password)
         {
             if (string.IsNullOrEmpty(programmGuid))
                 return BadRequest("Не все данные заполнены");
@@ -34,11 +35,13 @@ namespace WebApi.Controllers
             {
                 if (await DB.CheckUserAsync(userId, password))
                 {
+                    var user = await DB.GetUsersAsync(userId);
+
                     var token = Guid.NewGuid();
 
                     AuthTokens.Add(token);
 
-                    return new ActionResult<Guid>(token);
+                    return new ActionResult<AuthResult>(new AuthResult { SessionGuid = token, UserAccess = user.AccessGroup });
                 }
                 else return Unauthorized();
             }

@@ -60,7 +60,6 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="WebClientApi.cs" />
-    <Compile Include="Installers\Installer.cs" />
     <Compile Include="Interfaces\IWebClient.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

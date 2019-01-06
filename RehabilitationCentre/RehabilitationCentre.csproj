@@ -125,9 +125,14 @@
     </ApplicationDefinition>
     <Compile Include="AppBootstrapper.cs" />
     <Compile Include="IShell.cs" />
+    <Compile Include="Models\PacientInfoModel.cs" />
+    <Compile Include="Models\PacientRegistryModel.cs" />
     <Compile Include="Models\PacientsListModel.cs" />
     <Compile Include="Models\ReportsModel.cs" />
     <Compile Include="Models\VisitLogModel.cs" />
+    <Compile Include="ViewModels\BuildingsView.cs" />
+    <Compile Include="ViewModels\PacientInfoViewModel.cs" />
+    <Compile Include="ViewModels\PacientRegistryViewModel.cs" />
     <Compile Include="ViewModels\PacientsListViewModel.cs" />
     <Compile Include="App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
@@ -136,7 +141,20 @@
     <Compile Include="ViewModels\ReportsViewModel.cs" />
     <Compile Include="ViewModels\ShellViewModel.cs" />
     <Compile Include="ViewModels\UserLoginViewModel.cs" />
+    <Compile Include="ViewModels\ViewTypes\BuildingsView.cs" />
+    <Compile Include="ViewModels\ViewTypes\PacientTypeView.cs" />
+    <Compile Include="ViewModels\ViewTypes\SitiesView.cs" />
+    <Compile Include="ViewModels\ViewTypes\StreetsView.cs" />
     <Compile Include="ViewModels\VisitLogViewModel.cs" />
+    <Compile Include="Views\AdminPageView.xaml.cs">
+      <DependentUpon>AdminPageView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\PacientInfoView.xaml.cs">
+      <DependentUpon>PacientInfoView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\PacientRegistryView.xaml.cs">
+      <DependentUpon>PacientRegistryView.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\PacientsListView.xaml.cs">
       <DependentUpon>PacientsListView.xaml</DependentUpon>
     </Compile>
@@ -152,6 +170,18 @@
     <Compile Include="Views\VisitLogView.xaml.cs">
       <DependentUpon>VisitLogView.xaml</DependentUpon>
     </Compile>
+    <Page Include="Views\AdminPageView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\PacientInfoView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\PacientRegistryView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Views\PacientsListView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -221,6 +251,10 @@
     <ProjectReference Include="..\ExcelReports\ExcelReports.csproj">
       <Project>{14a7bb1b-e613-4e91-a132-351235d49aca}</Project>
       <Name>ExcelReports</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\KladrApiClient\KladrApiClient.csproj">
+      <Project>{AE29C5AD-8741-437A-9D78-972B2A4194DA}</Project>
+      <Name>KladrApiClient</Name>
     </ProjectReference>
     <ProjectReference Include="..\WebClient\WebClient.csproj">
       <Project>{D9365614-0692-4655-8B21-DCC258F7FF30}</Project>

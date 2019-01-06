@@ -17,16 +17,16 @@ namespace WebApi.DB
             }
         }
 
-        public async Task<bool> AddDoctorAsync(Doctors doc)
+        public async Task<Doctors> AddDoctorAsync(Doctors doc)
         {
             using (var db = new HospitalContext())
             {
                 doc.Id = 0;
 
-                db.Doctors.Add(doc);
+                var r = db.Doctors.Add(doc);
                 await db.SaveChangesAsync();
 
-                return true;
+                return r.Entity;
             }
         }
 
@@ -41,6 +41,42 @@ namespace WebApi.DB
                     return true;
                 }
                 else return false;
+            }
+        }
+
+        public async Task<Doctors> UpdateDoctorAsync(Doctors doc)
+        {
+            using (var db = new HospitalContext())
+            {
+                var docDb = await db.Doctors.SingleOrDefaultAsync(d => d.Id == doc.Id);
+
+                if (docDb != null)
+                {
+                    docDb.LastName = doc.LastName;
+                    docDb.PatronymicName = doc.PatronymicName;
+                    docDb.Position = doc.Position;
+                    docDb.FirstName = doc.FirstName;
+
+                    await db.SaveChangesAsync();
+
+                    return docDb;
+                }
+                else return null;
+            }
+        }
+
+        public async Task DeleteDoctorAsync(Doctors doc)
+        {
+            using (var db = new HospitalContext())
+            {
+                var docDb = await db.Doctors.SingleOrDefaultAsync(d => d.Id == doc.Id);
+
+                if (docDb != null)
+                {
+                    db.Doctors.Remove(docDb);
+
+                    await db.SaveChangesAsync();
+                }
             }
         }
     }

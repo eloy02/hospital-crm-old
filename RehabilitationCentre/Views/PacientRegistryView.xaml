@@ -1,0 +1,488 @@
+﻿<UserControl
+    x:Class="RehabilitationCentre.Views.PacientRegistryView"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:ValueConverters="clr-namespace:XamlConverters;assembly=XamlConverters"
+    xmlns:cal="http://www.caliburnproject.org"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:dragablz="clr-namespace:Dragablz;assembly=Dragablz"
+    xmlns:local="clr-namespace:RehabilitationCentre.Views"
+    xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    d:DesignHeight="450"
+    d:DesignWidth="800"
+    mc:Ignorable="d">
+
+    <UserControl.Resources>
+        <ResourceDictionary>
+            <ValueConverters:EnumDescriptionConverter x:Key="vcEnumToString" />
+            <BooleanToVisibilityConverter x:Key="BoolToVis" />
+        </ResourceDictionary>
+    </UserControl.Resources>
+
+    <dragablz:TabablzControl>
+        <TabItem Header="Добавить нового инвалида или лицо с ОВЗ">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="10" />
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="10" />
+                </Grid.ColumnDefinitions>
+
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="10" />
+                    <RowDefinition Height="30" />
+                    <RowDefinition Height="10" />
+                    <RowDefinition Height="auto" />
+                    <RowDefinition Height="10" />
+                </Grid.RowDefinitions>
+
+                <TextBlock
+                    Grid.Row="1"
+                    Grid.Column="1"
+                    HorizontalAlignment="Center"
+                    FontSize="25"
+                    Text="Добавить инвалида или лицо с ОВЗ" />
+
+                <Grid Grid.Row="3" Grid.Column="1">
+
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="20" />
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
+
+                    <StackPanel>
+                        <materialDesign:Card>
+                            <StackPanel>
+                                <TextBlock
+                                    HorizontalAlignment="Center"
+                                    FontWeight="Bold"
+                                    Text="Адрес" />
+
+                                <Grid Margin="10,5">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*" />
+                                        <ColumnDefinition Width="30" />
+                                    </Grid.ColumnDefinitions>
+
+                                    <ComboBox
+                                        x:Name="Sities"
+                                        Grid.Column="0"
+                                        materialDesign:HintAssist.Hint="Город"
+                                        DisplayMemberPath="Name"
+                                        IsEditable="True"
+                                        SelectedItem="{Binding SelectedSity}"
+                                        Style="{StaticResource MaterialDesignFloatingHintComboBox}"
+                                        Text="{Binding Sity}">
+                                        <ComboBox.ItemsPanel>
+                                            <ItemsPanelTemplate>
+                                                <VirtualizingStackPanel />
+                                            </ItemsPanelTemplate>
+                                        </ComboBox.ItemsPanel>
+                                    </ComboBox>
+
+                                    <ProgressBar
+                                        Grid.Column="1"
+                                        IsIndeterminate="True"
+                                        Style="{StaticResource MaterialDesignCircularProgressBar}"
+                                        Visibility="{Binding SitiesLoadingVisibility}"
+                                        Value="0" />
+                                </Grid>
+
+                                <Grid Margin="10,5">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*" />
+                                        <ColumnDefinition Width="30" />
+                                    </Grid.ColumnDefinitions>
+
+                                    <ComboBox
+                                        x:Name="Streets"
+                                        Grid.Column="0"
+                                        materialDesign:HintAssist.Hint="Улица"
+                                        DisplayMemberPath="Name"
+                                        IsEditable="True"
+                                        SelectedItem="{Binding SelectedStreet}"
+                                        Style="{StaticResource MaterialDesignFloatingHintComboBox}"
+                                        Text="{Binding Street}">
+                                        <ComboBox.ItemsPanel>
+                                            <ItemsPanelTemplate>
+                                                <VirtualizingStackPanel />
+                                            </ItemsPanelTemplate>
+                                        </ComboBox.ItemsPanel>
+                                    </ComboBox>
+
+                                    <ProgressBar
+                                        Grid.Column="1"
+                                        IsIndeterminate="True"
+                                        Style="{StaticResource MaterialDesignCircularProgressBar}"
+                                        Visibility="{Binding StreetsLoadingVisibility}"
+                                        Value="0" />
+                                </Grid>
+
+                                <Grid Margin="10">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*" />
+                                        <ColumnDefinition Width="10" />
+                                        <ColumnDefinition Width="*" />
+                                    </Grid.ColumnDefinitions>
+
+                                    <Grid Grid.Column="0">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="*" />
+                                            <ColumnDefinition Width="30" />
+                                        </Grid.ColumnDefinitions>
+
+                                        <ComboBox
+                                            x:Name="Buildings"
+                                            Grid.Column="0"
+                                            materialDesign:HintAssist.Hint="№ дома"
+                                            DisplayMemberPath="Name"
+                                            IsEditable="True"
+                                            SelectedItem="{Binding SelectedBuilding}"
+                                            Style="{StaticResource MaterialDesignFloatingHintComboBox}"
+                                            Text="{Binding BuildingNumber}">
+                                            <ComboBox.ItemsPanel>
+                                                <ItemsPanelTemplate>
+                                                    <VirtualizingStackPanel />
+                                                </ItemsPanelTemplate>
+                                            </ComboBox.ItemsPanel>
+                                        </ComboBox>
+
+                                        <ProgressBar
+                                            Grid.Column="1"
+                                            IsIndeterminate="True"
+                                            Style="{StaticResource MaterialDesignCircularProgressBar}"
+                                            Visibility="{Binding BuildingsLoadingVisibility}"
+                                            Value="0" />
+                                    </Grid>
+
+                                    <Grid Grid.Column="2">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="*" />
+                                            <ColumnDefinition Width="30" />
+                                        </Grid.ColumnDefinitions>
+
+                                        <ComboBox
+                                            Grid.Column="0"
+                                            materialDesign:HintAssist.Hint="№ квартиры"
+                                            IsEditable="True"
+                                            Style="{StaticResource MaterialDesignFloatingHintComboBox}"
+                                            Text="{Binding FlatNumber}">
+                                            <ComboBox.ItemsPanel>
+                                                <ItemsPanelTemplate>
+                                                    <VirtualizingStackPanel />
+                                                </ItemsPanelTemplate>
+                                            </ComboBox.ItemsPanel>
+                                        </ComboBox>
+
+                                        <ProgressBar
+                                            Grid.Column="1"
+                                            IsIndeterminate="True"
+                                            Style="{StaticResource MaterialDesignCircularProgressBar}"
+                                            Visibility="{Binding FlatsLoadingVisibility}"
+                                            Value="0" />
+                                    </Grid>
+                                </Grid>
+                            </StackPanel>
+                        </materialDesign:Card>
+
+                        <materialDesign:Card Margin="0,15,0,0">
+                            <StackPanel>
+                                <TextBlock
+                                    HorizontalAlignment="Center"
+                                    FontWeight="Bold"
+                                    Text="Данные инвалида или лица с ОВЗ" />
+
+                                <TextBox
+                                    x:Name="PacientLastName"
+                                    Margin="10,5"
+                                    materialDesign:HintAssist.Hint="Фамилия"
+                                    Style="{StaticResource MaterialDesignFloatingHintTextBox}" />
+                                <TextBox
+                                    x:Name="PacientFirstName"
+                                    Margin="10,5"
+                                    materialDesign:HintAssist.Hint="Имя"
+                                    Style="{StaticResource MaterialDesignFloatingHintTextBox}" />
+                                <TextBox
+                                    x:Name="PacientPatronymicName"
+                                    Margin="10,5"
+                                    materialDesign:HintAssist.Hint="Отчество"
+                                    Style="{StaticResource MaterialDesignFloatingHintTextBox}" />
+                                <TextBox
+                                    x:Name="PacientPhoneNumber"
+                                    Margin="10,5"
+                                    materialDesign:HintAssist.Hint="Номер телефона"
+                                    Style="{StaticResource MaterialDesignFloatingHintTextBox}" />
+                                <ComboBox
+                                    x:Name="PacientTypes"
+                                    Margin="10"
+                                    materialDesign:HintAssist.Hint="Инвалид или лицо с ОВЗ"
+                                    DisplayMemberPath="Name"
+                                    ItemsSource="{Binding PacientTypes}"
+                                    SelectedValue="{Binding SelectedPacientType}"
+                                    SelectedValuePath="Type"
+                                    Style="{StaticResource MaterialDesignFloatingHintComboBox}" />
+                            </StackPanel>
+                        </materialDesign:Card>
+                    </StackPanel>
+
+                    <StackPanel Grid.Column="2">
+                        <materialDesign:Card>
+                            <StackPanel>
+                                <TextBlock
+                                    HorizontalAlignment="Center"
+                                    FontWeight="Bold"
+                                    Text="Данные родителя инвалида или лица с ОВЗ" />
+
+                                <TextBox
+                                    x:Name="ParentLastName"
+                                    Margin="10,5"
+                                    materialDesign:HintAssist.Hint="Фамилия"
+                                    Style="{StaticResource MaterialDesignFloatingHintTextBox}" />
+                                <TextBox
+                                    x:Name="ParentFirstName"
+                                    Margin="10,5"
+                                    materialDesign:HintAssist.Hint="Имя"
+                                    Style="{StaticResource MaterialDesignFloatingHintTextBox}" />
+                                <TextBox
+                                    x:Name="ParentPatronymicName"
+                                    Margin="10,5"
+                                    materialDesign:HintAssist.Hint="Отчество"
+                                    Style="{StaticResource MaterialDesignFloatingHintTextBox}" />
+                                <TextBox
+                                    x:Name="ParentPhoneNumber"
+                                    Margin="10"
+                                    materialDesign:HintAssist.Hint="Номер телефона"
+                                    Style="{StaticResource MaterialDesignFloatingHintTextBox}" />
+                            </StackPanel>
+                        </materialDesign:Card>
+                        <materialDesign:Card Margin="0,10,0,0">
+                            <StackPanel>
+                                <TextBlock
+                                    HorizontalAlignment="Center"
+                                    FontWeight="Bold"
+                                    Text="Документ (ИПРА или ПМПК)" />
+
+                                <TextBox
+                                    x:Name="PdfPath"
+                                    Margin="10"
+                                    materialDesign:HintAssist.Hint="Путь до файла документа"
+                                    IsReadOnly="True"
+                                    Style="{StaticResource MaterialDesignFloatingHintTextBox}" />
+                                <Button
+                                    x:Name="ChoosePdfPath"
+                                    Width="150"
+                                    Margin="10,0,0,10"
+                                    HorizontalAlignment="Left"
+                                    Click="ChoosePdfPath_Click"
+                                    Style="{StaticResource MaterialDesignRaisedDarkButton}">
+                                    Выбрать файл
+                                </Button>
+                            </StackPanel>
+                        </materialDesign:Card>
+
+                        <CheckBox
+                            Margin="10"
+                            IsChecked="{Binding IsWorking, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                            Style="{StaticResource MaterialDesignCheckBox}">
+                            Посещяет специалистов
+                        </CheckBox>
+
+                        <Grid Margin="0,20,0,0">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="10" />
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="auto" />
+                            </Grid.ColumnDefinitions>
+
+                            <Button
+                                x:Name="ClearForms"
+                                Grid.Column="0"
+                                Style="{StaticResource MaterialDesignRaisedDarkButton}">
+                                Очистить форму
+                            </Button>
+
+                            <Button
+                                x:Name="SavePacient"
+                                Grid.Column="2"
+                                Style="{StaticResource MaterialDesignRaisedDarkButton}">
+                                Добавить
+                            </Button>
+
+                            <ProgressBar
+                                Grid.Column="3"
+                                IsIndeterminate="True"
+                                Style="{StaticResource MaterialDesignCircularProgressBar}"
+                                Visibility="{Binding SavingPacientVisibility}"
+                                Value="0" />
+                        </Grid>
+                    </StackPanel>
+                </Grid>
+            </Grid>
+        </TabItem>
+
+        <TabItem Header="Список инвалидов или лиц с ОВЗ">
+            <Grid>
+
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="auto" />
+                    <RowDefinition Height="*" />
+                </Grid.RowDefinitions>
+
+                <WrapPanel Orientation="Horizontal">
+                    <TextBox
+                        Width="200"
+                        Margin="10"
+                        materialDesign:HintAssist.Hint="Фамилия"
+                        Style="{StaticResource MaterialDesignFloatingHintTextBox}"
+                        Text="{Binding LastNameForSearch, UpdateSourceTrigger=PropertyChanged}" />
+                    <TextBox
+                        Width="200"
+                        Margin="10"
+                        materialDesign:HintAssist.Hint="Имя"
+                        Style="{StaticResource MaterialDesignFloatingHintTextBox}"
+                        Text="{Binding FirstNameForSearch, UpdateSourceTrigger=PropertyChanged}" />
+                    <TextBox
+                        Width="200"
+                        Margin="10"
+                        materialDesign:HintAssist.Hint="Отчество"
+                        Style="{StaticResource MaterialDesignFloatingHintTextBox}"
+                        Text="{Binding PatronymicNameForFilter, UpdateSourceTrigger=PropertyChanged}" />
+                </WrapPanel>
+
+                <DataGrid
+                    x:Name="Pacients"
+                    Grid.Row="1"
+                    materialDesign:DataGridAssist.CellPadding="13 8 8 8"
+                    materialDesign:DataGridAssist.ColumnHeaderPadding="8"
+                    AlternatingRowBackground="#EEEEFF"
+                    AlternationCount="2"
+                    AutoGenerateColumns="False"
+                    CanUserAddRows="False"
+                    CanUserSortColumns="True"
+                    EnableColumnVirtualization="True"
+                    EnableRowVirtualization="True"
+                    HeadersVisibility="Column"
+                    ScrollViewer.CanContentScroll="True"
+                    ScrollViewer.IsDeferredScrollingEnabled="True"
+                    SelectedItem="{Binding SelectedPacient, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                    VirtualizingPanel.IsVirtualizing="True"
+                    VirtualizingPanel.IsVirtualizingWhenGrouping="True"
+                    VirtualizingPanel.ScrollUnit="Pixel"
+                    VirtualizingPanel.VirtualizationMode="Recycling">
+                    <DataGrid.Columns>
+
+                        <DataGridTemplateColumn Width="200" Header="Адрес">
+                            <DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate>
+                                    <WrapPanel Margin="10" Orientation="Horizontal">
+                                        <TextBlock Margin="5,3" Text="{Binding Sity, StringFormat='Город: {0}'}" />
+                                        <TextBlock Margin="5,3" Text="{Binding Street, StringFormat='Улица: {0}'}" />
+                                        <TextBlock Margin="5,3" Text="{Binding BuildingNumber, StringFormat='Дом: {0}'}" />
+                                        <TextBlock Margin="5,3" Text="{Binding FlatNumber, StringFormat='Квартира: {0}'}" />
+                                    </WrapPanel>
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellTemplate>
+                        </DataGridTemplateColumn>
+
+                        <DataGridTemplateColumn Width="200" Header="ФИО">
+                            <DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate>
+                                    <WrapPanel Margin="10" Orientation="Horizontal">
+                                        <materialDesign:PackIcon Margin="0,0,10,0" Kind="Account" />
+                                        <TextBlock
+                                            Margin="0,0,0,0"
+                                            Text="{Binding LastName}"
+                                            TextWrapping="Wrap" />
+                                        <TextBlock
+                                            Margin="5,0,0,0"
+                                            Text="{Binding FirstName}"
+                                            TextWrapping="Wrap" />
+                                        <TextBlock
+                                            Margin="5,0,0,0"
+                                            Text="{Binding PatronymicName}"
+                                            TextWrapping="Wrap" />
+                                    </WrapPanel>
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellTemplate>
+                        </DataGridTemplateColumn>
+
+                        <DataGridTextColumn
+                            Binding="{Binding PacientType, Converter={StaticResource vcEnumToString}}"
+                            Header="Инвалид или лицо с ОВЗ"
+                            IsReadOnly="True" />
+
+                        <DataGridTemplateColumn Width="200" Header="Телефоны">
+                            <DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate>
+                                    <WrapPanel>
+                                        <WrapPanel Margin="10,10,10,10" Orientation="Horizontal">
+                                            <materialDesign:PackIcon Margin="0,0,10,0" Kind="PhoneClassic" />
+                                            <TextBlock Text="{Binding PacientPhoneNumber, StringFormat='Номер телефона: {0}'}" TextWrapping="Wrap" />
+                                        </WrapPanel>
+                                        <WrapPanel Margin="10,10,10,10" Orientation="Horizontal">
+                                            <materialDesign:PackIcon Margin="0,0,10,0" Kind="PhoneClassic" />
+                                            <TextBlock Text="{Binding ParentsPhoneNumber, StringFormat='Номер телефона родителей: {0}'}" TextWrapping="Wrap" />
+                                        </WrapPanel>
+                                    </WrapPanel>
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellTemplate>
+                        </DataGridTemplateColumn>
+
+                        <DataGridTemplateColumn Width="150" Header="Родители">
+                            <DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate>
+                                    <WrapPanel Margin="10" Orientation="Horizontal">
+                                        <TextBlock
+                                            Margin="0,0,5,0"
+                                            Text="{Binding ParentLastName}"
+                                            TextWrapping="Wrap" />
+                                        <TextBlock
+                                            Margin="0,0,5,0"
+                                            Text="{Binding ParentFirstName}"
+                                            TextWrapping="Wrap" />
+                                        <TextBlock
+                                            Margin="0,0,5,0"
+                                            Text="{Binding ParentPatronymicName}"
+                                            TextWrapping="Wrap" />
+                                    </WrapPanel>
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellTemplate>
+                        </DataGridTemplateColumn>
+
+                        <DataGridCheckBoxColumn
+                            Width="100"
+                            Binding="{Binding IsWorking}"
+                            EditingElementStyle="{StaticResource MaterialDesignDataGridCheckBoxColumnEditingStyle}"
+                            ElementStyle="{StaticResource MaterialDesignDataGridCheckBoxColumnStyle}"
+                            Header="Посещает специалистов"
+                            IsReadOnly="True" />
+
+                        <DataGridTemplateColumn>
+                            <DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate>
+                                    <StackPanel Margin="10">
+                                        <Button
+                                            Width="300"
+                                            Height="auto"
+                                            Margin="10,10,10,10"
+                                            cal:Message.Attach="[Event Click] = [Action UpdatePacientsData]"
+                                            Style="{StaticResource MaterialDesignRaisedButton}">
+                                            <TextBlock
+                                                HorizontalAlignment="Center"
+                                                Text="Изменить данные инвалида или лица с ОВЗ"
+                                                TextAlignment="Center"
+                                                TextWrapping="Wrap" />
+                                        </Button>
+                                    </StackPanel>
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellTemplate>
+                        </DataGridTemplateColumn>
+                    </DataGrid.Columns>
+                </DataGrid>
+            </Grid>
+        </TabItem>
+    </dragablz:TabablzControl>
+</UserControl>

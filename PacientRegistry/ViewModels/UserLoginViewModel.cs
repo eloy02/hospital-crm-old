@@ -86,10 +86,10 @@ namespace PacientRegistry.ViewModels
 
                 var ok = await WebClient.GetProgrammTokenAsync(SelectedUser, Password);
 
-                if (ok)
-                {
-                    TryClose(true);
-                }
+                //if (ok)
+                //{
+                //    TryClose(true);
+                //}
             }
             catch (UnauthorizedAccessException)
             {

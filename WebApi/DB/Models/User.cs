@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Core.Types.Enumerations;
+using System;
 
 namespace WebApi.Models
 {
@@ -10,5 +11,6 @@ namespace WebApi.Models
         public string LastName { get; set; }
         public string FirstName { get; set; }
         public string PatronymicName { get; set; }
+        public EAccessGroup AccessGroup { get; set; }
     }
 }
