@@ -3,6 +3,7 @@ using Core.Types;
 using RehabilitationCentre.Views;
 using System;
 using System.IO;
+using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
 using WebClient.Interfaces;
@@ -13,9 +14,10 @@ namespace RehabilitationCentre.ViewModels
     {
         private readonly IWebClient WebClient;
 
-        private PacientsListViewModel PacientsListViewModel;
-        private ReportsViewModel ReportsViewModel;
+        private readonly PacientsListViewModel PacientsListViewModel;
+        private readonly ReportsViewModel ReportsViewModel;
         private readonly PacientRegistryViewModel PacientRegistryViewModel;
+        private readonly AdminPageViewModel AdminPageViewModel;
 
         private UserLoginView UserLoginDialog = new UserLoginView();
 
@@ -32,12 +34,13 @@ namespace RehabilitationCentre.ViewModels
         private string password;
         private bool _isDialogShown;
 
-        public ShellViewModel(IWebClient webClient, PacientsListViewModel pacientsListViewModel, ReportsViewModel reportsViewModel, PacientRegistryViewModel pacientRegistryViewModel)
+        public ShellViewModel(IWebClient webClient, PacientsListViewModel pacientsListViewModel, ReportsViewModel reportsViewModel, PacientRegistryViewModel pacientRegistryViewModel, AdminPageViewModel adminPageViewModel)
         {
             WebClient = webClient;
             PacientsListViewModel = pacientsListViewModel;
             ReportsViewModel = reportsViewModel;
             PacientRegistryViewModel = pacientRegistryViewModel;
+            AdminPageViewModel = adminPageViewModel;
 
             Application.Current.Exit += CurrentApp_Exit;
         }
@@ -176,6 +179,7 @@ namespace RehabilitationCentre.ViewModels
                                 MenuItems.Add(PacientsListViewModel);
                                 MenuItems.Add(ReportsViewModel);
                                 MenuItems.Add(PacientRegistryViewModel);
+                                MenuItems.Add(AdminPageViewModel);
 
                                 break;
                             }
@@ -214,7 +218,7 @@ namespace RehabilitationCentre.ViewModels
             if (r != null)
             {
                 Users.Clear();
-                Users.AddRange(r);
+                Users.AddRange(r.Where(u => u.IsActive));
             }
 
             base.OnInitialize();

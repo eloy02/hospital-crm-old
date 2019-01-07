@@ -1,7 +1,7 @@
-﻿using System.Collections.Generic;
-using System.Linq;
-using Core.Types;
+﻿using Core.Types;
 using Core.Types.Enumerations;
+using System.Collections.Generic;
+using System.Linq;
 using WebApi.Models;
 
 namespace WebApi
@@ -61,6 +61,7 @@ namespace WebApi
             a.LastName = src.LastName;
             a.PatronymicName = src.PatronymicName;
             a.Position = src.Position;
+            a.IsActive = src.IsActive;
             a.DisplayName = $"{a.LastName} {a.FirstName} {a.PatronymicName} - {a.Position}";
 
             return a;
@@ -72,6 +73,7 @@ namespace WebApi
             a.LastName = src.LastName;
             a.PatronymicName = src.PatronymicName;
             a.Position = src.Position;
+            a.IsActive = src.IsActive;
             a.Id = src.Id;
 
             return a;
@@ -120,6 +122,8 @@ namespace WebApi
             a.Id = src.Id;
             a.LastName = src.LastName;
             a.PatronymicName = src.PatronymicName;
+            a.IsActive = src.IsActive;
+            a.Access = src.AccessGroup;
 
             return a;
         }
@@ -130,6 +134,8 @@ namespace WebApi
             a.Id = src.Id;
             a.LastName = src.LastName;
             a.PatronymicName = src.PatronymicName;
+            a.IsActive = src.IsActive;
+            a.AccessGroup = src.Access;
 
             return a;
         }

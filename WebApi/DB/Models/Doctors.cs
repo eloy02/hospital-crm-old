@@ -15,6 +15,7 @@ namespace WebApi.Models
         public string FirstName { get; set; }
         public string PatronymicName { get; set; }
         public string Position { get; set; }
+        public bool IsActive { get; set; }
 
         public ICollection<VisitLogs> VisitLogs { get; set; }
     }

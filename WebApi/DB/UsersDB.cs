@@ -71,6 +71,7 @@ namespace WebApi.DB
                 userdb.LastName = user.LastName;
                 userdb.PatronymicName = user.PatronymicName;
                 userdb.AccessGroup = user.AccessGroup;
+                userdb.IsActive = user.IsActive;
 
                 await db.SaveChangesAsync();
 

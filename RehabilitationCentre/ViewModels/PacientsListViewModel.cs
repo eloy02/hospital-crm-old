@@ -438,7 +438,7 @@ namespace RehabilitationCentre.ViewModels
                     var doc = await Model.GetDoctorsAsync();
 
                     if (doc != null)
-                        Doctors.AddRange(doc);
+                        Doctors.AddRange(doc.Where(d => d.IsActive));
 
                     await Model.GetPacientsAsync();
 

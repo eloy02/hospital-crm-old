@@ -12,5 +12,6 @@ namespace WebApi.Models
         public string FirstName { get; set; }
         public string PatronymicName { get; set; }
         public EAccessGroup AccessGroup { get; set; }
+        public bool IsActive { get; set; }
     }
 }

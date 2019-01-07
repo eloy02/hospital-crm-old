@@ -31,6 +31,8 @@ namespace RehabilitationCentre
             container.Register(Component.For<PacientInfoModel>());
             container.Register(Component.For<PacientInfoViewModel>());
             container.Register(Component.For<PacientRegistryViewModel>());
+            container.Register(Component.For<AdminPageViewModel>());
+            container.Register(Component.For<AdminModel>());
 
             container.Install(FromAssembly.Named("WebClient"));
             container.Install(FromAssembly.Named("ExcelReports"));

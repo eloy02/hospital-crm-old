@@ -9,9 +9,10 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>WebClient</RootNamespace>
     <AssemblyName>WebClient</AssemblyName>
-    <TargetFrameworkVersion>v4.7</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <Deterministic>true</Deterministic>
+    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -37,14 +38,14 @@
     <Reference Include="Castle.Windsor, Version=4.0.0.0, Culture=neutral, PublicKeyToken=407dd0808d44fbdc, processorArchitecture=MSIL">
       <HintPath>..\packages\Castle.Windsor.4.1.1\lib\net45\Castle.Windsor.dll</HintPath>
     </Reference>
-    <Reference Include="Newtonsoft.Json, Version=11.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
-      <HintPath>..\packages\Newtonsoft.Json.11.0.2\lib\net45\Newtonsoft.Json.dll</HintPath>
+    <Reference Include="Newtonsoft.Json, Version=12.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\packages\Newtonsoft.Json.12.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
     </Reference>
-    <Reference Include="RestSharp, Version=106.5.4.0, Culture=neutral, PublicKeyToken=598062e77f915f75, processorArchitecture=MSIL">
-      <HintPath>..\packages\RestSharp.106.5.4\lib\net452\RestSharp.dll</HintPath>
+    <Reference Include="RestSharp, Version=106.6.3.0, Culture=neutral, PublicKeyToken=598062e77f915f75, processorArchitecture=MSIL">
+      <HintPath>..\packages\RestSharp.106.6.3\lib\net452\RestSharp.dll</HintPath>
     </Reference>
-    <Reference Include="RestSharp.Serializers.Newtonsoft.Json, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\RestSharp.Newtonsoft.Json.1.5.0\lib\net452\RestSharp.Serializers.Newtonsoft.Json.dll</HintPath>
+    <Reference Include="RestSharp.Serializers.Newtonsoft.Json, Version=1.5.1.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\RestSharp.Newtonsoft.Json.1.5.1\lib\net452\RestSharp.Serializers.Newtonsoft.Json.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Configuration" />
@@ -59,6 +60,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Installers\Installer.cs" />
     <Compile Include="WebClientApi.cs" />
     <Compile Include="Interfaces\IWebClient.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

@@ -56,6 +56,7 @@ namespace WebApi.DB
                     docDb.PatronymicName = doc.PatronymicName;
                     docDb.Position = doc.Position;
                     docDb.FirstName = doc.FirstName;
+                    docDb.IsActive = doc.IsActive;
 
                     await db.SaveChangesAsync();
 
