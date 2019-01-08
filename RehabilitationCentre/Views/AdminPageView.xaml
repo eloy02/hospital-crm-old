@@ -37,7 +37,7 @@
                                 FontWeight="Bold"
                                 Text="Специалисты" />
                         </Expander.Header>
-                        <Grid MaxHeight="400">
+                        <Grid MaxHeight="500">
                             <Grid.RowDefinitions>
                                 <RowDefinition Height="*" />
                                 <RowDefinition Height="auto" />
@@ -80,19 +80,19 @@
                             <StackPanel Grid.Column="1" Margin="10">
                                 <WrapPanel HorizontalAlignment="Left" Orientation="Horizontal">
                                     <TextBox
-                                        Width="200"
+                                        Width="250"
                                         Margin="10"
                                         materialDesign:HintAssist.Hint="Фамилия (Обязательно при создании)"
                                         Style="{StaticResource MaterialDesignFloatingHintTextBox}"
                                         Text="{Binding DoctorLastName}" />
                                     <TextBox
-                                        Width="200"
+                                        Width="250"
                                         Margin="10"
                                         materialDesign:HintAssist.Hint="Имя"
                                         Style="{StaticResource MaterialDesignFloatingHintTextBox}"
                                         Text="{Binding DoctorFirstName}" />
                                     <TextBox
-                                        Width="200"
+                                        Width="250"
                                         Margin="10"
                                         materialDesign:HintAssist.Hint="Отчество"
                                         Style="{StaticResource MaterialDesignFloatingHintTextBox}"
@@ -101,7 +101,7 @@
 
                                 <WrapPanel Orientation="Horizontal">
                                     <TextBox
-                                        Width="200"
+                                        Width="250"
                                         Margin="10"
                                         HorizontalAlignment="Left"
                                         materialDesign:HintAssist.Hint="Должность"
@@ -109,7 +109,7 @@
                                         Text="{Binding DoctorPosition}" />
 
                                     <ComboBox
-                                        Width="200"
+                                        Width="250"
                                         Margin="10"
                                         HorizontalAlignment="Left"
                                         materialDesign:HintAssist.Hint="Статус"
@@ -174,7 +174,7 @@
                                 FontWeight="Bold"
                                 Text="Операторы" />
                         </Expander.Header>
-                        <Grid MaxHeight="400">
+                        <Grid MaxHeight="500">
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="*" />
                                 <ColumnDefinition Width="*" />
@@ -217,19 +217,19 @@
                             <StackPanel Grid.Column="1" Margin="10">
                                 <WrapPanel HorizontalAlignment="Left" Orientation="Horizontal">
                                     <TextBox
-                                        Width="200"
+                                        Width="250"
                                         Margin="10"
                                         materialDesign:HintAssist.Hint="Фамилия (Обязательно при создании)"
                                         Style="{StaticResource MaterialDesignFloatingHintTextBox}"
                                         Text="{Binding UserLastName, UpdateSourceTrigger=PropertyChanged}" />
                                     <TextBox
-                                        Width="200"
+                                        Width="250"
                                         Margin="10"
                                         materialDesign:HintAssist.Hint="Имя"
                                         Style="{StaticResource MaterialDesignFloatingHintTextBox}"
                                         Text="{Binding UserFirstName, UpdateSourceTrigger=PropertyChanged}" />
                                     <TextBox
-                                        Width="200"
+                                        Width="250"
                                         Margin="10"
                                         materialDesign:HintAssist.Hint="Отчество"
                                         Style="{StaticResource MaterialDesignFloatingHintTextBox}"
@@ -249,7 +249,7 @@
                                         Style="{StaticResource MaterialDesignFloatingHintComboBox}" />
 
                                     <ComboBox
-                                        Width="200"
+                                        Width="250"
                                         Margin="10"
                                         HorizontalAlignment="Left"
                                         materialDesign:HintAssist.Hint="Статус"
@@ -260,7 +260,7 @@
                                         Style="{StaticResource MaterialDesignFloatingHintComboBox}" />
 
                                     <TextBox
-                                        Width="200"
+                                        Width="250"
                                         Margin="10"
                                         materialDesign:HintAssist.Hint="Пароль (Обязательно при создании)"
                                         Style="{StaticResource MaterialDesignFloatingHintTextBox}"
@@ -270,9 +270,9 @@
 
                             <Button
                                 Grid.Row="1"
-                                    Margin="10"
-                                    cal:Message.Attach="[Event Click] = [Action ClearSeletedUser]"
-                                    Style="{StaticResource MaterialDesignRaisedDarkButton}">
+                                Margin="10"
+                                cal:Message.Attach="[Event Click] = [Action ClearSeletedUser]"
+                                Style="{StaticResource MaterialDesignRaisedDarkButton}">
                                 Сбросить выбор
                             </Button>
 

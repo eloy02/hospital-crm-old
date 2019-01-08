@@ -197,6 +197,14 @@ namespace RehabilitationCentre.ViewModels
 
                                 break;
                             }
+                        case Core.Types.Enumerations.EAccessGroup.RegAndCentre:
+                            {
+                                MenuItems.Add(PacientsListViewModel);
+                                MenuItems.Add(ReportsViewModel);
+                                MenuItems.Add(PacientRegistryViewModel);
+
+                                break;
+                            }
                     }
                 }
 
