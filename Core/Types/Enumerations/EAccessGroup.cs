@@ -11,6 +11,9 @@ namespace Core.Types.Enumerations
         RegPacients,
 
         [Description("Центр реабилитации")]
-        RehabilitationCentre
+        RehabilitationCentre,
+
+        [Description("Регистратура и центр реабилитации")]
+        RegAndCentre
     }
 }

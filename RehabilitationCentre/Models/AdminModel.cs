@@ -43,5 +43,15 @@ namespace RehabilitationCentre.Models
         {
             return await WebClient.UpdateDoctorAsync(doctor);
         }
+
+        public async Task<Doctor> CreateDoctorAsync(Doctor doctor)
+        {
+            return await WebClient.AddDoctorAsync(doctor);
+        }
+
+        public async Task<User> CreateUserAsync(User user, string password)
+        {
+            return await WebClient.AddUserAsync(user, password);
+        }
     }
 }

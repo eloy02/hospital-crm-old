@@ -80,23 +80,23 @@
                             <StackPanel Grid.Column="1" Margin="10">
                                 <WrapPanel HorizontalAlignment="Left" Orientation="Horizontal">
                                     <TextBox
-                                        Width="150"
+                                        Width="200"
                                         Margin="10"
-                                        materialDesign:HintAssist.Hint="Фамилия"
+                                        materialDesign:HintAssist.Hint="Фамилия (Обязательно при создании)"
                                         Style="{StaticResource MaterialDesignFloatingHintTextBox}"
-                                        Text="{Binding SelectedDoctor.LastName}" />
+                                        Text="{Binding DoctorLastName}" />
                                     <TextBox
-                                        Width="150"
+                                        Width="200"
                                         Margin="10"
                                         materialDesign:HintAssist.Hint="Имя"
                                         Style="{StaticResource MaterialDesignFloatingHintTextBox}"
-                                        Text="{Binding SelectedDoctor.FirstName}" />
+                                        Text="{Binding DoctorFirstName}" />
                                     <TextBox
-                                        Width="150"
+                                        Width="200"
                                         Margin="10"
                                         materialDesign:HintAssist.Hint="Отчество"
                                         Style="{StaticResource MaterialDesignFloatingHintTextBox}"
-                                        Text="{Binding SelectedDoctor.PatronymicName}" />
+                                        Text="{Binding DoctorPatronymicName}" />
                                 </WrapPanel>
 
                                 <WrapPanel Orientation="Horizontal">
@@ -106,7 +106,7 @@
                                         HorizontalAlignment="Left"
                                         materialDesign:HintAssist.Hint="Должность"
                                         Style="{StaticResource MaterialDesignFloatingHintTextBox}"
-                                        Text="{Binding SelectedDoctor.Position}" />
+                                        Text="{Binding DoctorPosition}" />
 
                                     <ComboBox
                                         Width="200"
@@ -115,25 +115,48 @@
                                         materialDesign:HintAssist.Hint="Статус"
                                         DisplayMemberPath="Name"
                                         ItemsSource="{Binding IsActiveCollection}"
-                                        SelectedValue="{Binding SelectedDoctor.IsActive}"
+                                        SelectedValue="{Binding DoctorIsActiveStatus}"
                                         SelectedValuePath="IsActive"
                                         Style="{StaticResource MaterialDesignFloatingHintComboBox}" />
                                 </WrapPanel>
                             </StackPanel>
 
-                            <StackPanel
+                            <WrapPanel
                                 Grid.Row="1"
-                                Grid.ColumnSpan="2"
+                                Grid.Column="1"
                                 HorizontalAlignment="Right"
                                 VerticalAlignment="Center"
                                 Orientation="Horizontal">
+                                <Button
+                                    Margin="10"
+                                    cal:Message.Attach="[Event Click] = [Action ClearSelectedDoctor]"
+                                    Style="{StaticResource MaterialDesignRaisedDarkButton}">
+                                    Очистить поля
+                                </Button>
+
+                                <Button
+                                    Margin="10"
+                                    cal:Message.Attach="[Event Click] = [Action CreateDoctor]"
+                                    Style="{StaticResource MaterialDesignRaisedDarkButton}">
+                                    Создать запись
+                                </Button>
+
                                 <Button
                                     Margin="10"
                                     cal:Message.Attach="[Event Click] = [Action SaveDoctor]"
                                     Style="{StaticResource MaterialDesignRaisedDarkButton}">
                                     Сохранить
                                 </Button>
-                            </StackPanel>
+                            </WrapPanel>
+
+                            <Button
+                                Grid.Row="1"
+                                Margin="10"
+                                HorizontalAlignment="Stretch"
+                                cal:Message.Attach="[Event Click] = [Action ClearSelectedDoctor]"
+                                Style="{StaticResource MaterialDesignRaisedDarkButton}">
+                                Сбросить выбор
+                            </Button>
                         </Grid>
                     </Expander>
                 </materialDesign:Card>
@@ -194,23 +217,23 @@
                             <StackPanel Grid.Column="1" Margin="10">
                                 <WrapPanel HorizontalAlignment="Left" Orientation="Horizontal">
                                     <TextBox
-                                        Width="150"
+                                        Width="200"
                                         Margin="10"
-                                        materialDesign:HintAssist.Hint="Фамилия"
+                                        materialDesign:HintAssist.Hint="Фамилия (Обязательно при создании)"
                                         Style="{StaticResource MaterialDesignFloatingHintTextBox}"
-                                        Text="{Binding SelectedUser.LastName, UpdateSourceTrigger=PropertyChanged}" />
+                                        Text="{Binding UserLastName, UpdateSourceTrigger=PropertyChanged}" />
                                     <TextBox
-                                        Width="150"
+                                        Width="200"
                                         Margin="10"
                                         materialDesign:HintAssist.Hint="Имя"
                                         Style="{StaticResource MaterialDesignFloatingHintTextBox}"
-                                        Text="{Binding SelectedUser.FirstName, UpdateSourceTrigger=PropertyChanged}" />
+                                        Text="{Binding UserFirstName, UpdateSourceTrigger=PropertyChanged}" />
                                     <TextBox
-                                        Width="150"
+                                        Width="200"
                                         Margin="10"
                                         materialDesign:HintAssist.Hint="Отчество"
                                         Style="{StaticResource MaterialDesignFloatingHintTextBox}"
-                                        Text="{Binding SelectedUser.PatronymicName, UpdateSourceTrigger=PropertyChanged}" />
+                                        Text="{Binding UserPatronymicName, UpdateSourceTrigger=PropertyChanged}" />
                                 </WrapPanel>
 
                                 <WrapPanel Orientation="Horizontal">
@@ -221,7 +244,7 @@
                                         materialDesign:HintAssist.Hint="Доступ"
                                         DisplayMemberPath="Name"
                                         ItemsSource="{Binding AccessGroups}"
-                                        SelectedValue="{Binding SelectedUser.Access}"
+                                        SelectedValue="{Binding UserAccessGroup}"
                                         SelectedValuePath="AccessGroup"
                                         Style="{StaticResource MaterialDesignFloatingHintComboBox}" />
 
@@ -232,25 +255,54 @@
                                         materialDesign:HintAssist.Hint="Статус"
                                         DisplayMemberPath="Name"
                                         ItemsSource="{Binding IsActiveCollection}"
-                                        SelectedValue="{Binding SelectedUser.IsActive}"
+                                        SelectedValue="{Binding UserIsActiveStatus}"
                                         SelectedValuePath="IsActive"
                                         Style="{StaticResource MaterialDesignFloatingHintComboBox}" />
+
+                                    <TextBox
+                                        Width="200"
+                                        Margin="10"
+                                        materialDesign:HintAssist.Hint="Пароль (Обязательно при создании)"
+                                        Style="{StaticResource MaterialDesignFloatingHintTextBox}"
+                                        Text="{Binding UserPassword, UpdateSourceTrigger=PropertyChanged}" />
                                 </WrapPanel>
                             </StackPanel>
 
-                            <StackPanel
+                            <Button
                                 Grid.Row="1"
-                                Grid.ColumnSpan="2"
+                                    Margin="10"
+                                    cal:Message.Attach="[Event Click] = [Action ClearSeletedUser]"
+                                    Style="{StaticResource MaterialDesignRaisedDarkButton}">
+                                Сбросить выбор
+                            </Button>
+
+                            <WrapPanel
+                                Grid.Row="1"
+                                Grid.Column="1"
                                 HorizontalAlignment="Right"
                                 VerticalAlignment="Center"
                                 Orientation="Horizontal">
+                                <Button
+                                    Margin="10"
+                                    cal:Message.Attach="[Event Click] = [Action ClearUserFields]"
+                                    Style="{StaticResource MaterialDesignRaisedDarkButton}">
+                                    Очистить введенные поля
+                                </Button>
+
+                                <Button
+                                    Margin="10"
+                                    cal:Message.Attach="[Event Click] = [Action CreateUser]"
+                                    Style="{StaticResource MaterialDesignRaisedDarkButton}">
+                                    Создать запись
+                                </Button>
+
                                 <Button
                                     Margin="10"
                                     cal:Message.Attach="[Event Click] = [Action SaveUser]"
                                     Style="{StaticResource MaterialDesignRaisedDarkButton}">
                                     Сохранить
                                 </Button>
-                            </StackPanel>
+                            </WrapPanel>
                         </Grid>
                     </Expander>
                 </materialDesign:Card>
