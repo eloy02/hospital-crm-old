@@ -19,10 +19,10 @@ namespace WebClient
 {
     public class WebClientApi : IWebClient
     {
-        private Uri BaseUrl = new Uri("https://localhost:44391/api");
+        //private Uri BaseUrl = new Uri("https://localhost:44391/api");
         private static string TempPath = Directory.GetCurrentDirectory() + @"\Temp";
 
-        //private Uri BaseUrl = new Uri("http://eloy102-001-site1.dtempurl.com/api");
+        private Uri BaseUrl = new Uri("http://eloy102-001-site1.dtempurl.com/api");
         private string ProgrammGuid = "2F5F714611C34EC5A2D6F06DEFD0AB084A940477EBED4BE4BC62-452D6B92D972";
 
         private Guid Token;
